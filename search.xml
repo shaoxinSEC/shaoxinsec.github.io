@@ -258,30 +258,6 @@
       </tags>
   </entry>
   <entry>
-    <title>SRC挖掘</title>
-    <url>/2025/11/06/SRC%E6%8C%96%E6%8E%98/</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer"/>
-
-<h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
-
-<h2 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h2><ol>
-<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
-<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
-<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
-</ol>
-<h2 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h2><ol>
-<li>权重为0：漏洞盒子-公益SRC</li>
-<li>有权重：补天</li>
-<li>edu.cn：教育SRC</li>
-<li>大厂：专属SRC</li>
-</ol>
-<h2 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h2><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
-<ol>
-<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
     <title>红队常用工具</title>
     <url>/2025/11/08/RedTeamTools/</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer"/>
@@ -408,6 +384,30 @@
 </li>
 <li><p>溯源反制</p>
  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>SRC挖掘</title>
+    <url>/2025/11/06/SRC%E6%8C%96%E6%8E%98/</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer"/>
+
+<h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
+
+<h2 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h2><ol>
+<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
+<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
+<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
+</ol>
+<h2 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h2><ol>
+<li>权重为0：漏洞盒子-公益SRC</li>
+<li>有权重：补天</li>
+<li>edu.cn：教育SRC</li>
+<li>大厂：专属SRC</li>
+</ol>
+<h2 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h2><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
+<ol>
+<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
 </ol>
 ]]></content>
   </entry>
