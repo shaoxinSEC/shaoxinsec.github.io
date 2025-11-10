@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>APK安全测试</title>
-    <url>/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/</url>
+    <url>/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
 <blockquote>
@@ -258,31 +258,8 @@
       </tags>
   </entry>
   <entry>
-    <title>红对面试八股文</title>
-    <url>/2025/11/06/%E5%85%AB%E8%82%A1%E6%96%87/</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>常见安全设备之间的区别</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>怎么判断设备是不是误报</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>windows入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Linux入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>溯源反制</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
     <title>红队常用工具</title>
-    <url>/2025/11/08/RedTeamTools/</url>
+    <url>/RedTeamTools.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
 <h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
@@ -389,7 +366,7 @@
   </entry>
   <entry>
     <title>RedteamNotes</title>
-    <url>/2025/11/04/RedteamNotes/</url>
+    <url>/RedteamNotes.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
 <h2 id="反溯源"><a href="#反溯源" class="headerlink" title="反溯源"></a>反溯源</h2><ol>
@@ -588,8 +565,31 @@
       </tags>
   </entry>
   <entry>
+    <title>红对面试八股文</title>
+    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>常见安全设备之间的区别</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>怎么判断设备是不是误报</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>windows入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Linux入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>溯源反制</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
     <title>SRC挖掘</title>
-    <url>/2025/11/06/SRC%E6%8C%96%E6%8E%98/</url>
+    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
 <h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
