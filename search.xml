@@ -263,33 +263,34 @@
       </tags>
   </entry>
   <entry>
-    <title>SRC挖掘</title>
-    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
+    <title>红队面试</title>
+    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
-<h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
-
-<h2 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h2><ol>
-<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
-<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
-<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
-</ol>
-<h2 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h2><ol>
-<li>权重为0：漏洞盒子-公益SRC</li>
-<li>有权重：补天</li>
-<li>edu.cn：教育SRC</li>
-<li>大厂：专属SRC</li>
-</ol>
-<h2 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h2><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
-<ol>
-<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>常见安全设备之间的区别</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>怎么判断设备是不是误报</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>windows入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Linux入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>溯源反制</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
 </ol>
 ]]></content>
       <categories>
-        <category>SRC</category>
+        <category>红队</category>
       </categories>
       <tags>
-        <tag>SRC挖掘思路</tag>
+        <tag>面试</tag>
+        <tag>八股文</tag>
+        <tag>面经</tag>
       </tags>
   </entry>
   <entry>
@@ -546,6 +547,429 @@
       </tags>
   </entry>
   <entry>
+    <title>SRC挖掘</title>
+    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<table>
+<thead>
+<tr>
+<th align="center">Name</th>
+<th align="center">Link</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">字节跳动安全应急响应中心</td>
+<td align="center"><a href="https://security.bytedance.com/submit">https://security.bytedance.com/submit</a></td>
+</tr>
+<tr>
+<td align="center">腾讯安全应急响应中心</td>
+<td align="center"><a href="https://security.tencent.com/index.php/report/add">https://security.tencent.com/index.php/report/add</a></td>
+</tr>
+<tr>
+<td align="center">阿里安全应急响应中心</td>
+<td align="center"><a href="https://security.alibaba.com/">https://security.alibaba.com/</a></td>
+</tr>
+<tr>
+<td align="center">京东安全应急响应中心</td>
+<td align="center"><a href="http://security.jd.com/">http://security.jd.com/</a></td>
+</tr>
+<tr>
+<td align="center">百度安全应急响应中心</td>
+<td align="center"><a href="http://sec.baidu.com/views/main/loophole.html#home">http://sec.baidu.com/views/main/loophole.html#home</a></td>
+</tr>
+<tr>
+<td align="center">顺丰安全应急响应中心</td>
+<td align="center"><a href="http://sfsrc.sf-express.com/submitBug">http://sfsrc.sf-express.com/submitBug</a></td>
+</tr>
+<tr>
+<td align="center">360应急响应中心</td>
+<td align="center"><a href="https://security.360.cn/Report/index">https://security.360.cn/Report/index</a></td>
+</tr>
+<tr>
+<td align="center">哔哩哔哩安全应急响应中心</td>
+<td align="center"><a href="https://security.bilibili.com/">https://security.bilibili.com/</a></td>
+</tr>
+<tr>
+<td align="center">爱奇艺安全应急响应中心</td>
+<td align="center"><a href="https://security.iqiyi.com/#submit">https://security.iqiyi.com/#submit</a></td>
+</tr>
+<tr>
+<td align="center">蚂蚁集团安全应急响应中心</td>
+<td align="center"><a href="https://security.alipay.com/sc/afsrc/home.htm">https://security.alipay.com/sc/afsrc/home.htm</a></td>
+</tr>
+<tr>
+<td align="center">BIGO SRC</td>
+<td align="center"><a href="https://security.bigo.sg/#/submittingReport">https://security.bigo.sg/#/submittingReport</a></td>
+</tr>
+<tr>
+<td align="center">贝壳安全应急响应中心</td>
+<td align="center"><a href="https://security.ke.com/vuls">https://security.ke.com/vuls</a></td>
+</tr>
+<tr>
+<td align="center">360漏洞云众包</td>
+<td align="center"><a href="https://src.360.net/home">https://src.360.net/home</a></td>
+</tr>
+<tr>
+<td align="center">58安全应急响应中心</td>
+<td align="center"><a href="https://security.58.com/">https://security.58.com/</a></td>
+</tr>
+<tr>
+<td align="center">滴滴出行安全应急响应中心</td>
+<td align="center"><a href="http://sec.didichuxing.com/">http://sec.didichuxing.com/</a></td>
+</tr>
+<tr>
+<td align="center">东方财富安全应急响应中心</td>
+<td align="center"><a href="https://passport2.eastmoney.com/pub/login?backurl=https://se//A//security.eastmoney.com/checklogin/Oj2EK64eudkAwPvb8whTTvUWqkDW87hPs3tcMijf">https://passport2.eastmoney.com/pub/login?backurl=https%3A//se//A//security.eastmoney.com/checklogin/Oj2EK64eudkAwPvb8whTTvUWqkDW87hPs3tcMijf</a></td>
+</tr>
+<tr>
+<td align="center">斗鱼安全应急响应中心</td>
+<td align="center"><a href="https://security.douyu.com/">https://security.douyu.com/</a></td>
+</tr>
+<tr>
+<td align="center">安全应急响应中心</td>
+<td align="center"><a href="https://security.duxiaoman.com/views/main/loophole.html#home">https://security.duxiaoman.com/views/main/loophole.html#home</a></td>
+</tr>
+<tr>
+<td align="center">DHgate安全应急响应中心</td>
+<td align="center"><a href="http://dhsrc.dhgate.com/user.php/login/index/callback/post-add.html">http://dhsrc.dhgate.com/user.php/login/index/callback/post-add.html</a></td>
+</tr>
+<tr>
+<td align="center">富友安全应急响应中心</td>
+<td align="center"><a href="https://fsrc.fuiou.com/">https://fsrc.fuiou.com/</a></td>
+</tr>
+<tr>
+<td align="center">货拉拉安全应急响应中心</td>
+<td align="center"><a href="https://llsrc.huolala.cn/">https://llsrc.huolala.cn/</a></td>
+</tr>
+<tr>
+<td align="center">合合安全应急响应中心</td>
+<td align="center"><a href="https://security.intsig.com/">https://security.intsig.com/</a></td>
+</tr>
+<tr>
+<td align="center">火线安全平台</td>
+<td align="center"><a href="https://www.huoxian.cn/login">https://www.huoxian.cn/login</a></td>
+</tr>
+<tr>
+<td align="center">好未来安全应急响应中心</td>
+<td align="center"><a href="http://src.100tal.com/">http://src.100tal.com/</a></td>
+</tr>
+<tr>
+<td align="center">华为安全激励计划</td>
+<td align="center"><a href="https://bugbounty.huawei.com/">https://bugbounty.huawei.com/</a></td>
+</tr>
+<tr>
+<td align="center">焦点安全应急响应中心</td>
+<td align="center"><a href="https://security.focuschina.com/home/index/report.html">https://security.focuschina.com/home/index/report.html</a></td>
+</tr>
+<tr>
+<td align="center">竞技安全应急响应中心</td>
+<td align="center"><a href="https://security.jj.cn/">https://security.jj.cn/</a></td>
+</tr>
+<tr>
+<td align="center">快手安全应急响应中心</td>
+<td align="center"><a href="https://security.kuaishou.com/#/submit">https://security.kuaishou.com/#/submit</a></td>
+</tr>
+<tr>
+<td align="center">联想安全应急响应中心</td>
+<td align="center"><a href="https://lsrc.vulbox.com/">https://lsrc.vulbox.com/</a></td>
+</tr>
+<tr>
+<td align="center">同程旅行安全应急响应中心</td>
+<td align="center"><a href="https://sec.ly.com/">https://sec.ly.com/</a></td>
+</tr>
+<tr>
+<td align="center">美丽联合集团安全应急响应中心</td>
+<td align="center"><a href="http://security.mogujie.com/#/">http://security.mogujie.com/#/</a></td>
+</tr>
+<tr>
+<td align="center">魅族安全应急响应中心</td>
+<td align="center"><a href="https://sec.meizu.com/">https://sec.meizu.com/</a></td>
+</tr>
+<tr>
+<td align="center">陌陌安全应急响应中心</td>
+<td align="center"><a href="https://security.immomo.com/">https://security.immomo.com/</a></td>
+</tr>
+<tr>
+<td align="center">马蜂窝安全应急响应中心</td>
+<td align="center"><a href="https://security.mafengwo.cn/submit">https://security.mafengwo.cn/submit</a></td>
+</tr>
+<tr>
+<td align="center">美团安全应急响应中心</td>
+<td align="center"><a href="https://security.meituan.com/">https://security.meituan.com/</a></td>
+</tr>
+<tr>
+<td align="center">OPPO安全应急响应中心</td>
+<td align="center"><a href="https://security.oppo.com/add.jsp">https://security.oppo.com/add.jsp</a></td>
+</tr>
+<tr>
+<td align="center">网易安全中心</td>
+<td align="center"><a href="http://anquan.163.com/module/hole/new-hole.html">http://anquan.163.com/module/hole/new-hole.html</a></td>
+</tr>
+<tr>
+<td align="center">平安安全应急响应中心</td>
+<td align="center"><a href="http://security.pingan.com/submit">http://security.pingan.com/submit</a></td>
+</tr>
+<tr>
+<td align="center">去哪儿安全应急响应中心</td>
+<td align="center"><a href="https://security.qunar.com/report.php">https://security.qunar.com/report.php</a></td>
+</tr>
+<tr>
+<td align="center">融360安全应急响应中心</td>
+<td align="center"><a href="https://security.rong360.com/#/leak/add">https://security.rong360.com/#/leak/add</a></td>
+</tr>
+<tr>
+<td align="center">知道创宇安全应急响应中心</td>
+<td align="center"><a href="https://www.seebug.org/">https://www.seebug.org/</a></td>
+</tr>
+<tr>
+<td align="center">新浪安全应急响应中心</td>
+<td align="center"><a href="http://sec.sina.com.cn/">http://sec.sina.com.cn/</a></td>
+</tr>
+<tr>
+<td align="center">苏宁安全应急响应中心</td>
+<td align="center"><a href="https://security.suning.com/">https://security.suning.com/</a></td>
+</tr>
+<tr>
+<td align="center">途牛安全应急响应中心</td>
+<td align="center"><a href="http://sec.tuniu.com/">http://sec.tuniu.com/</a></td>
+</tr>
+<tr>
+<td align="center">T3出行安全应急响应中心</td>
+<td align="center"><a href="https://security.t3go.cn/">https://security.t3go.cn/</a></td>
+</tr>
+<tr>
+<td align="center">唯品会安全应急响应中心</td>
+<td align="center"><a href="https://sec.vip.com/">https://sec.vip.com/</a></td>
+</tr>
+<tr>
+<td align="center">vivo安全应急响应中心</td>
+<td align="center"><a href="https://security.vivo.com.cn/#/bugsubmit">https://security.vivo.com.cn/#/bugsubmit</a></td>
+</tr>
+<tr>
+<td align="center">挖财安全应急响应中心</td>
+<td align="center"><a href="https://sec.wacai.com/">https://sec.wacai.com/</a></td>
+</tr>
+<tr>
+<td align="center">微博安全应急响应中心</td>
+<td align="center"><a href="http://wsrc.weibo.com/leak_module_view">http://wsrc.weibo.com/leak_module_view</a></td>
+</tr>
+<tr>
+<td align="center">微众银行安全应急响应中心</td>
+<td align="center"><a href="https://security.webank.com/report/add">https://security.webank.com/report/add</a></td>
+</tr>
+<tr>
+<td align="center">完美世界安全应急响应中心</td>
+<td align="center"><a href="http://security.wanmei.com/">http://security.wanmei.com/</a></td>
+</tr>
+<tr>
+<td align="center">小米安全中心</td>
+<td align="center"><a href="https://sec.xiaomi.com/submit">https://sec.xiaomi.com/submit</a></td>
+</tr>
+<tr>
+<td align="center">小赢安全应急响应中心</td>
+<td align="center"><a href="https://security.xiaoying.com/user.php?m=user&c=post&a=add">https://security.xiaoying.com/user.php?m=user&amp;c=post&amp;a=add</a></td>
+</tr>
+<tr>
+<td align="center">喜马拉雅安全应急响应中心</td>
+<td align="center"><a href="https://security.ximalaya.com/">https://security.ximalaya.com/</a></td>
+</tr>
+<tr>
+<td align="center">携程安全应急响应中心</td>
+<td align="center"><a href="https://sec.ctrip.com/report">https://sec.ctrip.com/report</a></td>
+</tr>
+<tr>
+<td align="center">讯飞安全应急响应中心</td>
+<td align="center"><a href="https://security.iflytek.com/user.php/post/add">https://security.iflytek.com/user.php/post/add</a></td>
+</tr>
+<tr>
+<td align="center">有赞安全应急响应中心</td>
+<td align="center"><a href="https://src.youzan.com/">https://src.youzan.com/</a></td>
+</tr>
+<tr>
+<td align="center">银联安全应急响应中心</td>
+<td align="center"><a href="https://security.unionpay.com/">https://security.unionpay.com/</a></td>
+</tr>
+<tr>
+<td align="center">宜信安全应急响应中心</td>
+<td align="center"><a href="https://security.creditease.cn/bugReport.html">https://security.creditease.cn/bugReport.html</a></td>
+</tr>
+<tr>
+<td align="center">智联招聘安全应急响应中心</td>
+<td align="center"><a href="https://src.zhaopin.com/#/submitvul">https://src.zhaopin.com/#/submitvul</a></td>
+</tr>
+<tr>
+<td align="center">中通安全应急响应中心</td>
+<td align="center"><a href="https://sec.zto.com/">https://sec.zto.com/</a></td>
+</tr>
+<tr>
+<td align="center">猪八戒网安全应急响应中心</td>
+<td align="center"><a href="https://sec.zbj.com/">https://sec.zbj.com/</a></td>
+</tr>
+<tr>
+<td align="center">自如安全应急响应中心</td>
+<td align="center"><a href="https://zrsecurity.ziroom.com/">https://zrsecurity.ziroom.com/</a></td>
+</tr>
+</tbody></table>
+<h2 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
+
+<h2 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h2><ol>
+<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
+<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
+<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
+</ol>
+<h2 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h2><ol>
+<li>权重为0：漏洞盒子-公益SRC</li>
+<li>有权重：补天</li>
+<li>edu.cn：教育SRC</li>
+<li>大厂：专属SRC</li>
+</ol>
+<h2 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h2><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
+<ol>
+<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
+</ol>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ol>
+<li>大厂边缘资产、非金融</li>
+<li>漏洞处置规则</li>
+</ol>
+<h1 id="Day01-字节SRC"><a href="#Day01-字节SRC" class="headerlink" title="Day01-字节SRC"></a>Day01-字节SRC</h1><blockquote>
+<ol>
+<li>SRC不强求漏洞利用，只要是漏洞就可以。当然，能够利用造成更大的危害肯定是更好</li>
+<li>SRC中常见漏洞：DOM-XSS、SSRF、逻辑漏洞、未授权访问</li>
+</ol>
+</blockquote>
+<h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><ol>
+<li>资产扩充——多个网络空间搜索引擎联合搜索：主域名、favicon、相同证书、C段</li>
+</ol>
+]]></content>
+      <categories>
+        <category>SRC</category>
+      </categories>
+      <tags>
+        <tag>SRC挖掘思路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>红队工具</title>
+    <url>/RedTeamTools.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h1 id="工具统计"><a href="#工具统计" class="headerlink" title="工具统计"></a>工具统计</h1><h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nuclei</td>
+<td>基于yaml格式的POC漏扫工具（命令行形式）</td>
+</tr>
+<tr>
+<td>nuclei-web</td>
+<td>少欣自研的基于nuclei+fofa的漏扫平台</td>
+</tr>
+<tr>
+<td>AWVS</td>
+<td>国外的漏扫平台，建议在闲鱼上购买当年最新的版本</td>
+</tr>
+</tbody></table>
+<h2 id="Package-Sniffing"><a href="#Package-Sniffing" class="headerlink" title="Package Sniffing"></a>Package Sniffing</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BurpSuite</td>
+<td>经典HTTP&#x2F;s抓包工具，插件生态丰富</td>
+</tr>
+<tr>
+<td>Wireshark</td>
+<td>抓去整个网卡流量的老牌工具</td>
+</tr>
+<tr>
+<td>Proxifier</td>
+<td>代理指定进程的所有流量</td>
+</tr>
+<tr>
+<td>Yakit</td>
+<td>国产http&#x2F;s抓包工具，新起之秀，等几年插件生态丰富了再用</td>
+</tr>
+<tr>
+<td>captcha-killer</td>
+<td>BurpSuite插件：爆破登录框时，自动识别验证码</td>
+</tr>
+<tr>
+<td>HaE</td>
+<td>根据正则表达式在请求或者响应中匹配关键字，然后高亮显示，检测信息泄露非常好用</td>
+</tr>
+</tbody></table>
+<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>010Editor</td>
+<td>16进制查看工具</td>
+</tr>
+<tr>
+<td>jadx-gui</td>
+<td>apk&#x2F;jar静态分析、反编译工具</td>
+</tr>
+</tbody></table>
+<h2 id="All-in"><a href="#All-in" class="headerlink" title="All-in"></a>All-in</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tscan</td>
+<td>聚合了端口扫描、poc扫描、红队常用小工具的GUI程序，基于JAVA实现跨平台</td>
+</tr>
+</tbody></table>
+<h2 id="ObtainInfo"><a href="#ObtainInfo" class="headerlink" title="ObtainInfo"></a>ObtainInfo</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>observer_ward</td>
+<td>Web finger scanner</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><h2 id="xray"><a href="#xray" class="headerlink" title="xray"></a>xray</h2><ol>
+<li><p>windows平台上，双击启动或者通过自己写的bat&#x2F;vbs启动器运行xray.exe，会出下下面的报错（no command provided）。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111101623009.png" alt="image-20251111101623009"></p>
+</li>
+<li><p>解决方法</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 手工打开CMD，然后进入到xray.exe所在的目录，再执行xray相关命令（推荐）</span><br><span class="line">2. 如果说你每次打开CMD，都在XX目录，那么将xray所在的目录中的所有文件全部放到XX目录中（注意，是所有内容，而不是整个文件夹），最终将XX目录添加到系统环境变量中即可（不推荐）</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>红队</category>
+      </categories>
+      <tags>
+        <tag>武器库</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot入门</title>
     <url>/SpringBootDev.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
@@ -676,157 +1100,6 @@
         <tag>Java</tag>
         <tag>后端</tag>
         <tag>SpringBoot</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>红队工具</title>
-    <url>/RedTeamTools.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h1 id="工具统计"><a href="#工具统计" class="headerlink" title="工具统计"></a>工具统计</h1><h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>nuclei</td>
-<td>基于yaml格式的POC漏扫工具（命令行形式）</td>
-</tr>
-<tr>
-<td>nuclei-web</td>
-<td>少欣自研的基于nuclei+fofa的漏扫平台</td>
-</tr>
-<tr>
-<td>AWVS</td>
-<td>国外的漏扫平台，建议在闲鱼上购买当年最新的版本</td>
-</tr>
-</tbody></table>
-<h2 id="Package-Sniffing"><a href="#Package-Sniffing" class="headerlink" title="Package Sniffing"></a>Package Sniffing</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>BurpSuite</td>
-<td>经典HTTP&#x2F;s抓包工具，插件生态丰富</td>
-</tr>
-<tr>
-<td>Wireshark</td>
-<td>抓去整个网卡流量的老牌工具</td>
-</tr>
-<tr>
-<td>Proxifier</td>
-<td>代理指定进程的所有流量</td>
-</tr>
-<tr>
-<td>Yakit</td>
-<td>国产http&#x2F;s抓包工具，新起之秀，等几年插件生态丰富了再用</td>
-</tr>
-<tr>
-<td>captcha-killer</td>
-<td>BurpSuite插件：爆破登录框时，自动识别验证码</td>
-</tr>
-<tr>
-<td>HaE</td>
-<td>根据正则表达式在请求或者响应中匹配关键字，然后高亮显示，检测信息泄露非常好用</td>
-</tr>
-</tbody></table>
-<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>010Editor</td>
-<td>16进制查看工具</td>
-</tr>
-<tr>
-<td>jadx-gui</td>
-<td>apk&#x2F;jar静态分析、反编译工具</td>
-</tr>
-</tbody></table>
-<h2 id="All-in"><a href="#All-in" class="headerlink" title="All-in"></a>All-in</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Tscan</td>
-<td>聚合了端口扫描、poc扫描、红队常用小工具的GUI程序，基于JAVA实现跨平台</td>
-</tr>
-</tbody></table>
-<h2 id="ObtainInfo"><a href="#ObtainInfo" class="headerlink" title="ObtainInfo"></a>ObtainInfo</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>observer_ward</td>
-<td>Web finger scanner</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><h2 id="xray"><a href="#xray" class="headerlink" title="xray"></a>xray</h2><ol>
-<li><p>windows平台上，双击启动或者通过自己写的bat&#x2F;vbs启动器运行xray.exe，会出下下面的报错（no command provided）。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111101623009.png" alt="image-20251111101623009"></p>
-</li>
-<li><p>解决方法</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 手工打开CMD，然后进入到xray.exe所在的目录，再执行xray相关命令（推荐）</span><br><span class="line">2. 如果说你每次打开CMD，都在XX目录，那么将xray所在的目录中的所有文件全部放到XX目录中（注意，是所有内容，而不是整个文件夹），最终将XX目录添加到系统环境变量中即可（不推荐）</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>红队</category>
-      </categories>
-      <tags>
-        <tag>武器库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>红队面试</title>
-    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>常见安全设备之间的区别</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>怎么判断设备是不是误报</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>windows入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Linux入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>溯源反制</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>红队</category>
-      </categories>
-      <tags>
-        <tag>面试</tag>
-        <tag>八股文</tag>
-        <tag>面经</tag>
       </tags>
   </entry>
 </search>
