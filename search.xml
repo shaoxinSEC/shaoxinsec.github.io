@@ -263,34 +263,444 @@
       </tags>
   </entry>
   <entry>
-    <title>红队面试</title>
-    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
+    <title>红队工具</title>
+    <url>/RedTeamTools.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
 
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>常见安全设备之间的区别</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
+<h1 id="工具统计"><a href="#工具统计" class="headerlink" title="工具统计"></a>工具统计</h1><h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nuclei</td>
+<td>基于yaml格式的POC漏扫工具（命令行形式）</td>
+</tr>
+<tr>
+<td>nuclei-web</td>
+<td>少欣自研的基于nuclei+fofa的漏扫平台</td>
+</tr>
+<tr>
+<td>AWVS</td>
+<td>国外的漏扫平台，建议在闲鱼上购买当年最新的版本</td>
+</tr>
+</tbody></table>
+<h2 id="Package-Sniffing"><a href="#Package-Sniffing" class="headerlink" title="Package Sniffing"></a>Package Sniffing</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BurpSuite</td>
+<td>经典HTTP&#x2F;s抓包工具，插件生态丰富</td>
+</tr>
+<tr>
+<td>Wireshark</td>
+<td>抓去整个网卡流量的老牌工具</td>
+</tr>
+<tr>
+<td>Proxifier</td>
+<td>代理指定进程的所有流量</td>
+</tr>
+<tr>
+<td>Yakit</td>
+<td>国产http&#x2F;s抓包工具，新起之秀，等几年插件生态丰富了再用</td>
+</tr>
+<tr>
+<td>captcha-killer</td>
+<td>BurpSuite插件：爆破登录框时，自动识别验证码</td>
+</tr>
+<tr>
+<td>HaE</td>
+<td>根据正则表达式在请求或者响应中匹配关键字，然后高亮显示，检测信息泄露非常好用</td>
+</tr>
+</tbody></table>
+<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>010Editor</td>
+<td>16进制查看工具</td>
+</tr>
+<tr>
+<td>jadx-gui</td>
+<td>apk&#x2F;jar静态分析、反编译工具</td>
+</tr>
+</tbody></table>
+<h2 id="All-in"><a href="#All-in" class="headerlink" title="All-in"></a>All-in</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tscan</td>
+<td>聚合了端口扫描、poc扫描、红队常用小工具的GUI程序，基于JAVA实现跨平台</td>
+</tr>
+</tbody></table>
+<h2 id="ObtainInfo"><a href="#ObtainInfo" class="headerlink" title="ObtainInfo"></a>ObtainInfo</h2><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>observer_ward</td>
+<td>Web finger scanner</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><h2 id="xray"><a href="#xray" class="headerlink" title="xray"></a>xray</h2><ol>
+<li><p>windows平台上，双击启动或者通过自己写的bat&#x2F;vbs启动器运行xray.exe，会出下下面的报错（no command provided）。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111101623009.png" alt="image-20251111101623009"></p>
 </li>
-<li><p>怎么判断设备是不是误报</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
+<li><p>解决方法</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 手工打开CMD，然后进入到xray.exe所在的目录，再执行xray相关命令（推荐）</span><br><span class="line">2. 如果说你每次打开CMD，都在XX目录，那么将xray所在的目录中的所有文件全部放到XX目录中（注意，是所有内容，而不是整个文件夹），最终将XX目录添加到系统环境变量中即可（不推荐）</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="具体使用"><a href="#具体使用" class="headerlink" title="具体使用"></a>具体使用</h1><h2 id="dirsearch"><a href="#dirsearch" class="headerlink" title="dirsearch"></a>dirsearch</h2><table>
+<thead>
+<tr>
+<th>命令参数</th>
+<th>解释（中文）</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>--version</code></td>
+<td>显示程序版本号并退出</td>
+<td><code>python dirsearch.py --version</code></td>
+</tr>
+<tr>
+<td><code>-h, --help</code></td>
+<td>显示帮助信息并退出</td>
+<td><code>python dirsearch.py -h</code></td>
+</tr>
+<tr>
+<td><code>-u URL, --url=URL</code></td>
+<td>指定目标 URL，可多次使用指定多个 URL</td>
+<td><code>python dirsearch.py -u http://example.com</code></td>
+</tr>
+<tr>
+<td><code>-l PATH, --url-file=PATH</code></td>
+<td>指定包含多个 URL 的列表文件</td>
+<td><code>python dirsearch.py -l urls.txt</code></td>
+</tr>
+<tr>
+<td><code>--stdin</code></td>
+<td>从标准输入读取 URL</td>
+<td><code>python dirsearch.py --stdin &lt;&lt; cat urls.txt</code></td>
+</tr>
+<tr>
+<td><code>--cidr=CIDR</code></td>
+<td>对指定 CIDR 网段内的所有 IP 进行扫描</td>
+<td><code>python dirsearch.py --cidr 192.168.1.0/24</code></td>
+</tr>
+<tr>
+<td><code>--raw=PATH</code></td>
+<td>从文件加载原始 HTTP 请求，需配合<code>--scheme</code>设置协议</td>
+<td><code>python dirsearch.py --raw request.txt --scheme http</code></td>
+</tr>
+<tr>
+<td><code>-s SESSION_FILE, --session=SESSION_FILE</code></td>
+<td>指定会话文件，用于保存或加载扫描会话以续扫</td>
+<td><code>python dirsearch.py -u http://example.com -s scan.session</code></td>
+</tr>
+<tr>
+<td><code>--config=PATH</code></td>
+<td>指定配置文件完整路径，默认<code>config.ini</code></td>
+<td><code>python dirsearch.py --config my_config.ini -u http://example.com</code></td>
+</tr>
+<tr>
+<td><code>-w WORDLISTS, --wordlists=WORDLISTS</code></td>
+<td>自定义字典，多个字典用逗号分隔</td>
+<td><code>python dirsearch.py -u http://example.com -w dict1.txt,dict2.txt</code></td>
+</tr>
+<tr>
+<td><code>-e EXTENSIONS, --extensions=EXTENSIONS</code></td>
+<td>指定文件扩展名列表，用逗号分隔</td>
+<td><code>python dirsearch.py -u http://example.com -e php,html,js</code></td>
+</tr>
+<tr>
+<td><code>-f, --force-extensions</code></td>
+<td>强制在每个字典条目后添加扩展名</td>
+<td><code>python dirsearch.py -u http://example.com -e php -f</code></td>
+</tr>
+<tr>
+<td><code>-O, --overwrite-extensions</code></td>
+<td>用指定扩展名覆盖字典中已有扩展名</td>
+<td><code>python dirsearch.py -u http://example.com -e php -O -w dict.txt</code></td>
+</tr>
+<tr>
+<td><code>--exclude-extensions=EXTENSIONS</code></td>
+<td>排除指定扩展名列表，用逗号分隔</td>
+<td><code>python dirsearch.py -u http://example.com --exclude-extensions asp,jsp</code></td>
+</tr>
+<tr>
+<td><code>--remove-extensions</code></td>
+<td>移除所有路径中的扩展名</td>
+<td><code>python dirsearch.py -u http://example.com --remove-extensions</code></td>
+</tr>
+<tr>
+<td><code>--prefixes=PREFIXES</code></td>
+<td>为所有字典条目添加自定义前缀，用逗号分隔</td>
+<td><code>python dirsearch.py -u http://example.com --prefixes /api,/v1 -w dict.txt</code></td>
+</tr>
+<tr>
+<td><code>--suffixes=SUFFIXES</code></td>
+<td>为所有字典条目添加自定义后缀（忽略目录），用逗号分隔</td>
+<td><code>python dirsearch.py -u http://example.com --suffixes .bak,.old -w dict.txt</code></td>
+</tr>
+<tr>
+<td><code>-U, --uppercase</code></td>
+<td>将字典内容转为大写</td>
+<td><code>python dirsearch.py -u http://example.com -U -w dict.txt</code></td>
+</tr>
+<tr>
+<td><code>-L, --lowercase</code></td>
+<td>将字典内容转为小写</td>
+<td><code>python dirsearch.py -u http://example.com -L -w dict.txt</code></td>
+</tr>
+<tr>
+<td><code>-C, --capital</code></td>
+<td>将字典内容每个单词首字母大写</td>
+<td><code>python dirsearch.py -u http://example.com -C -w dict.txt</code></td>
+</tr>
+<tr>
+<td><code>-t THREADS, --threads=THREADS</code></td>
+<td>指定线程数</td>
+<td><code>python dirsearch.py -u http://example.com -t 50</code></td>
+</tr>
+<tr>
+<td><code>-r, --recursive</code></td>
+<td>递归暴力扫描子目录</td>
+<td><code>python dirsearch.py -u http://example.com -r</code></td>
+</tr>
+<tr>
+<td><code>--deep-recursive</code></td>
+<td>对每个目录层级执行递归扫描</td>
+<td><code>python dirsearch.py -u http://example.com --deep-recursive</code></td>
+</tr>
+<tr>
+<td><code>--force-recursive</code></td>
+<td>对所有找到的路径执行递归暴力扫描（不限于目录）</td>
+<td><code>python dirsearch.py -u http://example.com --force-recursive</code></td>
+</tr>
+<tr>
+<td><code>-R DEPTH, --max-recursion-depth=DEPTH</code></td>
+<td>指定最大递归深度</td>
+<td><code>python dirsearch.py -u http://example.com -r -R 2</code></td>
+</tr>
+<tr>
+<td><code>--recursion-status=CODES</code></td>
+<td>指定触发递归扫描的有效状态码（支持范围，逗号分隔）</td>
+<td><code>python dirsearch.py -u http://example.com -r --recursion-status 200,301-302</code></td>
+</tr>
+<tr>
+<td><code>--subdirs=SUBDIRS</code></td>
+<td>扫描指定 URL 的子目录（逗号分隔）</td>
+<td><code>python dirsearch.py -u http://example.com --subdirs /admin,/blog</code></td>
+</tr>
+<tr>
+<td><code>--exclude-subdirs=SUBDIRS</code></td>
+<td>递归扫描时排除指定子目录（逗号分隔）</td>
+<td><code>python dirsearch.py -u http://example.com -r --exclude-subdirs /tmp,/log</code></td>
+</tr>
+<tr>
+<td><code>-i CODES, --include-status=CODES</code></td>
+<td>指定包含的状态码（支持范围，逗号分隔）</td>
+<td><code>python dirsearch.py -u http://example.com -i 200,301-302</code></td>
+</tr>
+<tr>
+<td><code>-x CODES, --exclude-status=CODES</code></td>
+<td>指定排除的状态码（支持范围，逗号分隔）</td>
+<td><code>python dirsearch.py -u http://example.com -x 404,403</code></td>
+</tr>
+<tr>
+<td><code>--exclude-sizes=SIZES</code></td>
+<td>按响应大小排除结果（逗号分隔，如 0B,4KB）</td>
+<td><code>python dirsearch.py -u http://example.com --exclude-sizes 0B,4KB</code></td>
+</tr>
+<tr>
+<td><code>--exclude-text=TEXTS</code></td>
+<td>按响应内容中的文本排除结果，可多次使用</td>
+<td><code>python dirsearch.py -u http://example.com --exclude-text &quot;Not Found&quot; --exclude-text &quot;Error&quot;</code></td>
+</tr>
+<tr>
+<td><code>--exclude-regex=REGEX</code></td>
+<td>按正则表达式排除响应结果</td>
+<td><code>python dirsearch.py -u http://example.com --exclude-regex &quot;404.*Not Found&quot;</code></td>
+</tr>
+<tr>
+<td><code>--exclude-redirect=STRING</code></td>
+<td>若重定向 URL 匹配指定正则或文本则排除该响应</td>
+<td><code>python dirsearch.py -u http://example.com --exclude-redirect &#39;/index.html&#39;</code></td>
+</tr>
+<tr>
+<td><code>--exclude-response=PATH</code></td>
+<td>排除与指定页面响应相似的结果</td>
+<td><code>python dirsearch.py -u http://example.com --exclude-response 404.html</code></td>
+</tr>
+<tr>
+<td><code>--skip-on-status=CODES</code></td>
+<td>遇到指定状态码时跳过当前目标（支持范围，逗号分隔）</td>
+<td><code>python dirsearch.py -u http://example.com --skip-on-status 500-503</code></td>
+</tr>
+<tr>
+<td><code>--min-response-size=LENGTH</code></td>
+<td>仅保留响应长度大于该值的结果</td>
+<td><code>python dirsearch.py -u http://example.com --min-response-size 100</code></td>
+</tr>
+<tr>
+<td><code>--max-response-size=LENGTH</code></td>
+<td>仅保留响应长度小于该值的结果</td>
+<td><code>python dirsearch.py -u http://example.com --max-response-size 10000</code></td>
+</tr>
+<tr>
+<td><code>--max-time=SECONDS</code></td>
+<td>指定扫描的最大运行时间（秒）</td>
+<td><code>python dirsearch.py -u http://example.com --max-time 300</code></td>
+</tr>
+<tr>
+<td><code>--exit-on-error</code></td>
+<td>遇到错误时立即退出扫描</td>
+<td><code>python dirsearch.py -u http://example.com --exit-on-error</code></td>
+</tr>
+<tr>
+<td><code>-m METHOD, --http-method=METHOD</code></td>
+<td>指定 HTTP 请求方法，默认 GET</td>
+<td><code>python dirsearch.py -u http://example.com -m POST</code></td>
+</tr>
+<tr>
+<td><code>-d DATA, --data=DATA</code></td>
+<td>指定 HTTP 请求数据（用于 POST 等方法）</td>
+<td><code>python dirsearch.py -u http://example.com -m POST -d &quot;username=test&amp;password=123&quot;</code></td>
+</tr>
+<tr>
+<td><code>--data-file=PATH</code></td>
+<td>指定包含 HTTP 请求数据的文件</td>
+<td><code>python dirsearch.py -u http://example.com -m POST --data-file data.txt</code></td>
+</tr>
+<tr>
+<td><code>-H HEADERS, --header=HEADERS</code></td>
+<td>指定 HTTP 请求头，可多次使用</td>
+<td><code>python dirsearch.py -u http://example.com -H &quot;Authorization: Bearer token&quot; -H &quot;X-Custom: value&quot;</code></td>
+</tr>
+<tr>
+<td><code>--header-file=PATH</code></td>
+<td>指定包含 HTTP 请求头的文件</td>
+<td><code>python dirsearch.py -u http://example.com --header-file headers.txt</code></td>
+</tr>
+<tr>
+<td><code>-F, --follow-redirects</code></td>
+<td>跟随 HTTP 重定向</td>
+<td><code>python dirsearch.py -u http://example.com -F</code></td>
+</tr>
+<tr>
+<td><code>--random-agent</code></td>
+<td>为每个请求选择随机 User-Agent</td>
+<td><code>python dirsearch.py -u http://example.com --random-agent</code></td>
+</tr>
+<tr>
+<td><code>--auth=CREDENTIAL</code></td>
+<td>指定认证凭据（如用户名：密码或 Bearer 令牌）</td>
+<td><code>python dirsearch.py -u http://example.com --auth &quot;admin:123456&quot;</code> 或 <code>--auth &quot;Bearer abc123&quot;</code></td>
+</tr>
+<tr>
+<td><code>--auth-type=TYPE</code></td>
+<td>指定认证类型（basic、digest、bearer 等）</td>
+<td><code>python dirsearch.py -u http://example.com --auth &quot;admin:123456&quot; --auth-type basic</code></td>
+</tr>
+<tr>
+<td><code>--cert-file=PATH</code></td>
+<td>指定包含客户端证书的文件</td>
+<td><code>python dirsearch.py -u https://example.com --cert-file client.crt</code></td>
+</tr>
+<tr>
+<td><code>--key-file=PATH</code></td>
+<td>指定包含客户端证书私钥的文件（未加密）</td>
+<td><code>python dirsearch.py -u https://example.com --cert-file client.crt --key-file client.key</code></td>
+</tr>
+<tr>
+<td><code>--user-agent=USER_AGENT</code></td>
+<td>指定自定义 User-Agent</td>
+<td><code>python dirsearch.py -u http://example.com --user-agent &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0.0.0&quot;</code></td>
+</tr>
+<tr>
+<td><code>--cookie=COOKIE</code></td>
+<td>指定 HTTP Cookie</td>
+<td><code>python dirsearch.py -u http://example.com --cookie &quot;PHPSESSID=abc123; username=admin&quot;</code></td>
+</tr>
+<tr>
+<td><code>--timeout=TIMEOUT</code></td>
+<td>指定连接超时时间（秒）</td>
+<td><code>python dirsearch.py -u http://example.com --timeout 5</code></td>
+</tr>
+<tr>
+<td><code>--delay=DELAY</code></td>
+<td>指定请求之间的延迟（秒）</td>
+<td><code>python dirsearch.py -u http://example.com --delay 1</code></td>
+</tr>
+<tr>
+<td><code>--proxy=PROXY</code></td>
+<td>指定代理 URL（支持 HTTP&#x2F;SOCKS，可多次使用）</td>
+<td><code>python dirsearch.py -u http://example.com --proxy http://127.0.0.1:8080</code></td>
+</tr>
+<tr>
+<td><code>--proxy-file=PATH</code></td>
+<td>指定包含代理服务器列表的文件</td>
+<td><code>python dirsearch.py -u http://example.com --proxy-file proxies.txt</code></td>
+</tr>
+<tr>
+<td><code>--proxy-auth=CREDENTIAL</code></td>
+<td>指定代理认证凭据</td>
+<td><code>python dirsearch.py -u http://example.com --proxy http://127.0.0.1:8080 --proxy-auth &quot;user:pass&quot;</code></td>
+</tr>
+</tbody></table>
+<h3 id="目标格式"><a href="#目标格式" class="headerlink" title="目标格式"></a>目标格式</h3><ol>
+<li><p>格式要求：协议:&#x2F;&#x2F;主机:端口</p>
 </li>
-<li><p>windows入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
+<li><p>格式处理</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse, urlunparse</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_valid_target</span>(<span class="params">raw_str: <span class="built_in">str</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    第一步：校验字符串是否为合法的目标地址（域名/IP），过滤非地址字符</span></span><br><span class="line"><span class="string">    :param raw_str: 待校验的原始字符串（如&quot;target.com&quot;、&quot;192.168.1.100&quot;、&quot;abcdefg&quot;）</span></span><br><span class="line"><span class="string">    :return: True=合法地址，False=非地址字符</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 1. 先移除字符串前后空格（避免用户输入时的误操作）</span></span><br><span class="line">    raw_str = raw_str.strip()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. 校验是否为IPv4地址（格式：xxx.xxx.xxx.xxx，每个段0-255）</span></span><br><span class="line">    ipv4_pattern = <span class="string">r&quot;^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)&#123;3&#125;(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$&quot;</span></span><br><span class="line">    <span class="keyword">if</span> re.<span class="keyword">match</span>(ipv4_pattern, raw_str):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 3. 校验是否为域名（需包含“.”，且符合域名规则：字母/数字/连字符，且不包含特殊字符）</span></span><br><span class="line">    <span class="comment"># 域名规则：至少1个“.”，前缀/后缀为字母数字，中间可含连字符（如“target.com”“a-b-c.cn”“api.v1.target.com”）</span></span><br><span class="line">    domain_pattern = <span class="string">r&quot;^[a-zA-Z0-9]([a-zA-Z0-9-]&#123;0,61&#125;[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]&#123;0,61&#125;[a-zA-Z0-9])?)*$&quot;</span></span><br><span class="line">    <span class="comment"># 额外条件：必须包含“.”（排除“abcdefg”这类纯字符），且长度符合域名规范（1-253字符）</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;.&quot;</span> <span class="keyword">in</span> raw_str <span class="keyword">and</span> <span class="built_in">len</span>(raw_str) &lt;= <span class="number">253</span> <span class="keyword">and</span> re.<span class="keyword">match</span>(domain_pattern, raw_str):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 4. 若包含端口（如“target.com:8080”“192.168.1.1:443”），提取域名/IP后再校验</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;:&quot;</span> <span class="keyword">in</span> raw_str:</span><br><span class="line">        <span class="comment"># 分割“域名/IP”与“端口”（仅按第一个“:”分割，避免IPv6干扰，此处暂不支持IPv6）</span></span><br><span class="line">        host_part, port_part = raw_str.split(<span class="string">&quot;:&quot;</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 端口需为数字（1-65535），且主机部分需符合域名/IP格式</span></span><br><span class="line">        <span class="keyword">if</span> port_part.isdigit() <span class="keyword">and</span> <span class="number">1</span> &lt;= <span class="built_in">int</span>(port_part) &lt;= <span class="number">65535</span>:</span><br><span class="line">            <span class="keyword">return</span> is_valid_target(host_part)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 5. 非合法地址（如“abcdefg”“123456”“test@target.com”）</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">format_valid_target</span>(<span class="params">raw_url: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    第二步：对合法地址进行标准化格式化，符合dirsearch要求</span></span><br><span class="line"><span class="string">    :param raw_url: 合法的原始地址（如“target.com”“192.168.1.1:8080”“https://target.com/admin”）</span></span><br><span class="line"><span class="string">    :return: 标准化后的URL（如“http://target.com:80”“http://192.168.1.1:8080”“https://target.com:443”）</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 1. 补全协议（无协议时默认补http，后续可手动调整为https）</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> re.<span class="keyword">match</span>(<span class="string">r&quot;^https?://&quot;</span>, raw_url, re.IGNORECASE):</span><br><span class="line">        raw_url = <span class="string">f&quot;http://<span class="subst">&#123;raw_url&#125;</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. 解析URL结构，统一协议为小写</span></span><br><span class="line">    parsed = urlparse(raw_url)</span><br><span class="line">    scheme = parsed.scheme.lower()</span><br><span class="line">    netloc = parsed.netloc  <span class="comment"># 主机+端口（如“target.com:8080”）</span></span><br><span class="line">    path = parsed.path      <span class="comment"># 路径（如“/admin”）</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 3. 修正协议与端口的匹配关系（如https用80端口→改为443）</span></span><br><span class="line">    default_ports = &#123;<span class="string">&quot;http&quot;</span>: <span class="string">&quot;80&quot;</span>, <span class="string">&quot;https&quot;</span>: <span class="string">&quot;443&quot;</span>&#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;:&quot;</span> <span class="keyword">in</span> netloc:</span><br><span class="line">        host, port = netloc.split(<span class="string">&quot;:&quot;</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 端口非数字时，重置为默认端口</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> port.isdigit() <span class="keyword">or</span> <span class="keyword">not</span> (<span class="number">1</span> &lt;= <span class="built_in">int</span>(port) &lt;= <span class="number">65535</span>):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;⚠️  无效端口：<span class="subst">&#123;port&#125;</span>，已重置为<span class="subst">&#123;scheme&#125;</span>默认端口<span class="subst">&#123;default_ports[scheme]&#125;</span>&quot;</span>)</span><br><span class="line">            netloc = <span class="string">f&quot;<span class="subst">&#123;host&#125;</span>:<span class="subst">&#123;default_ports[scheme]&#125;</span>&quot;</span></span><br><span class="line">        <span class="comment"># 协议与端口不匹配时，修正端口</span></span><br><span class="line">        <span class="keyword">elif</span> port != default_ports[scheme]:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;⚠️  协议与端口不匹配：<span class="subst">&#123;scheme&#125;</span>使用<span class="subst">&#123;port&#125;</span>端口，已修正为默认<span class="subst">&#123;default_ports[scheme]&#125;</span>端口&quot;</span>)</span><br><span class="line">            netloc = <span class="string">f&quot;<span class="subst">&#123;host&#125;</span>:<span class="subst">&#123;default_ports[scheme]&#125;</span>&quot;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 无端口时，补充协议默认端口（显式指定更规范，避免dirsearch解析歧义）</span></span><br><span class="line">        netloc = <span class="string">f&quot;<span class="subst">&#123;netloc&#125;</span>:<span class="subst">&#123;default_ports[scheme]&#125;</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 4. 清理冗余路径（仅保留根路径“/”，避免缩小dirsearch扫描范围）</span></span><br><span class="line">    <span class="keyword">if</span> path <span class="keyword">and</span> path != <span class="string">&quot;/&quot;</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;⚠️  冗余路径清理：<span class="subst">&#123;raw_url&#125;</span> 的路径<span class="subst">&#123;path&#125;</span>已移除，dirsearch将自动爆破所有路径&quot;</span>)</span><br><span class="line">        path = <span class="string">&quot;/&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 5. 重组URL（清除查询参数、片段等无关内容，如“http://target.com?a=1#top”→“http://target.com:80”）</span></span><br><span class="line">    formatted_url = urlunparse((scheme, netloc, path, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>))</span><br><span class="line">    <span class="comment"># 移除根路径斜杠（如“http://target.com:80/”→“http://target.com:80”，两者等效但更简洁）</span></span><br><span class="line">    formatted_url = re.sub(<span class="string">r&quot;:(\d+)/$&quot;</span>, <span class="string">r&quot;:\1&quot;</span>, formatted_url)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> formatted_url</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_targets</span>(<span class="params">input_source: <span class="built_in">str</span>, is_file: <span class="built_in">bool</span>, output_file: <span class="built_in">str</span> = <span class="string">&quot;formatted_targets.txt&quot;</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    整体流程：读取输入→过滤无效地址→格式化合法地址→保存结果</span></span><br><span class="line"><span class="string">    :param input_source: 输入源（文件路径或逗号分隔的字符串）</span></span><br><span class="line"><span class="string">    :param is_file: 是否为文件输入</span></span><br><span class="line"><span class="string">    :param output_file: 格式化结果保存路径</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 1. 读取原始目标列表，过滤空行和注释</span></span><br><span class="line">    raw_targets = []</span><br><span class="line">    <span class="keyword">if</span> is_file:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(input_source, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">                    line = line.strip()</span><br><span class="line">                    <span class="comment"># 跳过空行和“#”开头的注释行</span></span><br><span class="line">                    <span class="keyword">if</span> line <span class="keyword">and</span> <span class="keyword">not</span> line.startswith(<span class="string">&quot;#&quot;</span>):</span><br><span class="line">                        raw_targets.append(line)</span><br><span class="line">        <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;❌ 错误：文件<span class="subst">&#123;input_source&#125;</span>不存在，请检查路径&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 非文件输入：按逗号分割，过滤空字符串</span></span><br><span class="line">        raw_targets = [t.strip() <span class="keyword">for</span> t <span class="keyword">in</span> input_source.split(<span class="string">&quot;,&quot;</span>) <span class="keyword">if</span> t.strip()]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> raw_targets:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;❌ 未检测到任何有效输入，请检查目标内容&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. 批量处理：校验→格式化</span></span><br><span class="line">    valid_formatted = []</span><br><span class="line">    invalid_list = []</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span> + <span class="string">&quot;=&quot;</span>*<span class="number">60</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;开始处理（共<span class="subst">&#123;<span class="built_in">len</span>(raw_targets)&#125;</span>个原始目标）：&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">60</span>)</span><br><span class="line">    <span class="keyword">for</span> idx, target <span class="keyword">in</span> <span class="built_in">enumerate</span>(raw_targets, <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> is_valid_target(target):</span><br><span class="line">            <span class="comment"># 合法目标：格式化后加入结果列表</span></span><br><span class="line">            formatted = format_valid_target(target)</span><br><span class="line">            valid_formatted.append(formatted)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;✅ <span class="subst">&#123;idx:2d&#125;</span>. 合法地址：<span class="subst">&#123;target:35s&#125;</span> → 格式化后：<span class="subst">&#123;formatted&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 无效目标：记录到无效列表，不参与后续处理</span></span><br><span class="line">            invalid_list.append(target)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;❌ <span class="subst">&#123;idx:2d&#125;</span>. 无效地址：<span class="subst">&#123;target:35s&#125;</span>（非域名/IP，已过滤）&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 3. 保存格式化结果</span></span><br><span class="line">    <span class="keyword">if</span> valid_formatted:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(output_file, <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(<span class="string">&quot;\n&quot;</span>.join(valid_formatted))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span> + <span class="string">&quot;=&quot;</span>*<span class="number">60</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;处理完成！统计如下：&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;📊 原始目标总数：<span class="subst">&#123;<span class="built_in">len</span>(raw_targets)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;✅ 有效格式化目标数：<span class="subst">&#123;<span class="built_in">len</span>(valid_formatted)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;❌ 无效地址数（已过滤）：<span class="subst">&#123;<span class="built_in">len</span>(invalid_list)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;📁 结果保存路径：<span class="subst">&#123;output_file&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;💡 使用方式：python dirsearch.py -l <span class="subst">&#123;output_file&#125;</span> [其他参数]&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span> + <span class="string">&quot;=&quot;</span>*<span class="number">60</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;❌ 处理完成，但未检测到任何有效目标（所有输入均为非地址字符）&quot;</span>)</span><br><span class="line">        <span class="comment"># 避免生成空文件</span></span><br><span class="line">        <span class="keyword">if</span> os.path.exists(output_file):</span><br><span class="line">            os.remove(output_file)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line">    <span class="comment"># 命令行参数解析</span></span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&quot;dirsearch目标URL处理工具：先校验合法性，再标准化格式化&quot;</span>)</span><br><span class="line">    group = parser.add_mutually_exclusive_group(required=<span class="literal">True</span>)</span><br><span class="line">    group.add_argument(<span class="string">&quot;-f&quot;</span>, <span class="string">&quot;--file&quot;</span>, <span class="built_in">help</span>=<span class="string">&quot;输入目标文件路径（每行1个目标，支持#注释和空行）&quot;</span>)</span><br><span class="line">    group.add_argument(<span class="string">&quot;-u&quot;</span>, <span class="string">&quot;--urls&quot;</span>, <span class="built_in">help</span>=<span class="string">&quot;直接输入目标列表（用逗号分隔，如\&quot;target.com,192.168.1.1:8080\&quot;）&quot;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&quot;-o&quot;</span>, <span class="string">&quot;--output&quot;</span>, default=<span class="string">&quot;formatted_targets.txt&quot;</span>, <span class="built_in">help</span>=<span class="string">&quot;结果保存文件（默认：formatted_targets.txt）&quot;</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 执行处理逻辑</span></span><br><span class="line">    <span class="keyword">if</span> args.file:</span><br><span class="line">        process_targets(input_source=args.file, is_file=<span class="literal">True</span>, output_file=args.output)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        process_targets(input_source=args.urls, is_file=<span class="literal">False</span>, output_file=args.output)</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python url_formatter.py -f raw_targets.txt -o valid_targets.txt</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="爆破单个目标"><a href="#爆破单个目标" class="headerlink" title="爆破单个目标"></a>爆破单个目标</h3><ol>
+<li><p>最佳语法</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python dirsearch.py -e php,html,js,txt -t 15 --delay 0.5 --random-agent --exclude-status 404,403,500-599 --exclude-sizes 0B,1KB-2KB --cookie &quot;PHPSESSID=random_value; X-Requested-With=XMLHttpRequest&quot; -w /usr/share/wordlists/dirb/common.txt --format json -o target_scan_result -u http://target.com</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>Linux入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
+<li><p>提取路径</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;target_scan_result.json&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    data = json.load(f)</span><br><span class="line"><span class="comment"># 提取状态码200的有效路径</span></span><br><span class="line">valid_paths = [entry[<span class="string">&quot;path&quot;</span>] <span class="keyword">for</span> entry <span class="keyword">in</span> data[<span class="string">&quot;results&quot;</span>] <span class="keyword">if</span> entry[<span class="string">&quot;status&quot;</span>] == <span class="number">200</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;有效路径：&quot;</span>, valid_paths)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="多目标路径爆破"><a href="#多目标路径爆破" class="headerlink" title="多目标路径爆破"></a>多目标路径爆破</h3><ol>
+<li><p>最佳实践</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python dirsearch.py -e php,html,js,txt,asp -t 10 --delay 1 --random-agent -H &quot;X-Forwarded-For: 8.8.8.8&quot; --exclude-status 404,403,500-599 --exclude-sizes 0B,1KB-3KB --max-time 300 --session multi_target_scan.session -w /usr/share/wordlists/dirb/common.txt --format json -o multi_target_results -l /path/to/target_urls.txt</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>溯源反制</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
+<li><p>路径提取</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">result_dir = <span class="string">&quot;multi_target_results&quot;</span></span><br><span class="line">valid_paths = []</span><br><span class="line"></span><br><span class="line"><span class="comment"># 遍历所有目标的JSON结果文件</span></span><br><span class="line"><span class="keyword">for</span> filename <span class="keyword">in</span> os.listdir(result_dir):</span><br><span class="line">    <span class="keyword">if</span> filename.endswith(<span class="string">&quot;.json&quot;</span>):</span><br><span class="line">        target = filename.replace(<span class="string">&quot;.json&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(result_dir, filename), <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            data = json.load(f)</span><br><span class="line">        <span class="comment"># 提取状态码200、响应大小&gt;3KB的路径</span></span><br><span class="line">        <span class="keyword">for</span> entry <span class="keyword">in</span> data[<span class="string">&quot;results&quot;</span>]:</span><br><span class="line">            <span class="keyword">if</span> entry[<span class="string">&quot;status&quot;</span>] == <span class="number">200</span> <span class="keyword">and</span> <span class="built_in">int</span>(entry[<span class="string">&quot;size&quot;</span>].replace(<span class="string">&quot;KB&quot;</span>, <span class="string">&quot;&quot;</span>)) &gt; <span class="number">3</span>:</span><br><span class="line">                valid_paths.append(&#123;<span class="string">&quot;target&quot;</span>: target, <span class="string">&quot;path&quot;</span>: entry[<span class="string">&quot;path&quot;</span>], <span class="string">&quot;size&quot;</span>: entry[<span class="string">&quot;size&quot;</span>]&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出整理后的有效路径</span></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> valid_paths:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;目标：<span class="subst">&#123;item[<span class="string">&#x27;target&#x27;</span>]&#125;</span> | 有效路径：<span class="subst">&#123;item[<span class="string">&#x27;path&#x27;</span>]&#125;</span> | 大小：<span class="subst">&#123;item[<span class="string">&#x27;size&#x27;</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure></li>
 </ol>
 ]]></content>
       <categories>
         <category>红队</category>
       </categories>
       <tags>
-        <tag>面试</tag>
-        <tag>八股文</tag>
-        <tag>面经</tag>
+        <tag>武器库</tag>
       </tags>
   </entry>
   <entry>
@@ -839,7 +1249,10 @@
 </ol>
 </blockquote>
 <h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><ol>
-<li>资产扩充——多个网络空间搜索引擎联合搜索：主域名、favicon、相同证书、C段</li>
+<li><p>资产扩充——多个网络空间搜索引擎联合搜索：主域名、favicon、相同证书、C段</p>
+</li>
+<li><p>子域名提取脚本</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extract_subdomains</span>(<span class="params">file_path, target_domain, include_main=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    从文件中提取指定域名下的子域名</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    参数:</span></span><br><span class="line"><span class="string">        file_path: 包含URL的文件路径</span></span><br><span class="line"><span class="string">        target_domain: 目标主域名(如example.com)</span></span><br><span class="line"><span class="string">        include_main: 是否包含主域名本身</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">    返回:</span></span><br><span class="line"><span class="string">        去重后的子域名列表</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 编译正则表达式，用于匹配目标域名及其子域名</span></span><br><span class="line">    <span class="comment"># 支持带端口、路径等情况</span></span><br><span class="line">    pattern = re.<span class="built_in">compile</span>(</span><br><span class="line">        <span class="string">r&#x27;(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]&#123;0,61&#125;[a-zA-Z0-9])?\.)*?&#x27;</span> + </span><br><span class="line">        re.escape(target_domain) + </span><br><span class="line">        <span class="string">r&#x27;(?::\d+)?(?:/.*)?$&#x27;</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    subdomains = <span class="built_in">set</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">                line = line.strip()</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> line:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 尝试使用urlparse解析</span></span><br><span class="line">                parsed = urlparse(line)</span><br><span class="line">                <span class="keyword">if</span> parsed.netloc:  <span class="comment"># 有网络位置部分</span></span><br><span class="line">                    domain = parsed.netloc</span><br><span class="line">                    <span class="comment"># 去除端口</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="string">&#x27;:&#x27;</span> <span class="keyword">in</span> domain:</span><br><span class="line">                        domain = domain.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 没有协议部分，直接处理</span></span><br><span class="line">                    domain = line.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">0</span>].split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 检查是否匹配目标域名</span></span><br><span class="line">                <span class="keyword">if</span> pattern.<span class="keyword">match</span>(domain):</span><br><span class="line">                    <span class="comment"># 提取完整域名(包含子域名)</span></span><br><span class="line">                    full_domain = domain</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment"># 确保不包含端口信息</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="string">&#x27;:&#x27;</span> <span class="keyword">in</span> full_domain:</span><br><span class="line">                        full_domain = full_domain.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment"># 检查是否为主域名本身</span></span><br><span class="line">                    <span class="keyword">if</span> full_domain == target_domain:</span><br><span class="line">                        <span class="keyword">if</span> include_main:</span><br><span class="line">                            subdomains.add(full_domain)</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="comment"># 确认是目标域名的子域名</span></span><br><span class="line">                        <span class="keyword">if</span> full_domain.endswith(<span class="string">&#x27;.&#x27;</span> + target_domain):</span><br><span class="line">                            subdomains.add(full_domain)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;错误: 文件 &#x27;<span class="subst">&#123;file_path&#125;</span>&#x27; 不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;处理文件时出错: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 按长度排序，便于阅读</span></span><br><span class="line">    sorted_subdomains = <span class="built_in">sorted</span>(subdomains, key=<span class="keyword">lambda</span> x: (<span class="built_in">len</span>(x.split(<span class="string">&#x27;.&#x27;</span>)), x))</span><br><span class="line">    <span class="keyword">return</span> sorted_subdomains</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;提取指定域名下的子域名&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;file&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;包含URL的文件路径&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;domain&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;目标主域名(如example.com)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;-i&#x27;</span>, <span class="string">&#x27;--include-main&#x27;</span>, action=<span class="string">&#x27;store_true&#x27;</span>, </span><br><span class="line">                      <span class="built_in">help</span>=<span class="string">&#x27;是否包含主域名本身&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;-o&#x27;</span>, <span class="string">&#x27;--output&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;输出结果到文件&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;正在从 <span class="subst">&#123;args.file&#125;</span> 中提取 <span class="subst">&#123;args.domain&#125;</span> 的子域名...&quot;</span>)</span><br><span class="line">    subdomains = extract_subdomains(args.file, args.domain, args.include_main)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> subdomains:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n共找到 <span class="subst">&#123;<span class="built_in">len</span>(subdomains)&#125;</span> 个独特的子域名:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> subdomain <span class="keyword">in</span> subdomains:</span><br><span class="line">            <span class="built_in">print</span>(subdomain)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> args.output:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(args.output, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                <span class="keyword">for</span> subdomain <span class="keyword">in</span> subdomains:</span><br><span class="line">                    f.write(subdomain + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;\n结果已保存到 <span class="subst">&#123;args.output&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n未找到 <span class="subst">&#123;args.domain&#125;</span> 的子域名&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></li>
 </ol>
 ]]></content>
       <categories>
@@ -847,126 +1260,6 @@
       </categories>
       <tags>
         <tag>SRC挖掘思路</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>红队工具</title>
-    <url>/RedTeamTools.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h1 id="工具统计"><a href="#工具统计" class="headerlink" title="工具统计"></a>工具统计</h1><h2 id="Vulnerability-Scan"><a href="#Vulnerability-Scan" class="headerlink" title="Vulnerability Scan"></a>Vulnerability Scan</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>nuclei</td>
-<td>基于yaml格式的POC漏扫工具（命令行形式）</td>
-</tr>
-<tr>
-<td>nuclei-web</td>
-<td>少欣自研的基于nuclei+fofa的漏扫平台</td>
-</tr>
-<tr>
-<td>AWVS</td>
-<td>国外的漏扫平台，建议在闲鱼上购买当年最新的版本</td>
-</tr>
-</tbody></table>
-<h2 id="Package-Sniffing"><a href="#Package-Sniffing" class="headerlink" title="Package Sniffing"></a>Package Sniffing</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>BurpSuite</td>
-<td>经典HTTP&#x2F;s抓包工具，插件生态丰富</td>
-</tr>
-<tr>
-<td>Wireshark</td>
-<td>抓去整个网卡流量的老牌工具</td>
-</tr>
-<tr>
-<td>Proxifier</td>
-<td>代理指定进程的所有流量</td>
-</tr>
-<tr>
-<td>Yakit</td>
-<td>国产http&#x2F;s抓包工具，新起之秀，等几年插件生态丰富了再用</td>
-</tr>
-<tr>
-<td>captcha-killer</td>
-<td>BurpSuite插件：爆破登录框时，自动识别验证码</td>
-</tr>
-<tr>
-<td>HaE</td>
-<td>根据正则表达式在请求或者响应中匹配关键字，然后高亮显示，检测信息泄露非常好用</td>
-</tr>
-</tbody></table>
-<h2 id="Reverse-Engineering"><a href="#Reverse-Engineering" class="headerlink" title="Reverse Engineering"></a>Reverse Engineering</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>010Editor</td>
-<td>16进制查看工具</td>
-</tr>
-<tr>
-<td>jadx-gui</td>
-<td>apk&#x2F;jar静态分析、反编译工具</td>
-</tr>
-</tbody></table>
-<h2 id="All-in"><a href="#All-in" class="headerlink" title="All-in"></a>All-in</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Tscan</td>
-<td>聚合了端口扫描、poc扫描、红队常用小工具的GUI程序，基于JAVA实现跨平台</td>
-</tr>
-</tbody></table>
-<h2 id="ObtainInfo"><a href="#ObtainInfo" class="headerlink" title="ObtainInfo"></a>ObtainInfo</h2><table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>observer_ward</td>
-<td>Web finger scanner</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><h2 id="xray"><a href="#xray" class="headerlink" title="xray"></a>xray</h2><ol>
-<li><p>windows平台上，双击启动或者通过自己写的bat&#x2F;vbs启动器运行xray.exe，会出下下面的报错（no command provided）。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251111101623009.png" alt="image-20251111101623009"></p>
-</li>
-<li><p>解决方法</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 手工打开CMD，然后进入到xray.exe所在的目录，再执行xray相关命令（推荐）</span><br><span class="line">2. 如果说你每次打开CMD，都在XX目录，那么将xray所在的目录中的所有文件全部放到XX目录中（注意，是所有内容，而不是整个文件夹），最终将XX目录添加到系统环境变量中即可（不推荐）</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>红队</category>
-      </categories>
-      <tags>
-        <tag>武器库</tag>
       </tags>
   </entry>
   <entry>
@@ -1100,6 +1393,37 @@
         <tag>Java</tag>
         <tag>后端</tag>
         <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>红队面试</title>
+    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>常见安全设备之间的区别</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>怎么判断设备是不是误报</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>windows入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Linux入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>溯源反制</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>红队</category>
+      </categories>
+      <tags>
+        <tag>面试</tag>
+        <tag>八股文</tag>
+        <tag>面经</tag>
       </tags>
   </entry>
 </search>
