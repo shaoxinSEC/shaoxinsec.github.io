@@ -1,0 +1,600 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>少欣安全 - This is a blog site about shaoxinSEC.</title><meta name="author" content="shaoxinSEC"><meta name="copyright" content="shaoxinSEC"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="醉里论道 醒时折花">
+<meta property="og:type" content="website">
+<meta property="og:title" content="少欣安全">
+<meta property="og:url" content="https://www.shaoxinsec.top/page/3/index.html">
+<meta property="og:site_name" content="少欣安全">
+<meta property="og:description" content="醉里论道 醒时折花">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.shaoxinsec.top/img/avatar.jpg">
+<meta property="article:author" content="shaoxinSEC">
+<meta property="article:tag" content="androidReve, webSpieder, cyberSecurity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.shaoxinsec.top/img/avatar.jpg"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/avatar.jpg"><link rel="canonical" href="https://www.shaoxinsec.top/page/3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '少欣安全',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><link rel="stylesheet" href="/css/background.css"><link rel="stylesheet" href="/js/atom-one-dark.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/loading.gif" data-original="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/background.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/loading.gif" data-original="/img/avatar.jpg" alt="Logo"><span class="site-name">少欣安全</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">少欣安全</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/shaoxinSEC" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover left"><a href="/2025/12/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8__%E6%8A%93%E5%8C%85/" title="安卓抓包"><img class="post-bg" src="/img/loading.gif" data-original="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251203202150977.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="安卓抓包"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8__%E6%8A%93%E5%8C%85/" title="安卓抓包">安卓抓包</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-29T06:00:00.000Z" title="发表于 2025-12-29 14:00:00">2025-12-29</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-22T06:57:28.131Z" title="更新于 2026-04-22 14:57:28">2026-04-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/">移动安全</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/">移动安全</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/BurpSuite/">BurpSuite</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Reqable%E5%B0%8F%E9%BB%84%E9%B8%9F/">Reqable小黄鸟</a></span></div><div class="content">  BurpSuite代理抓包  导出burp证书 &#x3D;&#x3D;&gt; 转为”hashValue.0”这个文件名 &#x3D;&#x3D;&gt; 移动到安卓系统证书路径中（&#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts&#x2F;） 安装代理转发插件：appproxy.apk 安装相关的bp插件：HaE、apiFinder等    自动转换证书格式并通过adb上传到&#x2F;sdcard&#x2F;download目录下 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011021031041051061071081091101111121131141151161171181191...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/12/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E6%8A%93%E5%8C%85/" title="安卓抓包"><img class="post-bg" src="/img/loading.gif" data-original="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251203202150977.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="安卓抓包"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E6%8A%93%E5%8C%85/" title="安卓抓包">安卓抓包</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-29T06:00:00.000Z" title="发表于 2025-12-29 14:00:00">2025-12-29</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-08T02:03:16.152Z" title="更新于 2026-01-08 10:03:16">2026-01-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/">移动安全</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/">移动安全</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/BurpSuite/">BurpSuite</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Reqable%E5%B0%8F%E9%BB%84%E9%B8%9F/">Reqable小黄鸟</a></span></div><div class="content">  BurpSuite代理抓包  导出burp证书 &#x3D;&#x3D;&gt; 转为”hashValue.0”这个文件名 &#x3D;&#x3D;&gt; 移动到安卓系统证书路径中（&#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts&#x2F;） 安装代理转发插件：appproxy.apk 安装相关的bp插件：HaE、apiFinder等    自动转换证书格式并通过adb上传到&#x2F;sdcard&#x2F;download目录下 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798991001011021031041051061071081091101111121131141151161171181191...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/12/23/WEB%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E4%BC%81%E4%B8%9ASRC/" title="企业SRC挖洞"><img class="post-bg" src="/img/loading.gif" data-original="/img/default-cover-4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="企业SRC挖洞"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/23/WEB%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E4%BC%81%E4%B8%9ASRC/" title="企业SRC挖洞">企业SRC挖洞</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-23T14:00:00.000Z" title="发表于 2025-12-23 22:00:00">2025-12-23</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-03T14:22:51.706Z" title="更新于 2026-01-03 22:22:51">2026-01-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/SRC/">SRC</a></span></div><div class="content">  环境准备 BurpSuite插件  Turbo Intruder：并发发包 Copy As Python-Requests：将请求包一键转为python代码   python：从逻辑上修改请求或者响应，比bp更加灵活  数据外带  dnslog.pw 外带的时候可能会禁止访问这些常用的地址或者已经别列入黑名单的地址，这个时候可以用一个合法的域名，CNAME到dnslog.pw上面   服务器  vps 利用靶场的临时服务器：拿到靶场的root权限之后，配合webshell管理工具，相当于拥有了一个临时的vps，而且这些国内靶场的域名基本上备案，在一定程度上可以避免限制   ROOT机：用来测试APP  信息收集：主要收集目标公司有哪些业务程序（app&#x2F;小程序&#x2F;web）  企查查：海鲜市场开会员（一个月￥15），获取这个公司下面备案的app&#x2F;小程序&#x2F;web，并且一键导出 Google：访问官网，从官网里的推广中获取子业务以及关联app&#x2F;小程序&#x2F;web；把某个程序的名称和官方介绍丢给大模型，提示词“根据这个程序的主要业务...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/12/19/%E5%BC%80%E5%8F%91devops/Docker%E6%90%AD%E5%BB%BAC_C++%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" title="Docker搭建C/C++开发环境"><img class="post-bg" src="/img/loading.gif" data-original="/img/default-cover-2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker搭建C/C++开发环境"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/19/%E5%BC%80%E5%8F%91devops/Docker%E6%90%AD%E5%BB%BAC_C++%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" title="Docker搭建C/C++开发环境">Docker搭建C/C++开发环境</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-19T09:20:00.000Z" title="发表于 2025-12-19 17:20:00">2025-12-19</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-20T05:47:04.009Z" title="更新于 2025-12-20 13:47:04">2025-12-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/DevOps/">DevOps</a></span></div><div class="content">  构建镜像 编写Dockerfile  123456789101112131415161718192021222324252627282930313233# 1. 基础系统FROM ubuntu:22.04# 2. 换国内源 + 装依赖（如果公司内网有 apt 代理，把 sed 行删掉即可）RUN sed -i &#x27;s@http://.*.ubuntu.com@http://mirrors.aliyun.com@g&#x27; /etc/apt/sources.list &amp;&amp; \    apt-get update &amp;&amp; DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \        # 编译工具链        gcc g++ clang make cmake ninja-build gdb \        # 常用库        libboost-all-dev libssl-dev libcurl4-openssl-dev \ ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/12/03/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/frida%E8%B0%83%E8%AF%95/" title="Frida调试"><img class="post-bg" src="/img/loading.gif" data-original="/img/default-cover-3.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Frida调试"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/03/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/frida%E8%B0%83%E8%AF%95/" title="Frida调试">Frida调试</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-03T14:13:00.000Z" title="发表于 2025-12-03 22:13:00">2025-12-03</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-27T01:55:10.806Z" title="更新于 2026-01-27 09:55:10">2026-01-27</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/">移动安全</a></span></div><div class="content">  Frida调试 frida常见使用及脚本收集 | Xman  环境搭建 Android：安装Frida-Server（建议使用16.x版本）https://github.com/frida/frida/releases/download/16.5.9/frida-server-16.5.9-android-arm64.xz  123adb rootadb push frida-server /data/local/tmp/fridaadb shell &quot;chmod 777 /data/local/tmp/frida&quot;  Windows：安装与server版本对应的客户端  123pip install frida~=16.5.9pip install frida-tools~=12.3.0frida --version  动态调试12345678# 启动frida-serveradb shellsu/data/local/tmp/frida# 使用hook.js脚本hook吉利银河中的某个函数frida -U -n &quot;吉利银河&quot; -l ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/12/03/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8__frida%E8%B0%83%E8%AF%95/" title="Frida调试"><img class="post-bg" src="/img/loading.gif" data-original="/img/default-cover.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Frida调试"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/03/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E5%AE%89%E5%8D%93%E5%AE%89%E5%85%A8__frida%E8%B0%83%E8%AF%95/" title="Frida调试">Frida调试</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-03T14:13:00.000Z" title="发表于 2025-12-03 22:13:00">2025-12-03</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-04-22T06:57:28.127Z" title="更新于 2026-04-22 14:57:28">2026-04-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/">移动安全</a></span></div><div class="content">  Frida调试 frida常见使用及脚本收集 | Xman  环境搭建 Android：安装Frida-Server（建议使用16.x版本）https://github.com/frida/frida/releases/download/16.5.9/frida-server-16.5.9-android-arm64.xz  123adb rootadb push frida-server /data/local/tmp/fridaadb shell &quot;chmod 777 /data/local/tmp/frida&quot;  Windows：安装与server版本对应的客户端  123pip install frida~=16.5.9pip install frida-tools~=12.3.0frida --version  动态调试12345678# 启动frida-serveradb shellsu/data/local/tmp/frida# 使用hook.js脚本hook吉利银河中的某个函数frida -U -n &quot;吉利银河&quot; -l ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/11/20/Others/CVE-2025-24132/" title="CVE-2025-24132威胁情报分析"><img class="post-bg" src="/img/loading.gif" data-original="https://gitee.com/shaoxinsec/picgo_images/raw/master/image-20251120160748526.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CVE-2025-24132威胁情报分析"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/20/Others/CVE-2025-24132/" title="CVE-2025-24132威胁情报分析">CVE-2025-24132威胁情报分析</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-20T08:00:00.000Z" title="发表于 2025-11-20 16:00:00">2025-11-20</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-25T09:57:24.163Z" title="更新于 2025-11-25 17:57:24">2025-11-25</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/">威胁情报</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E3%80%81RCE/">溢出漏洞、RCE</a></span></div><div class="content">  威胁情报  以色列网络安全公司“Oligo”披露了AirPlay协议中存在的一组漏洞，命名为 “AirBorne” 。其中值得关注的有两个：CVE-2025-24132、CVE-2025-24252。 参考文章 深入解析RTSP协议：流媒体传输的控制核心 - 知乎 AirPlay协议规范（非官方） https://wenku.csdn.net/column/159v2uiruj#3.1%20Airplay AirPlay协议源码分析与协议详解-CSDN博客     前置知识Airplay是苹果公司推出的一套基于以太网通信的远程音视频播放协议，用来远程播放音频、视屏等等（比如iPhone上的屏幕镜像功能、直播投屏）利用现有的TCP&#x2F;IP协议栈，增加了一些功能，包括从设备的发现 -&gt; 设备连接 -&gt; 音频&#x2F;视频流数据的传输。Airplay协议到目前（2025年）基本上历经了2个版本，在版本一中主要采用RTSP协议相TCP&#x2F;7000传输控制命令，而版本二中，主要采用HTTP协议向TCP&#x2F;7000传递命令；并且，在airplay2....</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/11/10/WEB%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E5%85%AB%E8%82%A1%E6%96%87/" title="红队面试"><img class="post-bg" src="/img/loading.gif" data-original="/img/default-cover-5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="红队面试"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/10/WEB%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E5%85%AB%E8%82%A1%E6%96%87/" title="红队面试">红队面试</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-10T02:03:00.000Z" title="发表于 2025-11-10 10:03:00">2025-11-10</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-10T07:30:00.000Z" title="更新于 2025-11-10 15:30:00">2025-11-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%BA%A2%E9%98%9F/">红队</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95/">面试</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/">八股文</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E9%9D%A2%E7%BB%8F/">面经</a></span></div><div class="content">  防御 常见安全设备之间的区别  12345678WAF：专门对WEB进行防护的应用程序，对http流量进行特征检测，并及时拦截、封禁IP等措施；防火墙：主要在三层、四层进行过滤，根据规则进行拦截或者放行；IDS: 对交换机镜像过来的流量进行检测，根据特征进行匹配然后告警，一般旁路部署；IPS：在检测流量的基础之上，还可以拦截危险的流量，主要部署在出入口的一些地方，形成一条串行链路；态势感知：整个网络进行的监控，实时汇报攻击源、攻击事件，甚至还可以预测提示下一步的攻击方向，提前防御；蜜罐：故意部署的带有漏洞的一些系统，主要套取攻击者的一些攻击手法、工具等等，当然了，在一定程度上起到了防御作用；根据交互式程度一般分为低中高三种蜜罐，最常用的开源蜜罐一般是hfishing；威胁情报：对攻击事件进行的总结，形成的报告，最有意义/最具有代表性的要看里面的IOC（攻击的特征）。来源：微步在线、XXX威胁情报中心，在云沙箱里面运行可以程序，根据特征/IOC进行分析；EDR：根据特征库、行为对终端进行监控、防护、高危行为的组织。  怎么判断设备是不是误报  121. 看来源IP：国内的/国外...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/2/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/#content-inner">2</a><span class="page-number current">3</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/loading.gif" data-original="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">shaoxinSEC</div><div class="author-info-description">醉里论道 醒时折花</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/shaoxinSEC"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/shaoxinSEC" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">接单：安卓逆向、网络爬虫、移动安全、刷机……</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/04/21/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/libmsaoaidsec%E6%A3%80%E6%B5%8B%E5%AF%B9%E6%8A%97/" title="frida检测对抗(libmsaoaidsec.so)"><img src="/img/loading.gif" data-original="/img/default-cover-4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="frida检测对抗(libmsaoaidsec.so)"/></a><div class="content"><a class="title" href="/2026/04/21/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/libmsaoaidsec%E6%A3%80%E6%B5%8B%E5%AF%B9%E6%8A%97/" title="frida检测对抗(libmsaoaidsec.so)">frida检测对抗(libmsaoaidsec.so)</a><time datetime="2026-04-21T10:00:00.000Z" title="发表于 2026-04-21 18:00:00">2026-04-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/04/14/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/Android%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" title="Android客户端漏洞挖掘"><img src="/img/loading.gif" data-original="/img/default-cover-5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Android客户端漏洞挖掘"/></a><div class="content"><a class="title" href="/2026/04/14/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/Android%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" title="Android客户端漏洞挖掘">Android客户端漏洞挖掘</a><time datetime="2026-04-14T14:13:00.000Z" title="发表于 2026-04-14 22:13:00">2026-04-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/31/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E7%BC%96%E8%AF%91frida/" title="自编译Frida16.7.19"><img src="/img/loading.gif" data-original="/img/default-cover-2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="自编译Frida16.7.19"/></a><div class="content"><a class="title" href="/2026/03/31/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E7%BC%96%E8%AF%91frida/" title="自编译Frida16.7.19">自编译Frida16.7.19</a><time datetime="2026-03-30T16:00:00.000Z" title="发表于 2026-03-31 00:00:00">2026-03-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/30/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E4%BA%8C%E6%AC%A1%E6%89%93%E5%8C%85/" title="二次打包"><img src="/img/loading.gif" data-original="/img/default-cover-3.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="二次打包"/></a><div class="content"><a class="title" href="/2026/03/30/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E4%BA%8C%E6%AC%A1%E6%89%93%E5%8C%85/" title="二次打包">二次打包</a><time datetime="2026-03-29T16:00:00.000Z" title="发表于 2026-03-30 00:00:00">2026-03-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/21/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E5%AE%9A%E5%88%B6%E8%84%B1%E5%A3%B3%E6%9C%BA/" title="定制脱壳机"><img src="/img/loading.gif" data-original="/img/default-cover-4.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="定制脱壳机"/></a><div class="content"><a class="title" href="/2026/03/21/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/%E5%AE%9A%E5%88%B6%E8%84%B1%E5%A3%B3%E6%9C%BA/" title="定制脱壳机">定制脱壳机</a><time datetime="2026-03-20T16:00:00.000Z" title="发表于 2026-03-21 00:00:00">2026-03-21</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/DevOps/"><span class="card-category-list-name">DevOps</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/SRC/"><span class="card-category-list-name">SRC</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/iOS%E9%80%86%E5%90%91%E5%BC%80%E5%8F%91/"><span class="card-category-list-name">iOS逆向开发</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/web%E5%AE%89%E5%85%A8/"><span class="card-category-list-name">web安全</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%A8%81%E8%83%81%E6%83%85%E6%8A%A5/"><span class="card-category-list-name">威胁情报</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/"><span class="card-category-list-name">安卓逆向</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/"><span class="card-category-list-name">移动安全</span><span class="card-category-list-count">18</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%BA%A2%E9%98%9F/"><span class="card-category-list-name">红队</span><span class="card-category-list-count">1</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E3%80%81RCE/" style="font-size: 1.1em; color: #999">溢出漏洞、RCE</a> <a href="/tags/BurpSuite/" style="font-size: 1.3em; color: #99a1ac">BurpSuite</a> <a href="/tags/web%E5%AE%89%E5%85%A8/" style="font-size: 1.3em; color: #99a1ac">web安全</a> <a href="/tags/%E5%85%AB%E8%82%A1%E6%96%87/" style="font-size: 1.1em; color: #999">八股文</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 1.1em; color: #999">面试</a> <a href="/tags/top10/" style="font-size: 1.3em; color: #99a1ac">top10</a> <a href="/tags/%E5%AF%B9%E6%8A%97/" style="font-size: 1.3em; color: #99a1ac">对抗</a> <a href="/tags/Reqable%E5%B0%8F%E9%BB%84%E9%B8%9F/" style="font-size: 1.3em; color: #99a1ac">Reqable小黄鸟</a> <a href="/tags/termux/" style="font-size: 1.3em; color: #99a1ac">termux</a> <a href="/tags/iOS%E8%B6%8A%E7%8B%B1/" style="font-size: 1.1em; color: #999">iOS越狱</a> <a href="/tags/%E9%9D%A2%E7%BB%8F/" style="font-size: 1.1em; color: #999">面经</a> <a href="/tags/%E7%A7%BB%E5%8A%A8%E5%AE%89%E5%85%A8/" style="font-size: 1.5em; color: #99a9bf">移动安全</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">13</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">28</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">65.7k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-04-22T07:03:48.034Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/background.png);"><div class="footer-other"><div class="footer-copyright"></div><div class="footer_custom_text">红尘未破也无甚牵挂只恋生杀</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["未收招 三声笑 皆醉了","唯此间江湖年少 偏爱纵横天下","笑将人间恩仇 煮入少年茶","斩罢春风 回身接桃花","是敌是友不妨一战罢"].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  typedJSFn.processSubtitle(["未收招 三声笑 皆醉了","唯此间江湖年少 偏爱纵横天下","笑将人间恩仇 煮入少年茶","斩罢春风 回身接桃花","是敌是友不妨一战罢"])
+}
+typedJSFn.run(subtitleType)</script><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.outerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        if (typeof svg === 'string') {
+          openSvgInNewTab({ source: svg, initViewBox })
+          return
+        }
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+
+    // Avoid binding multiple times on themeChange/pjax
+    if (wrap.__mermaidGestureBound) return
+    wrap.__mermaidGestureBound = true
+
+    // Helper: map client (viewport) coordinate -> viewBox coordinate
+    const clientToViewBox = (clientX, clientY) => {
+      const rect = svg.getBoundingClientRect()
+      const vb = wrap.__mermaidCurViewBox || getSvgViewBox(svg)
+      const x = vb[0] + (clientX - rect.left) * (vb[2] / rect.width)
+      const y = vb[1] + (clientY - rect.top) * (vb[3] / rect.height)
+      return { x, y, rect, vb }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      startCenter: null
+    }
+
+    const clampVb = vb => {
+      const init = wrap.__mermaidInitViewBox || vb
+      const minW = init[2] * 0.1
+      const maxW = init[2] * 10
+      const minH = init[3] * 0.1
+      const maxH = init[3] * 10
+      vb[2] = clamp(vb[2], minW, maxW)
+      vb[3] = clamp(vb[3], minH, maxH)
+      return vb
+    }
+
+    const setCurVb = vb => {
+      vb = clampVb(vb)
+      wrap.__mermaidCurViewBox = vb
+      setSvgViewBox(svg, vb)
+    }
+
+    const onPointerDown = e => {
+      // Allow only primary button for mouse
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (state.pointers.size === 1) {
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        state.startCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      // Pan with 1 pointer
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = [...state.pointers.values()][0]
+        const prev = { x: e.clientX - e.movementX, y: e.clientY - e.movementY }
+        // movementX/Y unreliable on touch, compute from stored last position
+        const last = wrap.__mermaidLastSinglePointer || p
+        const dxClient = p.x - last.x
+        const dyClient = p.y - last.y
+        wrap.__mermaidLastSinglePointer = p
+
+        const { rect } = clientToViewBox(p.x, p.y)
+        const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        const dx = dxClient * (vb[2] / rect.width)
+        const dy = dyClient * (vb[3] / rect.height)
+        setCurVb([vb[0] - dx, vb[1] - dy, vb[2], vb[3]])
+        return
+      }
+
+      // Pinch zoom with 2 pointers
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist // dist bigger => zoom in (viewBox smaller)
+
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const centerClient = { x: cx, y: cy }
+
+        const pxy = clientToViewBox(centerClient.x, centerClient.y)
+        const cpx = pxy.x
+        const cpy = pxy.y
+
+        const vb = zoomAtPoint(state.startVb, factor, cpx, cpy)
+        setCurVb(vb)
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+        state.startCenter = null
+        wrap.__mermaidLastSinglePointer = null
+      } else if (state.pointers.size === 1) {
+        // reset single pointer baseline to avoid jump
+        wrap.__mermaidLastSinglePointer = [...state.pointers.values()][0]
+      }
+    }
+
+    // Wheel zoom (mouse/trackpad)
+    const onWheel = e => {
+      // ctrlKey on mac trackpad pinch; we treat both as zoom
+      e.preventDefault()
+      const delta = e.deltaY
+      const zoomFactor = delta > 0 ? 1.1 : 0.9
+      const { x, y } = clientToViewBox(e.clientX, e.clientY)
+      const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      setCurVb(zoomAtPoint(vb, zoomFactor, x, y))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (!init) return
+      wrap.__mermaidCurViewBox = init.slice()
+      setSvgViewBox(svg, init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown)
+    svg.addEventListener('pointermove', onPointerMove)
+    svg.addEventListener('pointerup', onPointerUpOrCancel)
+    svg.addEventListener('pointercancel', onPointerUpOrCancel)
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    svg.addEventListener('dblclick', onDblClick)
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+
+      // Clear old render (themeChange/pjax will rerun)
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      item.__mermaidGestureBound = false
+
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/click-show-text.min.js" data-mobile="false" data-text="&lt;a href=&quot;j	a v a s c r i p t:%5c%75%30%30%36%31%6c%65%72%74%28%31%29&quot;&gt;click&lt;/a&gt;,&lt;object data=&quot;data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;&quot;&gt;,&lt;style&gt;@keyframes x{}&lt;/style&gt;&lt;div style=&quot;animation-name:x&quot; onanimationstart=&quot;alert(1)&quot;&gt;&lt;/div&gt;,&lt;script&gt;eval('\141\154\145\162\164\50\61\51')&lt;/script&gt;,?id=1%2520union%2520select%25201,?id=1;exec(0x730065006c00650063007400200075007300650072),[object Object],shellcode += &quot;xffxffx06x28&quot;" data-fontsize="15px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="哦豁 你找到的内容飞了~" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div>
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z\d\-\.\+]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(t.test(e.href)||r.test(e.href))&&(e.href=a.dataset.original)})});</script><script>(r=>{r.imageLazyLoadSetting.processImages=t;var a=r.imageLazyLoadSetting.isSPA,o=r.imageLazyLoadSetting.preloadRatio||1,d=i();function i(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(t){(a||t)&&(d=i());for(var e,n=0;n<d.length;n++)0<=(e=(e=d[n]).getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(r.innerHeight*o||document.documentElement.clientHeight*o)&&(()=>{var t,e,a,o,i=d[n];e=function(){d=d.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).dataset.loaded||(t.hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(a=new Image,o=t.getAttribute("data-original"),a.onload=function(){t.src=o,t.removeAttribute("data-original"),t.setAttribute("data-loaded",!0),e&&e()},a.onerror=function(){t.removeAttribute("data-original"),t.setAttribute("data-loaded",!1),t.src=o},t.src!==o&&(a.src=o)))})()}function e(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",e),r.addEventListener("resize",e),r.addEventListener("orientationchange",e)})(this);</script></body></html>
