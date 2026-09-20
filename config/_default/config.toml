@@ -1,0 +1,8 @@
+baseurl = "https://shaoxinSEC.github.io/shannonyin.github.io/"
+locale = "zh-cn"
+title = "Shannon Yin"
+defaultContentLanguage = "zh-cn"
+hasCJKLanguage = true
+
+[pagination]
+pagerSize = 10

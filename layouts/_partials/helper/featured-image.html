@@ -1,0 +1,20 @@
+{{/* 卡片封面：优先 front matter 的 image，否则取文章内第一张图 */}}
+{{ $image := .Image }}
+
+{{ if not $image }}
+  {{ with .Resources.ByType "image" }}
+    {{ with index . 0 }}
+      {{ $image = .Name }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ if not $image }}
+  {{ with .Context }}
+    {{ with findRESubmatch `!\[[^\]]*\]\(([^)]+)\)` .RawContent 1 }}
+      {{ $image = index . 0 1 | strings.TrimSpace }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return partial "helper/image" (dict "Image" $image "Resources" .Resources "Context" .Context) }}
