@@ -3,8 +3,8 @@
 
 # Site
 title: Shannon Yin
-subtitle: 记录漏洞分析、渗透测试笔记与SRC挖洞心得
-description: 基于Hexo+Butterfly的个人网络安全博客
+subtitle: 记录漏洞分析、渗透测试
+description: 记录web、pwn、reverse、spider、iov-sec相关知识
 keywords: 网络安全,渗透测试,SRC,漏洞分析
 author: Shannon Yin
 language: zh-CN
