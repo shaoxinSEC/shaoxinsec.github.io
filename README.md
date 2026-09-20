@@ -50,7 +50,7 @@
 
 1. 推送代码到GitHub
 2. Settings→Pages→Source选择GitHub Actions
-3. 访问 https://shaoxinsec.github.io/
+3. 访问 https://shaoxinsec.top/
 
 ## 六、主题文档
 
