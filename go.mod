@@ -1,4 +1,4 @@
-module github.com/shaoxinSEC/shannonyin.github.io
+module github.com/shaoxinSEC/shaoxinsec.github.io
 
 go 1.22
 

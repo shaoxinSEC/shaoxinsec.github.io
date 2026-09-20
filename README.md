@@ -50,9 +50,10 @@
 
 1. 推送代码到GitHub
 2. Settings→Pages→Source选择GitHub Actions
-3. 访问 https://shaoxinSEC.github.io/shannonyin.github.io/
+3. 访问 https://shaoxinsec.github.io/
 
 ## 六、主题文档
 
 - 官方文档：https://stack.cai.im/zh
 - Demo：https://demo.stack.cai.im
+
