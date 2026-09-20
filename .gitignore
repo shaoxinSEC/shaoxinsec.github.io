@@ -1,12 +1,9 @@
-# Hugo
+# Hexo
 /public/
-/resources/_gen/
-/assets/jsconfig.json
-hugo_stats.json
-.hugo_build.lock
-
-# Go modules (Congo theme)
-/node_modules/
+/db.json
+*.log
+.deploy*/
+node_modules/
 
 # OS
 .DS_Store
